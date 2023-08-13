@@ -1,0 +1,29 @@
+<table>
+	<thead>
+	<tr>
+		<td>
+			<input type="checkbox" />
+		</td>
+		<td *ngFor="let header of headers">
+			{{header}}
+		</td>
+		<td></td>
+	</tr>
+	</thead>
+	<tbody>
+	<tr *ngFor="let row of data">
+		<td>
+			<input type="checkbox" />
+		</td>
+		<td *ngFor="let header of headerKeys" (click)="rowClicked(row)">
+			<ng-container
+				[ngTemplateOutlet]="getTemplate(header, row[header])"
+				[ngTemplateOutletContext]="{ value: row[header] }"
+			></ng-container>
+		</td>
+		<td>
+			<button (click)="showActions(row)">...</button>
+		</td>
+	</tr>
+	</tbody>
+</table>
