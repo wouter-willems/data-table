@@ -18,6 +18,6 @@ jobs:
           always-auth: true
       - run: yarn install
       - run: yarn build:prod
-      - run: yarn publish ./dist/wouter-willems/data-tables
+      - run: yarn publish ./dist/wouter-willems/data-table
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
