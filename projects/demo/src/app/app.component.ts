@@ -2,8 +2,12 @@ import {Component, OnInit} from '@angular/core';
 
 const data  = [
 	{
+		id: 123,
+		id2: 123,
+		id23: 123,
 		name: 'Wutu',
 		age: 36,
+		id24: 123,
 		address: {
 			street: 'Apenlaan',
 			number: 22,

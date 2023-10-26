@@ -71,8 +71,8 @@ export class DataTableComponent implements OnChanges, OnInit {
 		}).reduce((acc, cur) => {
 			return [...acc, ...cur];
 		}, []));
-		this.headerKeys = keys;
-		this.headers = keys.map(key => this.columnKeyDirectives.find(e => e.columnKey === key)?.columnCaption);
+		this.headerKeys = keys.filter(key => this.columnKeyDirectives.some(e => e.columnKey === key));
+		this.headers = this.headerKeys.map(key => this.columnKeyDirectives.find(e => e.columnKey === key)?.columnCaption);
 	}
 
 	public getTemplate(header: string, value: any): TemplateRef<any> {

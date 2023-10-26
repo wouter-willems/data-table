@@ -22,7 +22,6 @@
 			<input type="checkbox" />
 		</td>
 		<td *ngFor="let header of headerKeys" (click)="rowClicked(row)">
-			{{row}}
 			<ng-container
 				[ngTemplateOutlet]="getTemplate(header, row[header])"
 				[ngTemplateOutletContext]="{ value: row[header] }"
