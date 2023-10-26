@@ -1,14 +1,14 @@
-import { NgModule } from '@angular/core';
+import {NgModule} from '@angular/core';
 import {ColumnKeyDirective, DataTableComponent} from './data-table/data-table.component';
-import {JsonPipe} from "@angular/common";
-import {BrowserModule} from "@angular/platform-browser";
+import {CommonModule, JsonPipe} from "@angular/common";
 
 @NgModule({
 	declarations: [DataTableComponent, ColumnKeyDirective],
 	imports: [
-		BrowserModule,
+		CommonModule,
 		JsonPipe
 	],
 	exports: [DataTableComponent, ColumnKeyDirective]
 })
-export class WutuDataTableModule { }
+export class WutuDataTableModule {
+}
