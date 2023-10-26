@@ -9,10 +9,6 @@ const data  = [
 			number: 22,
 		}
 	}, {
-		name: 'Samson',
-		age: 22,
-		breed: 'Hond',
-	}, {
 		name: 'Gert',
 		age: 22,
 		address: {
@@ -35,19 +31,6 @@ const data  = [
 })
 export class AppComponent implements OnInit {
 
-	public headers: { [k in Required<keyof typeof data[number]>]: string } = {
-		name: 'NAAMPJE',
-		age: 'leeftijd',
-		address: 'miaow waar',
-		breed: 'soort',
-		comments: 'Commentaar'
-	};
-
-	mapColumnKeyToHeaderCaptionFn: (e: string) => string = (e) => {
-		console.log(e);
-		return this.headers[e];
-	};
-
 	getActionsForRowFn = (e) => {
 		console.log(e);
 		return [{
@@ -65,7 +48,7 @@ export class AppComponent implements OnInit {
 		}];
 	};
 
-	fetchItemsFn: (start: number) => Promise<{
+	fetchItemsFn: (start: number, itemsPerPage: number) => Promise<{
 		totalAmount: number,
 		data: Array<Record<string, any>>
 	}> = async (start: number) => {
@@ -73,7 +56,7 @@ export class AppComponent implements OnInit {
 		if (start === 96) {
 			return {
 				totalAmount: 98,
-				data: [data[0], data[3]],
+				data: [data[0], data[2]],
 			};
 		}
 		return {
@@ -84,10 +67,6 @@ export class AppComponent implements OnInit {
 
 	ngOnInit(): void {
 
-	}
-
-	asColKey(e: keyof typeof this.headers): keyof typeof this.headers {
-		return e;
 	}
 
 	onRowClicked($event: any) {

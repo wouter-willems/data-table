@@ -6,7 +6,7 @@ import {
 	Input,
 	OnChanges,
 	OnInit,
-	Output,
+	Output, QueryList,
 	SimpleChanges,
 	TemplateRef
 } from '@angular/core';
@@ -17,6 +17,7 @@ import {isValueSet} from "../util/values";
 @Directive({selector: '[columnKey]'})
 export class ColumnKeyDirective {
 	@Input() columnKey;
+	@Input() columnCaption;
 }
 
 @Component({
@@ -25,19 +26,18 @@ export class ColumnKeyDirective {
 	styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent implements OnChanges, OnInit {
-	@ContentChildren(ColumnKeyDirective, {read: TemplateRef}) template;
-	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) zagen;
-	@Input() fetchItemsFn: (start: number) => Promise<{
+	@ContentChildren(ColumnKeyDirective, {read: TemplateRef}) templates: QueryList<TemplateRef<any>> ;
+	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) columnKeyDirectives: QueryList<ColumnKeyDirective>;
+	@Input() fetchItemsFn: (start: number, itemsPerPage: number) => Promise<{
 		totalAmount: number,
 		data: Array<Record<string, any>>
 	}>;
-	@Input() mapColumnKeyToHeaderCaptionFn: (s: string) => string;
 	@Input() getActionsForRowFn: (r: any) => Array<any>;
 	@Input() public currentPage = 1;
 	@Output() onRowClicked = new EventEmitter<any>();
 	@Output() onPageChange = new EventEmitter<number>();
 
-	public itemsPerPage = 4;
+	public itemsPerPage = 3;
 	public headerKeys: Array<string> = [];
 	public headers: Array<string> = [];
 	public stuff: { totalAmount: number; data: Array<Record<string, any>> };
@@ -46,8 +46,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	constructor() {
 		setTimeout(() => {
-			console.log(this.template);
-			console.log(this.zagen.toArray());
+			// console.log(this.columnKeyDirectives.toArray());
 		}, 100);
 	}
 
@@ -62,7 +61,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	}
 
 	private async getData(): Promise<void> {
-		this.stuff = await this.fetchItemsFn((this.currentPage - 1) * this.itemsPerPage);
+		this.stuff = await this.fetchItemsFn((this.currentPage - 1) * (this.itemsPerPage ?? 1), (this.itemsPerPage ?? 1));
 		this.extractHeaders();
 	}
 
@@ -73,16 +72,15 @@ export class DataTableComponent implements OnChanges, OnInit {
 			return [...acc, ...cur];
 		}, []));
 		this.headerKeys = keys;
-		const headers = keys.map(this.mapColumnKeyToHeaderCaptionFn);
-		this.headers = headers;
+		this.headers = keys.map(key => this.columnKeyDirectives.find(e => e.columnKey === key)?.columnCaption);
 	}
 
 	public getTemplate(header: string, value: any): TemplateRef<any> {
-		const index = this.zagen.toArray().findIndex(e => {
+		const index = this.columnKeyDirectives.toArray().findIndex(e => {
 			return e.columnKey === header;
 		});
 		if (isValueSet(value)) {
-			return this.template.toArray()[index];
+			return this.templates.toArray()[index];
 		}
 		return null;
 	}
@@ -108,7 +106,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	}
 
 	public getLastPage(): number {
-		return Math.ceil(this.stuff.totalAmount / this.itemsPerPage);
+		return Math.ceil(this.stuff.totalAmount / (this.itemsPerPage ?? 1));
 	}
 
 	toPage(pageNr: number) {

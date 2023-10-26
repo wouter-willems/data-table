@@ -1,24 +1,21 @@
 <wutu-data-table
 	[fetchItemsFn]="fetchItemsFn"
-	[mapColumnKeyToHeaderCaptionFn]="mapColumnKeyToHeaderCaptionFn"
 	[getActionsForRowFn]="getActionsForRowFn"
 	(onRowClicked)="onRowClicked($event)"
 >
-	<ng-template [columnKey]="asColKey('name')" let-value="value">
+	<ng-template columnKey="name" columnCaption="NAMERINO" let-value="value">
 		name: {{value}}
 	</ng-template>
-	<ng-template [columnKey]="asColKey('age')" let-value="value">
+	<ng-template columnKey="age" columnCaption="leeftijd" let-value="value">
 		age: {{value}}
 	</ng-template>
-	<ng-template [columnKey]="asColKey('breed')" let-value="value">
+	<ng-template columnKey="breed" columnCaption="soort" let-value="value">
 		soort: {{value}}
 	</ng-template>
-	<ng-template [columnKey]="asColKey('address')" let-value="value">
+	<ng-template columnKey="address" columnCaption="waaro" let-value="value">
 		address: {{value | json}}
 	</ng-template>
-	<ng-template [columnKey]="asColKey('comments')" let-value="value">
+	<ng-template columnKey="comments" columnCaption="commentaar" let-value="value">
 		'"{{value}}"'
 	</ng-template>
 </wutu-data-table>
-
-<ng-template #bla></ng-template>
