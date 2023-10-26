@@ -10,7 +10,7 @@ import {
 	SimpleChanges,
 	TemplateRef
 } from '@angular/core';
-import {removeDuplicatesFromArray} from "../util/arrays";
+import {arrayIsSetAndFilled, removeDuplicatesFromArray} from "../util/arrays";
 import {isValueSet} from "../util/values";
 
 // tslint:disable-next-line:directive-selector
@@ -43,6 +43,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	public stuff: { totalAmount: number; data: Array<Record<string, any>> };
 	public actions: any[];
 	public actionMenuActionForRow: any;
+	public definedColumns: Array<{key: string, active: boolean}>;
 
 	constructor() {
 		setTimeout(() => {
@@ -71,7 +72,12 @@ export class DataTableComponent implements OnChanges, OnInit {
 		}).reduce((acc, cur) => {
 			return [...acc, ...cur];
 		}, []));
-		this.headerKeys = keys.filter(key => this.columnKeyDirectives.some(e => e.columnKey === key));
+		if (!arrayIsSetAndFilled(this.definedColumns)) {
+			this.definedColumns = this.columnKeyDirectives.map(e => e.columnKey).map(e => ({key: e, active: true}));
+		}
+		this.headerKeys = keys
+		.filter(key => this.columnKeyDirectives.some(e => e.columnKey === key))
+		.filter(key => this.definedColumns.some(e => e.key === key && e.active !== false));
 		this.headers = this.headerKeys.map(key => this.columnKeyDirectives.find(e => e.columnKey === key)?.columnCaption);
 	}
 

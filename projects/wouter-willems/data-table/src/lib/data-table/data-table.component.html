@@ -50,3 +50,5 @@
 	<button (click)="toPage(currentPage+1)" [disabled]="currentPage === this.getLastPage()">Next</button>
 	<button (click)="toPage(this.getLastPage())">Last</button>
 </div>
+
+<wutu-column-rearranger [(ngModel)]="definedColumns"></wutu-column-rearranger>

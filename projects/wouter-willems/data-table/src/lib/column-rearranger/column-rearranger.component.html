@@ -1,0 +1,8 @@
+<div class="componentContainer">
+	<div *ngFor="let col of columns">
+		<div>{{col.key}}</div>
+		<input type="checkbox" [(ngModel)]="col.active" />
+	</div>
+
+	<button (click)="notify()">gaan</button>
+</div>
