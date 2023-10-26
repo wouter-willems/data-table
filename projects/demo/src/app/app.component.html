@@ -1,6 +1,6 @@
 <wutu-data-table
-	[data]="myData"
-	[mapRowToHeaderFn]="mapRowToHeaderFn"
+	[fetchItemsFn]="fetchItemsFn"
+	[mapColumnKeyToHeaderCaptionFn]="mapColumnKeyToHeaderCaptionFn"
 	[getActionsForRowFn]="getActionsForRowFn"
 	(onRowClicked)="onRowClicked($event)"
 >
@@ -20,3 +20,5 @@
 		'"{{value}}"'
 	</ng-template>
 </wutu-data-table>
+
+<ng-template #bla></ng-template>

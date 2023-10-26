@@ -1,11 +1,11 @@
 import {
 	Component,
-	ContentChild,
 	ContentChildren,
 	Directive,
 	EventEmitter,
 	Input,
 	OnChanges,
+	OnInit,
 	Output,
 	SimpleChanges,
 	TemplateRef
@@ -14,7 +14,7 @@ import {removeDuplicatesFromArray} from "../util/arrays";
 import {isValueSet} from "../util/values";
 
 // tslint:disable-next-line:directive-selector
-@Directive({ selector: '[columnKey]' })
+@Directive({selector: '[columnKey]'})
 export class ColumnKeyDirective {
 	@Input() columnKey;
 }
@@ -24,15 +24,25 @@ export class ColumnKeyDirective {
 	templateUrl: './data-table.component.html',
 	styleUrls: ['./data-table.component.scss'],
 })
-export class DataTableComponent implements OnChanges {
-	@ContentChildren(ColumnKeyDirective, { read: TemplateRef }) template;
-	@ContentChildren(ColumnKeyDirective, { read: ColumnKeyDirective }) zagen;
-	@Input() data = [];
-	@Input() mapRowToHeaderFn: (s: string) => string;
+export class DataTableComponent implements OnChanges, OnInit {
+	@ContentChildren(ColumnKeyDirective, {read: TemplateRef}) template;
+	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) zagen;
+	@Input() fetchItemsFn: (start: number) => Promise<{
+		totalAmount: number,
+		data: Array<Record<string, any>>
+	}>;
+	@Input() mapColumnKeyToHeaderCaptionFn: (s: string) => string;
 	@Input() getActionsForRowFn: (r: any) => Array<any>;
+	@Input() public currentPage = 1;
 	@Output() onRowClicked = new EventEmitter<any>();
+	@Output() onPageChange = new EventEmitter<number>();
+
+	public itemsPerPage = 4;
 	public headerKeys: Array<string> = [];
 	public headers: Array<string> = [];
+	public stuff: { totalAmount: number; data: Array<Record<string, any>> };
+	public actions: any[];
+	public actionMenuActionForRow: any;
 
 	constructor() {
 		setTimeout(() => {
@@ -41,18 +51,29 @@ export class DataTableComponent implements OnChanges {
 		}, 100);
 	}
 
-	ngOnChanges(simpleChanges: SimpleChanges): void {
-		this.extractHeaders(simpleChanges.data.currentValue);
+	async ngOnInit(): Promise<void> {
+		this.getData();
 	}
 
-	private extractHeaders(obj): void {
-		const keys = removeDuplicatesFromArray(Object.values(obj).map(e => {
+	ngOnChanges(simpleChanges: SimpleChanges): void {
+		if (isValueSet(simpleChanges.currentPage)) {
+			this.toPage(simpleChanges.currentPage.currentValue);
+		}
+	}
+
+	private async getData(): Promise<void> {
+		this.stuff = await this.fetchItemsFn((this.currentPage - 1) * this.itemsPerPage);
+		this.extractHeaders();
+	}
+
+	private extractHeaders(): void {
+		const keys = removeDuplicatesFromArray(Object.values(this.stuff.data).map(e => {
 			return Object.keys(e);
 		}).reduce((acc, cur) => {
 			return [...acc, ...cur];
 		}, []));
 		this.headerKeys = keys;
-		const headers = keys.map(this.mapRowToHeaderFn);
+		const headers = keys.map(this.mapColumnKeyToHeaderCaptionFn);
 		this.headers = headers;
 	}
 
@@ -71,9 +92,29 @@ export class DataTableComponent implements OnChanges {
 		this.onRowClicked.emit(row);
 	}
 
-	showActions(row: any) {
+	showActions(row: any): void {
 		const actions = this.getActionsForRowFn(row);
-		actions[0].action();
 		console.log(actions);
+		this.actionMenuActionForRow = row;
+		this.actions = actions;
+		// actions[0].action();
+		// console.log(actions);
+	}
+
+	getPageNumbers(): Array<number> {
+		const totalPages = this.getLastPage();
+		const allPageNumbers = [...Array(totalPages).keys()].map(i => i + 1);
+		return allPageNumbers.filter(i => Math.abs(i - this.currentPage) < 4);
+	}
+
+	public getLastPage(): number {
+		return Math.ceil(this.stuff.totalAmount / this.itemsPerPage);
+	}
+
+	toPage(pageNr: number) {
+		this.currentPage = pageNr;
+		this.onPageChange.emit(pageNr);
+
+		this.getData();
 	}
 }

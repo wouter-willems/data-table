@@ -1,6 +1,6 @@
 {
   "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../../dist/wutu/data-table",
+  "dest": "../../../dist/wouter-willems/data-table",
   "lib": {
     "entryFile": "src/public-api.ts"
   }

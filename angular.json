@@ -3,35 +3,35 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "wutu/data-table": {
+    "wouter-willems/data-table": {
       "projectType": "library",
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
         }
       },
-      "root": "projects/wutu/data-table",
-      "sourceRoot": "projects/wutu/data-table/src",
+      "root": "projects/wouter-willems/data-table",
+      "sourceRoot": "projects/wouter-willems/data-table/src",
       "prefix": "wutu",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "tsConfig": "projects/wutu/data-table/tsconfig.lib.json",
-            "project": "projects/wutu/data-table/ng-package.json"
+            "tsConfig": "projects/wouter-willems/data-table/tsconfig.lib.json",
+            "project": "projects/wouter-willems/data-table/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/wutu/data-table/tsconfig.lib.prod.json"
+              "tsConfig": "projects/wouter-willems/data-table/tsconfig.lib.prod.json"
             }
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/wutu/data-table/src/test.ts",
-            "tsConfig": "projects/wutu/data-table/tsconfig.spec.json",
-            "karmaConfig": "projects/wutu/data-table/karma.conf.js"
+            "main": "projects/wouter-willems/data-table/src/test.ts",
+            "tsConfig": "projects/wouter-willems/data-table/tsconfig.spec.json",
+            "karmaConfig": "projects/wouter-willems/data-table/karma.conf.js"
           }
         }
       }

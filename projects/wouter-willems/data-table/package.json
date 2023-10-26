@@ -1,5 +1,5 @@
 {
-  "name": "wutu/data-table",
+  "name": "wouter-willems/data-table",
   "version": "0.0.1",
   "publishConfig": {
     "access": "public"

@@ -3,6 +3,7 @@ import {NgModule} from '@angular/core';
 
 import {AppComponent} from './app.component';
 import {WutuDataTableModule} from "../../../wouter-willems/data-table/src/lib/wutu-data-table.module";
+import {RouterModule} from "@angular/router";
 
 @NgModule({
 	declarations: [
@@ -10,6 +11,7 @@ import {WutuDataTableModule} from "../../../wouter-willems/data-table/src/lib/wu
 	],
 	imports: [
 		BrowserModule,
+		RouterModule,
 		WutuDataTableModule,
 	],
 	providers: [],

@@ -5,7 +5,28 @@
 table {
 	width: 100%;
 }
+input {
+	margin: 0;
+}
 
 td {
 	white-space: nowrap;
+}
+.actionMenuContainer {
+	position: relative;
+	display: flex;
+	justify-content: flex-end;
+}
+.actionMenu {
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+.pageNumbers {
+	display: flex;
+}
+.pageNrButton {
+	&.selected {
+		background: red;
+	}
 }

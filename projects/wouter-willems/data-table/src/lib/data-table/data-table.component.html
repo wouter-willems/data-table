@@ -11,7 +11,7 @@
 	</tr>
 	</thead>
 	<tbody>
-	<tr *ngFor="let row of data">
+	<tr *ngFor="let row of stuff?.data">
 		<td>
 			<input type="checkbox" />
 		</td>
@@ -22,8 +22,25 @@
 			></ng-container>
 		</td>
 		<td>
-			<button (click)="showActions(row)">...</button>
+			<div class="actionMenuContainer">
+				<button (click)="showActions(row)">...</button>
+				<div class="actionMenu" *ngIf="actionMenuActionForRow === row">
+					<button *ngFor="let action of actions" (click)="action.action()">
+						{{action.caption}}
+					</button>
+				</div>
+			</div>
 		</td>
 	</tr>
 	</tbody>
 </table>
+
+<div class="pageNumbers" *ngIf="stuff">
+	<button (click)="toPage(1)">First</button>
+	<button (click)="toPage(currentPage-1)" [disabled]="currentPage === 1">Previous</button>
+	<button class="pageNrButton" *ngFor="let pageNr of getPageNumbers()" (click)="toPage(pageNr)" [ngClass]="{selected: currentPage === pageNr}">
+		<span>{{pageNr}}</span>
+	</button>
+	<button (click)="toPage(currentPage+1)" [disabled]="currentPage === this.getLastPage()">Next</button>
+	<button (click)="toPage(this.getLastPage())">Last</button>
+</div>
