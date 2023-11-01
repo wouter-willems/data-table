@@ -1,8 +1,23 @@
-<div class="componentContainer">
-	<div *ngFor="let col of columns">
-		<div>{{col.key}}</div>
-		<input type="checkbox" [(ngModel)]="col.active" />
-	</div>
+<ol class="componentContainer" [ngClass]="{dragInProgress: dragSourceIndex >= 0}">
+	<li
+		*ngFor="let col of columns; index as index"
+	>
+		<div
+			class="draggableItem"
+			draggable="true"
+			(dragstart)="dragStart($event)"
+			(dragenter)="dragEnter($event)"
+			(dragover)="$event.preventDefault()"
+			(dragend)="dragEnd($event)"
+			[ngClass]="{beingDragged: index === dragSourceIndex}"
+			#dragItem
+		>
+			<div class="visual" [ngStyle]="{transform: 'translateY('+ getTransform(index) + '%)'}">
+				<div>{{col.key}}</div>
+				<input type="checkbox" [(ngModel)]="col.active"/>
+			</div>
+		</div>
+	</li>
 
 	<button (click)="notify()">gaan</button>
-</div>
+</ol>

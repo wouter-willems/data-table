@@ -51,4 +51,6 @@
 	<button (click)="toPage(this.getLastPage())">Last</button>
 </div>
 
+{{definedColumns | json}}
+
 <wutu-column-rearranger [(ngModel)]="definedColumns"></wutu-column-rearranger>

@@ -1,0 +1,22 @@
+:host {
+  display: block;
+}
+
+li {
+  position: relative;
+}
+
+.visual {
+  padding: 10px;
+  background: lightgrey;
+}
+.dragInProgress .visual {
+  pointer-events: none;
+  transition: transform 0.1s linear;
+}
+.draggableItem {
+  &.beingDragged {
+    opacity: 0.7;
+    transform: translateX(0.8rem);
+  }
+}
