@@ -1,4 +1,4 @@
-<ol class="componentContainer" [ngClass]="{dragInProgress: dragSourceIndex >= 0}">
+<ol [ngClass]="{dragInProgress: dragSourceIndex >= 0}">
 	<li
 		*ngFor="let col of columns; index as index"
 	>
@@ -19,5 +19,5 @@
 		</div>
 	</li>
 
-	<button (click)="notify()">gaan</button>
 </ol>
+<button (click)="submit()">gaan</button>

@@ -1,5 +1,13 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+ol {
+  flex-grow: 1;
+  list-style: none;
+  margin: 0;
+  padding-inline: unset;
 }
 
 li {

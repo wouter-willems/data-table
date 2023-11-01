@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {Component, ElementRef, EventEmitter, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 
 @Component({
@@ -8,6 +8,9 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 	providers: [{provide: NG_VALUE_ACCESSOR, useExisting: ColumnRearrangerComponent, multi: true}],
 })
 export class ColumnRearrangerComponent implements OnInit, ControlValueAccessor {
+
+	@Output() onColumnsSaved = new EventEmitter();
+	@Output() onCloseRequest = new EventEmitter();
 
 	private changed = new Array<(value: any) => void>();
 	private touched = new Array<() => void>();
@@ -102,5 +105,11 @@ export class ColumnRearrangerComponent implements OnInit, ControlValueAccessor {
 		}
 		const diff = this.currentDragPosition - this.dragSourceIndex;
 		return diff * 100;
+	}
+
+	submit() {
+		this.notify();
+		this.onColumnsSaved.emit();
+		this.onCloseRequest.emit();
 	}
 }

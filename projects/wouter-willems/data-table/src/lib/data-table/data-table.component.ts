@@ -26,7 +26,7 @@ export class ColumnKeyDirective {
 	styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent implements OnChanges, OnInit {
-	@ContentChildren(ColumnKeyDirective, {read: TemplateRef}) templates: QueryList<TemplateRef<any>> ;
+	@ContentChildren(ColumnKeyDirective, {read: TemplateRef}) templates: QueryList<TemplateRef<any>>;
 	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) columnKeyDirectives: QueryList<ColumnKeyDirective>;
 	@Input() fetchItemsFn: (start: number, itemsPerPage: number) => Promise<{
 		totalAmount: number,
@@ -43,7 +43,9 @@ export class DataTableComponent implements OnChanges, OnInit {
 	public stuff: { totalAmount: number; data: Array<Record<string, any>> };
 	public actions: any[];
 	public actionMenuActionForRow: any;
-	public definedColumns: Array<{key: string, active: boolean}>;
+	public definedColumns: Array<{ key: string, active: boolean }>;
+	public showConfig: boolean = false;
+	private backdropDiv: HTMLDivElement;
 
 	constructor() {
 		setTimeout(() => {
@@ -77,7 +79,10 @@ export class DataTableComponent implements OnChanges, OnInit {
 		}
 		this.headerKeys = keys
 		.filter(key => this.columnKeyDirectives.some(e => e.columnKey === key))
-		.filter(key => this.definedColumns.some(e => e.key === key && e.active !== false));
+		.filter(key => this.definedColumns.some(e => e.key === key && e.active !== false))
+		.sort((a, b) => {
+			return this.definedColumns.findIndex(e => e.key === a) > this.definedColumns.findIndex(e => e.key === b) ? 1 : -1;
+		});
 		this.headers = this.headerKeys.map(key => this.columnKeyDirectives.find(e => e.columnKey === key)?.columnCaption);
 	}
 
@@ -120,5 +125,23 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.onPageChange.emit(pageNr);
 
 		this.getData();
+	}
+
+	openConfig() {
+		this.showConfig = true;
+		this.backdropDiv = document.createElement('div');
+		this.backdropDiv.style.background = 'black';
+		this.backdropDiv.style.opacity = '0.5';
+		this.backdropDiv.style.position = 'fixed';
+		this.backdropDiv.style.top = '0';
+		this.backdropDiv.style.right = '0';
+		this.backdropDiv.style.bottom = '0';
+		this.backdropDiv.style.left = '0';
+		document.body.appendChild(this.backdropDiv);
+	}
+
+	closeConfig() {
+		this.showConfig = false;
+		document.body.removeChild(this.backdropDiv);
 	}
 }

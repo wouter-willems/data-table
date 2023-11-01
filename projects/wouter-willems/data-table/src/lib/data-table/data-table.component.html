@@ -1,9 +1,14 @@
-<select [(ngModel)]="itemsPerPage">
-	<option value="1">1</option>
-	<option value="3">3</option>
-	<option value="5">5</option>
-	<option value="10">10</option>
-</select>
+<div class="topButtons">
+	<select [(ngModel)]="itemsPerPage">
+		<option value="1">1</option>
+		<option value="3">3</option>
+		<option value="5">5</option>
+		<option value="10">10</option>
+	</select>
+	<div>
+		<button (click)="openConfig()">Config table</button>
+	</div>
+</div>
 <table>
 	<thead>
 	<tr>
@@ -53,4 +58,7 @@
 
 {{definedColumns | json}}
 
-<wutu-column-rearranger [(ngModel)]="definedColumns"></wutu-column-rearranger>
+<div class="columnRearranger" *ngIf="showConfig">
+	<button class="closeButton" (click)="closeConfig()">X</button>
+	<wutu-column-rearranger [(ngModel)]="definedColumns" (onCloseRequest)="closeConfig()" (onColumnsSaved)="extractHeaders()"></wutu-column-rearranger>
+</div>
