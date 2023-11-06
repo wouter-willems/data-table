@@ -1,4 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, InjectionToken, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import { MyTestToken } from 'projects/wouter-willems/data-table/src/public-api';
+import {MyToggleComponent} from "../my-toggle/my-toggle.component";
+import {ControlValueAccessor} from "@angular/forms";
 
 const data  = [
 	{
@@ -31,7 +34,11 @@ const data  = [
 @Component({
 	selector: 'app-root',
 	templateUrl: './app.component.html',
-	styleUrls: ['./app.component.scss']
+	styleUrls: ['./app.component.scss'],
+	providers: [{
+		provide: MyTestToken,
+		useValue: MyToggleComponent,
+	}]
 })
 export class AppComponent implements OnInit {
 

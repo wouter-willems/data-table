@@ -1,3 +1,5 @@
+<wutu-lib-style></wutu-lib-style>
+
 <div class="topButtons">
 	<select [(ngModel)]="itemsPerPage">
 		<option value="1">1</option>
@@ -12,8 +14,10 @@
 <table>
 	<thead>
 	<tr>
-		<td>
-			<input type="checkbox" />
+		<td (click)="headerSelectClicked()">
+			<div class="selectBox">
+				<ng-template #headerSelect></ng-template>
+			</div>
 		</td>
 		<td *ngFor="let header of headers">
 			{{header}}
@@ -22,9 +26,11 @@
 	</tr>
 	</thead>
 	<tbody>
-	<tr *ngFor="let row of stuff?.data">
-		<td>
-			<input type="checkbox" />
+	<tr *ngFor="let row of stuff?.data; index as index">
+		<td (click)="rowSelectClicked(row, index)">
+			<div class="selectBox">
+				<ng-template #rowSelect></ng-template>
+			</div>
 		</td>
 		<td *ngFor="let header of headerKeys" (click)="rowClicked(row)">
 			<ng-container

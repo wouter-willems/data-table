@@ -1,0 +1,7 @@
+@import "../_variables.scss";
+:host {
+  display: none;
+}
+body {
+  #{$p}background: orange;
+}

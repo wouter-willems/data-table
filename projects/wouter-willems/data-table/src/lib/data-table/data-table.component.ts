@@ -1,17 +1,26 @@
 import {
+	AfterViewInit,
 	Component,
 	ContentChildren,
 	Directive,
-	EventEmitter,
+	EventEmitter, InjectionToken, Injector,
 	Input,
 	OnChanges,
 	OnInit,
-	Output, QueryList,
+	Output,
+	QueryList,
 	SimpleChanges,
-	TemplateRef
+	TemplateRef,
+	ViewChild,
+	ViewChildren,
+	ViewContainerRef
 } from '@angular/core';
-import {arrayIsSetAndFilled, removeDuplicatesFromArray} from "../util/arrays";
-import {isValueSet} from "../util/values";
+import {arrayIsSetAndFilled, removeDuplicatesFromArray} from '../util/arrays';
+import {isValueSet} from '../util/values';
+import {MyToggleComponent} from '../../../../../demo/src/my-toggle/my-toggle.component';
+import {ControlValueAccessor} from "@angular/forms";
+
+export const MyTestToken = new InjectionToken('myTest');
 
 // tslint:disable-next-line:directive-selector
 @Directive({selector: '[columnKey]'})
@@ -28,6 +37,10 @@ export class ColumnKeyDirective {
 export class DataTableComponent implements OnChanges, OnInit {
 	@ContentChildren(ColumnKeyDirective, {read: TemplateRef}) templates: QueryList<TemplateRef<any>>;
 	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) columnKeyDirectives: QueryList<ColumnKeyDirective>;
+
+	@ViewChild('headerSelect', {read: ViewContainerRef}) headerSelect: ViewContainerRef;
+	@ViewChildren('rowSelect', {read: ViewContainerRef}) rowSelects: QueryList<ViewContainerRef>;
+
 	@Input() fetchItemsFn: (start: number, itemsPerPage: number) => Promise<{
 		totalAmount: number,
 		data: Array<Record<string, any>>
@@ -46,16 +59,25 @@ export class DataTableComponent implements OnChanges, OnInit {
 	public definedColumns: Array<{ key: string, active: boolean }>;
 	public showConfig: boolean = false;
 	private backdropDiv: HTMLDivElement;
+	public selectedState: Map<Record<string, any>, boolean> = new Map();
+	private headerSelectComp: any;
+	private rowSelectComps: Array<ControlValueAccessor>;
 
-	constructor() {
-		setTimeout(() => {
-			// console.log(this.columnKeyDirectives.toArray());
-		}, 100);
+	constructor(private injector: Injector) {
+
 	}
 
 	async ngOnInit(): Promise<void> {
-		this.getData();
+		setTimeout(() => {
+			console.log(MyToggleComponent);
+			const injected = this.injector.get<any>(MyTestToken);
+			console.log('injected');
+			console.log(injected);
+			this.headerSelectComp = this.headerSelect.createComponent(injected).instance;
+		});
+		await this.getData();
 	}
+
 
 	ngOnChanges(simpleChanges: SimpleChanges): void {
 		if (isValueSet(simpleChanges.currentPage)) {
@@ -65,6 +87,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	private async getData(): Promise<void> {
 		this.stuff = await this.fetchItemsFn((this.currentPage - 1) * (this.itemsPerPage ?? 1), (this.itemsPerPage ?? 1));
+		this.stuff.data.forEach(e => this.selectedState.set(e, false));
 		this.extractHeaders();
 	}
 
@@ -84,6 +107,13 @@ export class DataTableComponent implements OnChanges, OnInit {
 			return this.definedColumns.findIndex(e => e.key === a) > this.definedColumns.findIndex(e => e.key === b) ? 1 : -1;
 		});
 		this.headers = this.headerKeys.map(key => this.columnKeyDirectives.find(e => e.columnKey === key)?.columnCaption);
+
+		setTimeout(() => {
+			this.rowSelectComps = this.rowSelects
+			.map(e => e.createComponent(MyToggleComponent))
+				.map(e => e.instance)
+			;
+		});
 	}
 
 	public getTemplate(header: string, value: any): TemplateRef<any> {
@@ -127,7 +157,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.getData();
 	}
 
-	openConfig() {
+	openConfig(): void {
 		this.showConfig = true;
 		this.backdropDiv = document.createElement('div');
 		this.backdropDiv.style.background = 'black';
@@ -143,5 +173,36 @@ export class DataTableComponent implements OnChanges, OnInit {
 	closeConfig() {
 		this.showConfig = false;
 		document.body.removeChild(this.backdropDiv);
+	}
+
+	rowSelectClicked(row: Record<string, any>, i: number): void {
+		this.setRowSelect(row, i, !this.selectedState.get(row));
+		this.setHeaderSelectState();
+	}
+
+	private setRowSelect(row: Record<string, any>, i: number, newState: boolean): void {
+		this.selectedState.set(row, newState);
+		this.rowSelectComps[i].writeValue(newState);
+	}
+
+	private setHeaderSelectState(): void {
+		if ([...this.selectedState.values()].every(e => e === true)) {
+			this.headerSelectComp.writeValue(true);
+		} else if ([...this.selectedState.values()].every(e => e === false)) {
+			this.headerSelectComp.writeValue(false);
+		} else {
+			this.headerSelectComp.writeValue(undefined);
+		}
+	}
+
+	headerSelectClicked(): void {
+		if ([...this.selectedState.values()].every(e => e === true)) {
+			this.stuff.data.forEach((row, i) => this.setRowSelect(row, i, false));
+		} else if ([...this.selectedState.values()].every(e => e === false)) {
+			this.stuff.data.forEach((row, i) => this.setRowSelect(row, i, true));
+		} else {
+			this.stuff.data.forEach((row, i) => this.setRowSelect(row, i, true));
+		}
+		this.setHeaderSelectState();
 	}
 }

@@ -4,15 +4,19 @@ import {NgModule} from '@angular/core';
 import {AppComponent} from './app.component';
 import {WutuDataTableModule} from "../../../wouter-willems/data-table/src/lib/wutu-data-table.module";
 import {RouterModule} from "@angular/router";
+import {MyToggleComponent} from "../my-toggle/my-toggle.component";
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
 	declarations: [
-		AppComponent
+		AppComponent,
+		MyToggleComponent,
 	],
 	imports: [
 		BrowserModule,
 		RouterModule,
 		WutuDataTableModule,
+		FormsModule,
 	],
 	providers: [],
 	bootstrap: [AppComponent]

@@ -1,3 +1,4 @@
+@import "../_variables.scss";
 :host {
 	display: block;
 	overflow-x: auto;
@@ -12,8 +13,8 @@
 	bottom: 0;
 	right: 0;
 	width: 20rem;
-	padding: 1rem;
 	background: white;
+	padding: 1rem;
 	box-shadow: -3px 0px 25px gray;
 	z-index: 1;
 	.closeButton {
@@ -24,6 +25,9 @@
 		width: 2rem;
 		height: 2rem;
 	}
+}
+.selectBox {
+	pointer-events: none;
 }
 .backDrop {
 	position: fixed;
@@ -44,6 +48,7 @@ input {
 
 td {
 	white-space: nowrap;
+	background: var(#{$p}background);
 }
 .actionMenuContainer {
 	position: relative;
