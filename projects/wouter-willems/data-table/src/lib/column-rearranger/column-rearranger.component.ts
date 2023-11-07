@@ -1,5 +1,18 @@
-import {Component, ElementRef, EventEmitter, OnInit, Output, QueryList, ViewChildren} from '@angular/core';
+import {
+	Component,
+	ElementRef,
+	EventEmitter,
+	InjectionToken,
+	Injector,
+	OnInit,
+	Output,
+	QueryList,
+	TemplateRef,
+	ViewChildren
+} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
+
+export const SaveBtnRefToken = new InjectionToken('save btn');
 
 @Component({
 	selector: 'wutu-column-rearranger',
@@ -20,11 +33,14 @@ export class ColumnRearrangerComponent implements OnInit, ControlValueAccessor {
 	@ViewChildren('dragItem') dragItems: QueryList<ElementRef>;
 	public dragSourceIndex: number;
 	private currentDragPosition: number;
+	public saveBtnRef: TemplateRef<any>;
 
-	constructor() {
-	}
+	constructor(private injector: Injector) {}
 
 	ngOnInit(): void {
+		setTimeout(() => {
+			this.saveBtnRef = this.injector.get<TemplateRef<any>>(SaveBtnRefToken);
+		});
 	}
 
 	registerOnChange(fn: any): void {
@@ -107,7 +123,7 @@ export class ColumnRearrangerComponent implements OnInit, ControlValueAccessor {
 		return diff * 100;
 	}
 
-	submit() {
+	submit = () => {
 		this.notify();
 		this.onColumnsSaved.emit();
 		this.onCloseRequest.emit();

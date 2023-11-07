@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {ControlValueAccessor} from "@angular/forms";
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 
 @Component({
 	selector: 'app-my-toggle',
 	templateUrl: './my-toggle.component.html',
-	styleUrls: ['./my-toggle.component.scss']
+	styleUrls: ['./my-toggle.component.scss'],
+	providers: [{provide: NG_VALUE_ACCESSOR, useExisting: MyToggleComponent, multi: true}],
 })
 export class MyToggleComponent implements ControlValueAccessor {
 	private changed = new Array<(value: any) => void>();

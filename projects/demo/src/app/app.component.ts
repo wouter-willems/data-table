@@ -1,7 +1,10 @@
-import {Component, InjectionToken, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import { MyTestToken } from 'projects/wouter-willems/data-table/src/public-api';
+import {Component, inject, InjectionToken, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {CheckBoxRefToken, ConfigBtnRefToken} from 'projects/wouter-willems/data-table/src/public-api';
 import {MyToggleComponent} from "../my-toggle/my-toggle.component";
 import {ControlValueAccessor} from "@angular/forms";
+import {
+	SaveBtnRefToken
+} from "../../../wouter-willems/data-table/src/lib/column-rearranger/column-rearranger.component";
 
 const data  = [
 	{
@@ -35,12 +38,24 @@ const data  = [
 	selector: 'app-root',
 	templateUrl: './app.component.html',
 	styleUrls: ['./app.component.scss'],
-	providers: [{
-		provide: MyTestToken,
-		useValue: MyToggleComponent,
-	}]
+	providers: [
+		{
+			provide: CheckBoxRefToken,
+			useFactory: () => inject(AppComponent, {self: true}).myToggle,
+		}, {
+			provide: ConfigBtnRefToken,
+			useFactory: () => inject(AppComponent, {self: true}).configBtn,
+		}, {
+			provide: SaveBtnRefToken,
+			useFactory: () => inject(AppComponent, {self: true}).saveBtn,
+		}
+	]
 })
 export class AppComponent implements OnInit {
+
+	@ViewChild('myToggle') myToggle: TemplateRef<any>;
+	@ViewChild('configBtn') configBtn: TemplateRef<any>;
+	@ViewChild('saveBtn') saveBtn: TemplateRef<any>;
 
 	getActionsForRowFn = (e) => {
 		console.log(e);

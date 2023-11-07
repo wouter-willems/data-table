@@ -1,3 +1,13 @@
+<ng-template #myToggle let-isSelected="isSelected">
+	<app-my-toggle [ngModel]="isSelected"></app-my-toggle>
+</ng-template>
+<ng-template #configBtn let-clickHandler="clickHandler">
+	<button (click)="clickHandler()">conf</button>
+</ng-template>
+<ng-template #saveBtn let-clickHandler="clickHandler">
+	<button (click)="clickHandler()">SAVE IT</button>
+</ng-template>
+
 <wutu-data-table
 	[fetchItemsFn]="fetchItemsFn"
 	[getActionsForRowFn]="getActionsForRowFn"

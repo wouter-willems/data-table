@@ -8,7 +8,7 @@
 		<option value="10">10</option>
 	</select>
 	<div>
-		<button (click)="openConfig()">Config table</button>
+		<ng-container [ngTemplateOutlet]="configBtnRef" [ngTemplateOutletContext]="{clickHandler: openConfig}"></ng-container>
 	</div>
 </div>
 <table>
@@ -16,7 +16,7 @@
 	<tr>
 		<td (click)="headerSelectClicked()">
 			<div class="selectBox">
-				<ng-template #headerSelect></ng-template>
+				<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: getHeaderSelectState()}"></ng-container>
 			</div>
 		</td>
 		<td *ngFor="let header of headers">
@@ -26,10 +26,10 @@
 	</tr>
 	</thead>
 	<tbody>
-	<tr *ngFor="let row of stuff?.data; index as index">
-		<td (click)="rowSelectClicked(row, index)">
+	<tr *ngFor="let row of stuff?.data">
+		<td (click)="rowSelectClicked(row)">
 			<div class="selectBox">
-				<ng-template #rowSelect></ng-template>
+				<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: isSelected(row)}"></ng-container>
 			</div>
 		</td>
 		<td *ngFor="let header of headerKeys" (click)="rowClicked(row)">

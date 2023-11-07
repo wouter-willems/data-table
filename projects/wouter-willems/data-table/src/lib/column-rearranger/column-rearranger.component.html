@@ -20,4 +20,4 @@
 	</li>
 
 </ol>
-<button (click)="submit()">gaan</button>
+<ng-container [ngTemplateOutlet]="saveBtnRef" [ngTemplateOutletContext]="{clickHandler: submit}"></ng-container>
