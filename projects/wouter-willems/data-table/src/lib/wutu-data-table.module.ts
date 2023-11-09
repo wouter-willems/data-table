@@ -4,9 +4,10 @@ import {CommonModule, JsonPipe} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import { ColumnRearrangerComponent } from './column-rearranger/column-rearranger.component';
 import { LibStyleComponent } from './lib-style/lib-style.component';
+import {WithTooltipDirective} from "./withTooltip.component";
 
 @NgModule({
-	declarations: [DataTableComponent, ColumnKeyDirective, ColumnRearrangerComponent, LibStyleComponent],
+	declarations: [DataTableComponent, ColumnKeyDirective, ColumnRearrangerComponent, LibStyleComponent, WithTooltipDirective],
 	imports: [
 		CommonModule,
 		JsonPipe,

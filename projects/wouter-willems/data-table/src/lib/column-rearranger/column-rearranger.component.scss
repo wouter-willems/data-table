@@ -4,25 +4,52 @@
   height: 100%;
 }
 ol {
-  flex-grow: 1;
   list-style: none;
   margin: 0;
   padding-inline: unset;
+  border-radius: 0.4rem;
+}
+.filler {
+  flex: 1 1 0px;
 }
 
 li {
   position: relative;
+  .visual {
+    border-top: none;
+  }
+  &:first-child .visual {
+    border-top: var(--wdt-border);
+    border-top-left-radius: 0.4rem;
+    border-top-right-radius: 0.4rem;
+  }
+  &:last-child .visual {
+    border-bottom-left-radius: 0.4rem;
+    border-bottom-right-radius: 0.4rem;
+  }
 }
 
 .visual {
+  cursor: pointer;
   padding: 10px;
-  background: lightgrey;
+  background: white;
+  border: var(--wdt-border);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  .hamburger {
+    font-size: 1.5rem;
+  }
 }
 .dragInProgress .visual {
   pointer-events: none;
   transition: transform 0.1s linear;
 }
 .draggableItem {
+  cursor: pointer;
+  &:hover .visual {
+    background: #e6ecf5;
+  }
   &.beingDragged {
     opacity: 0.7;
     transform: translateX(0.8rem);

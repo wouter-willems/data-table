@@ -1,68 +1,89 @@
 <wutu-lib-style></wutu-lib-style>
 
 <div class="topButtons">
-	<select [(ngModel)]="itemsPerPage">
-		<option value="1">1</option>
-		<option value="3">3</option>
-		<option value="5">5</option>
-		<option value="10">10</option>
-	</select>
+	<div class="amountPicker">
+		Show
+		<select [(ngModel)]="itemsPerPage">
+			<option value="1">1</option>
+			<option value="3">3</option>
+			<option value="5">5</option>
+			<option value="10">10</option>
+		</select>
+		results
+	</div>
 	<div>
-		<ng-container [ngTemplateOutlet]="configBtnRef" [ngTemplateOutletContext]="{clickHandler: openConfig}"></ng-container>
+
 	</div>
 </div>
-<table>
-	<thead>
-	<tr>
-		<td (click)="headerSelectClicked()">
-			<div class="selectBox">
-				<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: getHeaderSelectState()}"></ng-container>
-			</div>
-		</td>
-		<td *ngFor="let header of headers">
-			{{header}}
-		</td>
-		<td></td>
-	</tr>
-	</thead>
-	<tbody>
-	<tr *ngFor="let row of stuff?.data">
-		<td (click)="rowSelectClicked(row)">
-			<div class="selectBox">
-				<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: isSelected(row)}"></ng-container>
-			</div>
-		</td>
-		<td *ngFor="let header of headerKeys" (click)="rowClicked(row)">
-			<ng-container
-				[ngTemplateOutlet]="getTemplate(header, row[header])"
-				[ngTemplateOutletContext]="{ value: row[header] }"
-			></ng-container>
-		</td>
-		<td>
-			<div class="actionMenuContainer">
-				<button (click)="showActions(row)">...</button>
-				<div class="actionMenu" *ngIf="actionMenuActionForRow === row">
-					<button *ngFor="let action of actions" (click)="action.action()">
-						{{action.caption}}
-					</button>
-				</div>
-			</div>
-		</td>
-	</tr>
-	</tbody>
-</table>
 
-<div class="pageNumbers" *ngIf="stuff">
-	<button (click)="toPage(1)">First</button>
-	<button (click)="toPage(currentPage-1)" [disabled]="currentPage === 1">Previous</button>
-	<button class="pageNrButton" *ngFor="let pageNr of getPageNumbers()" (click)="toPage(pageNr)" [ngClass]="{selected: currentPage === pageNr}">
-		<span>{{pageNr}}</span>
-	</button>
-	<button (click)="toPage(currentPage+1)" [disabled]="currentPage === this.getLastPage()">Next</button>
-	<button (click)="toPage(this.getLastPage())">Last</button>
+<div
+	class="tableContainer"
+	[ngClass]="{horizontalScroll: horizontalScroll || columnWidthsToBeCalculated, withPaddings: !columnWidthsToBeCalculated}"
+>
+	<table [ngClass]="{actionMenuOpen: hasActionMenuOpen()}">
+		<thead>
+		<tr>
+			<td (click)="headerSelectClicked()">
+				<div class="selectBox">
+					<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: getHeaderSelectState()}"></ng-container>
+				</div>
+			</td>
+			<td *ngFor="let header of headers">
+				<span [klpWithTooltip]="true">{{header}}</span>
+			</td>
+			<td>
+				<ng-container [ngTemplateOutlet]="configBtnRef" [ngTemplateOutletContext]="{clickHandler: openConfig}"></ng-container>
+			</td>
+		</tr>
+		</thead>
+		<tbody>
+		<tr *ngFor="let row of stuff?.data">
+			<td (click)="rowSelectClicked(row)">
+				<div class="selectBox">
+					<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: isSelected(row)}"></ng-container>
+				</div>
+			</td>
+			<td *ngFor="let header of headerKeys" (click)="rowClicked(row)" [klpWithTooltip]="true">
+				<ng-container
+					[ngTemplateOutlet]="getTemplate(header, row[header])"
+					[ngTemplateOutletContext]="{ value: row[header] }"
+				></ng-container>
+			</td>
+			<td>
+				<div class="actionMenuContainer">
+					<button (click)="showActions(row, $event.target)">...</button>
+					<div
+						class="actionMenu"
+						*ngIf="actionMenuActionForRow === row"
+						[ngStyle]="{transform: 'translate('+actionMenuOffset.x+ 'px,'+ actionMenuOffset.y + 'px)'}"
+					>
+						<button *ngFor="let action of actions" (click)="action.action()">
+							{{action.caption}}
+						</button>
+					</div>
+				</div>
+			</td>
+		</tr>
+		</tbody>
+	</table>
 </div>
 
-{{definedColumns | json}}
+<footer>
+	<div>
+		Showing {{(currentPage -1) * stuff.data.length + 1}} to {{currentPage * stuff.data.length}} of {{stuff.totalAmount}} results
+	</div>
+	<div class="pageNumbers" *ngIf="stuff">
+		<button (click)="toPage(1)" [disabled]="currentPage === 1">First</button>
+		<button (click)="toPage(currentPage-1)" [disabled]="currentPage === 1">Previous</button>
+		<div class="pageNrButtons">
+			<button class="pageNrButton" *ngFor="let pageNr of getPageNumbers()" (click)="toPage(pageNr)" [ngClass]="{selected: currentPage === pageNr}">
+				<span>{{pageNr}}</span>
+			</button>
+		</div>
+		<button (click)="toPage(currentPage+1)" [disabled]="currentPage === this.getLastPage()">Next</button>
+		<button (click)="toPage(this.getLastPage())" [disabled]="currentPage === this.getLastPage()">Last</button>
+	</div>
+</footer>
 
 <div class="columnRearranger" *ngIf="showConfig">
 	<button class="closeButton" (click)="closeConfig()">X</button>

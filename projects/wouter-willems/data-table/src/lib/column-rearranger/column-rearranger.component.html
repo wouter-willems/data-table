@@ -13,6 +13,7 @@
 			#dragItem
 		>
 			<div class="visual" [ngStyle]="{transform: 'translateY('+ getTransform(index) + '%)'}">
+				<div class="hamburger">☰</div>
 				<div>{{col.key}}</div>
 				<input type="checkbox" [(ngModel)]="col.active"/>
 			</div>
@@ -20,4 +21,5 @@
 	</li>
 
 </ol>
+<div class="filler"></div>
 <ng-container [ngTemplateOutlet]="saveBtnRef" [ngTemplateOutletContext]="{clickHandler: submit}"></ng-container>

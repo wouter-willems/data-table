@@ -60,13 +60,13 @@ export class AppComponent implements OnInit {
 	getActionsForRowFn = (e) => {
 		console.log(e);
 		return [{
-			caption: 'pick me',
+			caption: 'Export',
 			action: () => {
 				console.log('chosen pick me');
 				console.log(e);
 			}
 		}, {
-			caption: 'pick other',
+			caption: 'Delete',
 			action: () => {
 				console.log('chosen other');
 				console.log(e);

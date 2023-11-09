@@ -3,5 +3,6 @@
   display: none;
 }
 body {
-  #{$p}background: orange;
+  --wdt-background: white;
+  --wdt-border: 1px solid #e6ecf5;
 }

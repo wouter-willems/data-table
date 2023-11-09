@@ -1,7 +1,7 @@
 import {
 	Component,
 	ContentChildren,
-	Directive,
+	Directive, ElementRef,
 	EventEmitter,
 	inject,
 	InjectionToken, Injector,
@@ -15,6 +15,7 @@ import {
 } from '@angular/core';
 import {arrayIsSetAndFilled, removeDuplicatesFromArray} from '../util/arrays';
 import {isValueSet} from '../util/values';
+import {awaitableForNextCycle} from "../util/angular";
 
 export const CheckBoxRefToken = new InjectionToken('checkbox');
 export const ConfigBtnRefToken = new InjectionToken('config btn');
@@ -35,6 +36,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	@ContentChildren(ColumnKeyDirective, {read: TemplateRef}) templates: QueryList<TemplateRef<any>>;
 	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) columnKeyDirectives: QueryList<ColumnKeyDirective>;
 
+	@Input() horizontalScroll = false;
 	@Input() fetchItemsFn: (start: number, itemsPerPage: number) => Promise<{
 		totalAmount: number,
 		data: Array<Record<string, any>>
@@ -43,6 +45,8 @@ export class DataTableComponent implements OnChanges, OnInit {
 	@Input() public currentPage = 1;
 	@Output() onRowClicked = new EventEmitter<any>();
 	@Output() onPageChange = new EventEmitter<number>();
+
+	public columnWidthsToBeCalculated = true;
 
 	public itemsPerPage = 3;
 	public headerKeys: Array<string> = [];
@@ -57,17 +61,22 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	public checkboxRef: TemplateRef<any>;
 	public configBtnRef: TemplateRef<any>;
+	public actionMenuOffset: { x: number, y: number };
 
-	constructor(private injector: Injector) {
+	constructor(private injector: Injector, private elRef: ElementRef) {
 
 	}
 
 	async ngOnInit(): Promise<void> {
+		this.columnWidthsToBeCalculated = !this.horizontalScroll;
 		setTimeout(() => {
 			this.checkboxRef = this.injector.get<TemplateRef<any>>(CheckBoxRefToken);
 			this.configBtnRef = this.injector.get<TemplateRef<any>>(ConfigBtnRefToken);
 		});
 		await this.getData();
+		if (!this.horizontalScroll) {
+			this.calculateColumnWidths();
+		}
 	}
 
 
@@ -80,10 +89,10 @@ export class DataTableComponent implements OnChanges, OnInit {
 	private async getData(): Promise<void> {
 		this.stuff = await this.fetchItemsFn((this.currentPage - 1) * (this.itemsPerPage ?? 1), (this.itemsPerPage ?? 1));
 		this.stuff.data.forEach(e => this.selectedState.set(e, false));
-		this.extractHeaders();
+		await this.extractHeaders();
 	}
 
-	private extractHeaders(): void {
+	private async extractHeaders(): Promise<void> {
 		const keys = removeDuplicatesFromArray(Object.values(this.stuff.data).map(e => {
 			return Object.keys(e);
 		}).reduce((acc, cur) => {
@@ -99,6 +108,21 @@ export class DataTableComponent implements OnChanges, OnInit {
 			return this.definedColumns.findIndex(e => e.key === a) > this.definedColumns.findIndex(e => e.key === b) ? 1 : -1;
 		});
 		this.headers = this.headerKeys.map(key => this.columnKeyDirectives.find(e => e.columnKey === key)?.columnCaption);
+		await awaitableForNextCycle();
+	}
+
+	private calculateColumnWidths(): void {
+		const staticCols = [...this.elRef.nativeElement.querySelectorAll('thead td:first-child, thead td:last-child')];
+		staticCols.forEach((e, i) => e.style.width = `${e.getBoundingClientRect().width}px`);
+		const dynamicCols = [...this.elRef.nativeElement.querySelectorAll('thead td:not(:first-child):not(:last-child)')];
+		console.log(dynamicCols);
+		const widths = dynamicCols.map(e => {
+			return e.getBoundingClientRect().width;
+		});
+		const totalWidth = widths.reduce((acc, cur) => acc + cur, 0);
+		const percentages = widths.map(e => e / totalWidth * 100);
+		dynamicCols.forEach((e, i) => e.style.width = `${percentages[i]}%`);
+		this.columnWidthsToBeCalculated = false;
 	}
 
 	public getTemplate(header: string, value: any): TemplateRef<any> {
@@ -116,13 +140,22 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.onRowClicked.emit(row);
 	}
 
-	showActions(row: any): void {
+	showActions(row: any, target: EventTarget): void {
+		this.actionMenuOffset = {
+			x: (target as HTMLElement).getBoundingClientRect().right - this.elRef.nativeElement.getBoundingClientRect().right,
+			y: (target as HTMLElement).getBoundingClientRect().top - this.elRef.nativeElement.getBoundingClientRect().top,
+		};
 		const actions = this.getActionsForRowFn(row);
-		console.log(actions);
 		this.actionMenuActionForRow = row;
 		this.actions = actions;
-		// actions[0].action();
-		// console.log(actions);
+		this.createBackdrop(() => {
+			this.actionMenuActionForRow = null;
+			this.actions = null;
+		}, false);
+	}
+
+	hasActionMenuOpen() {
+		return isValueSet(this.actionMenuActionForRow);
 	}
 
 	getPageNumbers(): Array<number> {
@@ -144,14 +177,24 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	openConfig = (): void => {
 		this.showConfig = true;
+		this.createBackdrop(() => this.showConfig = false, true);
+	}
+
+	private createBackdrop(clickHandler: () => void, blackBackground: boolean): void {
 		this.backdropDiv = document.createElement('div');
-		this.backdropDiv.style.background = 'black';
+		if (blackBackground) {
+			this.backdropDiv.style.background = 'black';
+		}
 		this.backdropDiv.style.opacity = '0.5';
 		this.backdropDiv.style.position = 'fixed';
 		this.backdropDiv.style.top = '0';
 		this.backdropDiv.style.right = '0';
 		this.backdropDiv.style.bottom = '0';
 		this.backdropDiv.style.left = '0';
+		this.backdropDiv.addEventListener('click', () => {
+			setTimeout(clickHandler);
+			document.body.removeChild(this.backdropDiv);
+		});
 		document.body.appendChild(this.backdropDiv);
 	}
 

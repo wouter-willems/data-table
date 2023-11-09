@@ -1,70 +1,200 @@
 @import "../_variables.scss";
+
+$color: #252528;
+
 :host {
-	display: block;
-	overflow-x: auto;
+  display: block;
+  position: relative;
 }
+
 .topButtons {
-	display: flex;
-	justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
+.tableContainer {
+  &.horizontalScroll {
+    overflow: auto;
+  }
+  &:not(&.horizontalScroll) table {
+    table-layout: fixed;
+    td {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+  &.withPaddings td:not(:last-child) {
+    padding: 1rem 1rem 1rem 0;
+  }
+}
+
+.amountPicker {
+  margin-bottom: 1rem;
+}
+
 .columnRearranger {
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	right: 0;
-	width: 20rem;
-	background: white;
-	padding: 1rem;
-	box-shadow: -3px 0px 25px gray;
-	z-index: 1;
-	.closeButton {
-		position: absolute;
-		top: 0.5rem;
-		right: 0.5rem;
-		z-index: 1;
-		width: 2rem;
-		height: 2rem;
-	}
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 20rem;
+  background: white;
+  padding: 1rem;
+  box-shadow: -3px 0px 25px gray;
+  z-index: 1;
+
+  .closeButton {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 1;
+    width: 2rem;
+    height: 2rem;
+  }
 }
+
 .selectBox {
-	pointer-events: none;
+  pointer-events: none;
 }
+
 .backDrop {
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	right: 0;
-	left: 0;
-	background: black;
-	opacity: 0.5;
-	z-index: 0;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background: black;
+  opacity: 0.5;
+  z-index: 0;
 }
+
 table {
-	width: 100%;
+  width: 100%;
+  border-collapse: collapse;
+  color: $color;
+
+  thead td {
+    border-top: var(#{$p}border);
+    border-bottom: var(#{$p}border);
+
+    &:last-of-type {
+      padding: 1rem 0;
+    }
+
+    font-weight: bold;
+    text-decoration: underline;
+  }
+
+  &:not(.actionMenuOpen) {
+    tbody tr {
+      &:hover td {
+        background: #cccccc;
+      }
+    }
+  }
+  tbody tr {
+    &:nth-child(odd) td {
+      background: #eeeeee;
+    }
+    td {
+      border-bottom: var(#{$p}border);
+      &:not(:first-child) {
+        cursor: pointer;
+      }
+    }
+  }
 }
+
 input {
-	margin: 0;
+  margin: 0;
 }
 
 td {
-	white-space: nowrap;
-	background: var(#{$p}background);
+  white-space: nowrap;
+  background: var(#{$p}background);
 }
+
 .actionMenuContainer {
-	position: relative;
-	display: flex;
-	justify-content: flex-end;
+  display: flex;
+  justify-content: flex-end;
 }
+
 .actionMenu {
-	position: absolute;
-	right: 0;
-	top: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+  background: white;
+  border: var(#{$p}border);
+  border-radius: 0.2rem;
+  box-shadow: 0px 0px 10px gray;
+  min-width: 10rem;
+  button {
+    width: 100%;
+    display: block;
+    background: white;
+    border: none;
+    height: 3rem;
+    cursor: pointer;
+    text-align: left;
+    padding-left: 1rem;
+    &:hover {
+      background: #eeeeee;
+    }
+  }
 }
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 2.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  color: $color;
+}
+
 .pageNumbers {
-	display: flex;
+  display: flex;
+
+  button {
+    color: $color;
+
+    &[disabled] {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    cursor: pointer;
+    background: none;
+    border: none;
+    margin-left: 1rem;
+
+    &.pageNrButton {
+      border-radius: 999px;
+      min-width: 2rem;
+      min-height: 2rem;
+
+      &.selected {
+        color: white;
+        background: #27bb5f;
+        pointer-events: none;
+      }
+    }
+  }
+
+  .pageNrButtons button {
+    &:hover {
+      background: lightgrey;
+    }
+
+    &:not(:first-child) {
+      margin-left: 0.5rem;
+    }
+  }
 }
-.pageNrButton {
-	&.selected {
-		background: red;
-	}
-}
+
