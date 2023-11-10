@@ -1,10 +1,11 @@
 @import "../_variables.scss";
 
-$color: #252528;
+$color: #888da8;
 
 :host {
   display: block;
   position: relative;
+  font-size: 14px;
 }
 
 .topButtons {
@@ -41,13 +42,16 @@ $color: #252528;
   background: white;
   padding: 1rem;
   box-shadow: -3px 0px 25px gray;
-  z-index: 1;
+  z-index: var(--wdt-column-rearrange-zIndex);
+
+  header {
+    margin-top: var(--wdt-column-rearrange-margin-top);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 
   .closeButton {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    z-index: 1;
     width: 2rem;
     height: 2rem;
   }
@@ -69,11 +73,14 @@ $color: #252528;
 }
 
 table {
-  width: 100%;
+  &.fullWidth {
+    width: 100%;
+  }
   border-collapse: collapse;
   color: $color;
 
   thead td {
+    color: #515365;
     border-top: var(#{$p}border);
     border-bottom: var(#{$p}border);
 
@@ -87,13 +94,13 @@ table {
   &:not(.actionMenuOpen) {
     tbody tr {
       &:hover td {
-        background: #cccccc;
+        background: #f6f7fb;
       }
     }
   }
   tbody tr {
     &:nth-child(odd) td {
-      background: #eeeeee;
+      background: #fbfcfd;
     }
     td {
       border-bottom: var(#{$p}border);

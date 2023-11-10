@@ -191,6 +191,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.backdropDiv.style.right = '0';
 		this.backdropDiv.style.bottom = '0';
 		this.backdropDiv.style.left = '0';
+		this.backdropDiv.style.zIndex = 'var(--wdt-column-rearrange-backdrop-zIndex)';
 		this.backdropDiv.addEventListener('click', () => {
 			setTimeout(clickHandler);
 			document.body.removeChild(this.backdropDiv);

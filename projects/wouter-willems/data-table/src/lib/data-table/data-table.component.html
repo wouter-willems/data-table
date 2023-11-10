@@ -20,7 +20,7 @@
 	class="tableContainer"
 	[ngClass]="{horizontalScroll: horizontalScroll || columnWidthsToBeCalculated, withPaddings: !columnWidthsToBeCalculated}"
 >
-	<table [ngClass]="{actionMenuOpen: hasActionMenuOpen()}">
+	<table [ngClass]="{actionMenuOpen: hasActionMenuOpen(), fullWidth: horizontalScroll || !columnWidthsToBeCalculated}">
 		<thead>
 		<tr>
 			<td (click)="headerSelectClicked()">
@@ -86,6 +86,9 @@
 </footer>
 
 <div class="columnRearranger" *ngIf="showConfig">
-	<button class="closeButton" (click)="closeConfig()">X</button>
+	<header>
+		<div>Rearrange and enable columns</div>
+		<button class="closeButton" (click)="closeConfig()">X</button>
+	</header>
 	<wutu-column-rearranger [(ngModel)]="definedColumns" (onCloseRequest)="closeConfig()" (onColumnsSaved)="extractHeaders()"></wutu-column-rearranger>
 </div>
