@@ -12,8 +12,13 @@ export class WithTooltipDirective {
 	@Input() klpWithTooltip = true;
 	constructor(el: ElementRef) {
 		el.nativeElement.addEventListener('mouseenter', () => {
-			console.log(this.klpWithTooltip);
 			if (!this.klpWithTooltip) {
+				return;
+			}
+			if (el.nativeElement.innerText.trim().length < 1) {
+				return;
+			}
+			if (el.nativeElement.offsetWidth >= el.nativeElement.scrollWidth) {
 				return;
 			}
 			if (getComputedStyle(el.nativeElement).position === 'static') {
@@ -26,7 +31,7 @@ export class WithTooltipDirective {
 			this.div.style.position = 'fixed';
 			this.div.style.left = `${el.nativeElement.getBoundingClientRect().x}px`;
 			this.div.style.top = `${el.nativeElement.getBoundingClientRect().y}px`;
-			this.div.style.transform = `translate(calc(0px), calc(-100% - 0.3rem))`;
+			this.div.style.transform = `translate(calc(0px), calc(-100% + ${getComputedStyle(el.nativeElement).paddingTop} - 0.3rem))`;
 			this.div.style.maxWidth = '200px';
 			this.div.style.whiteSpace = 'break-spaces';
 			this.div.style.backgroundColor = 'white';
@@ -35,6 +40,7 @@ export class WithTooltipDirective {
 			this.div.style.padding = '0.3rem 0.5rem';
 			this.div.style.boxSizing = 'border-box';
 			this.div.style.borderRadius = '3px';
+			this.div.style.pointerEvents = 'none';
 			this.div.textContent = el.nativeElement.innerText;
 			el.nativeElement.prepend(this.div);
 
@@ -43,12 +49,13 @@ export class WithTooltipDirective {
 			this.triangle.style.position = 'fixed';
 			this.triangle.style.left = `calc(${el.nativeElement.getBoundingClientRect().x}px + 1rem)`;
 			this.triangle.style.top = `${el.nativeElement.getBoundingClientRect().y}px`;
-			this.triangle.style.transform = `translate(-50%, calc(-100% + 0.2rem))`;
+			this.triangle.style.transform = `translate(-50%, calc(-100% + 0.2rem + ${getComputedStyle(el.nativeElement).paddingTop}))`;
 			this.triangle.style.width = '0';
 			this.triangle.style.height = '0';
 			this.triangle.style.borderLeft = `${triangleSize} solid transparent`;
 			this.triangle.style.borderRight = `${triangleSize} solid transparent`;
 			this.triangle.style.borderTop = `${triangleSize} solid rgba(37, 37, 40, 0.1254901961)`;
+			this.triangle.style.pointerEvents = 'none';
 			el.nativeElement.prepend(this.triangle);
 
 			this.triangleWhite = document.createElement('div');
@@ -56,12 +63,13 @@ export class WithTooltipDirective {
 			this.triangleWhite.style.position = 'fixed';
 			this.triangleWhite.style.left = `calc(${el.nativeElement.getBoundingClientRect().x}px + 1rem)`;
 			this.triangleWhite.style.top = `${el.nativeElement.getBoundingClientRect().y}px`;
-			this.triangleWhite.style.transform = `translate(-50%, calc(-100% + 0.2rem - 2px))`;
+			this.triangleWhite.style.transform = `translate(-50%, calc(-100% + 0.2rem + ${getComputedStyle(el.nativeElement).paddingTop} - 2px))`;
 			this.triangleWhite.style.width = '0';
 			this.triangleWhite.style.height = '0';
 			this.triangleWhite.style.borderLeft = `${triangleSize} solid transparent`;
 			this.triangleWhite.style.borderRight = `${triangleSize} solid transparent`;
 			this.triangleWhite.style.borderTop = `${triangleSize} solid white`;
+			this.triangleWhite.style.pointerEvents = 'none';
 			el.nativeElement.prepend(this.triangleWhite);
 		});
 		el.nativeElement.addEventListener('mouseout', () => {

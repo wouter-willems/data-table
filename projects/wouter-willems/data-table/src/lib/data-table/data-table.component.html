@@ -28,8 +28,8 @@
 					<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: getHeaderSelectState()}"></ng-container>
 				</div>
 			</td>
-			<td *ngFor="let header of headers">
-				<span [klpWithTooltip]="true">{{header}}</span>
+			<td *ngFor="let header of headers" [klpWithTooltip]="true">
+				{{header}}
 			</td>
 			<td>
 				<ng-container [ngTemplateOutlet]="configBtnRef" [ngTemplateOutletContext]="{clickHandler: openConfig}"></ng-container>
@@ -68,9 +68,9 @@
 	</table>
 </div>
 
-<footer>
+<footer *ngIf="stuff">
 	<div>
-		Showing {{(currentPage -1) * stuff.data.length + 1}} to {{currentPage * stuff.data.length}} of {{stuff.totalAmount}} results
+		Showing {{(currentPage -1) * itemsPerPage + 1}} to {{(currentPage -1) * itemsPerPage + stuff.data.length}} of {{stuff.totalAmount}} results
 	</div>
 	<div class="pageNumbers" *ngIf="stuff">
 		<button (click)="toPage(1)" [disabled]="currentPage === 1">First</button>
