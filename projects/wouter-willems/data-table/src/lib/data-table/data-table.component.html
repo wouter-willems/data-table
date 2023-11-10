@@ -3,7 +3,7 @@
 <div class="topButtons">
 	<div class="amountPicker">
 		Show
-		<select [(ngModel)]="itemsPerPage">
+		<select [(ngModel)]="itemsPerPage" (ngModelChange)="itemsPerPageChanged()">
 			<option value="1">1</option>
 			<option value="3">3</option>
 			<option value="5">5</option>

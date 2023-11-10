@@ -235,4 +235,9 @@ export class DataTableComponent implements OnChanges, OnInit {
 			this.stuff.data.forEach((row, i) => this.setRowSelect(row, true));
 		}
 	}
+
+	itemsPerPageChanged() {
+		this.currentPage = 1;
+		this.getData();
+	}
 }

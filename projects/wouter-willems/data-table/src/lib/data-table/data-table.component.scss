@@ -39,6 +39,8 @@ $color: #888da8;
   bottom: 0;
   right: 0;
   width: 20rem;
+  display: flex;
+  flex-direction: column;
   background: white;
   padding: 1rem;
   box-shadow: -3px 0px 25px gray;
