@@ -19,6 +19,7 @@ import {awaitableForNextCycle} from "../util/angular";
 
 export const CheckBoxRefToken = new InjectionToken('checkbox');
 export const ConfigBtnRefToken = new InjectionToken('config btn');
+export const ActionMenuBtnRefToken = new InjectionToken('actionMenu');
 
 // tslint:disable-next-line:directive-selector
 @Directive({selector: '[columnKey]'})
@@ -61,6 +62,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	public checkboxRef: TemplateRef<any>;
 	public configBtnRef: TemplateRef<any>;
+	public actionMenuBtnRef: TemplateRef<any>;
 	public actionMenuOffset: { x: number, y: number };
 
 	constructor(private injector: Injector, private elRef: ElementRef) {
@@ -72,6 +74,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 		setTimeout(() => {
 			this.checkboxRef = this.injector.get<TemplateRef<any>>(CheckBoxRefToken);
 			this.configBtnRef = this.injector.get<TemplateRef<any>>(ConfigBtnRefToken);
+			this.actionMenuBtnRef = this.injector.get<TemplateRef<any>>(ActionMenuBtnRefToken);
 		});
 		await this.getData();
 		if (!this.horizontalScroll) {
@@ -239,5 +242,9 @@ export class DataTableComponent implements OnChanges, OnInit {
 	itemsPerPageChanged() {
 		this.currentPage = 1;
 		this.getData();
+	}
+
+	getShowActionsFn(row: Record<string, any>) {
+		return (target) => this.showActions(row, target);
 	}
 }

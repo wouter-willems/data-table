@@ -9,8 +9,7 @@ $color: #888da8;
 }
 
 .topButtons {
-  display: flex;
-  justify-content: space-between;
+
 }
 .tableContainer {
   &.horizontalScroll {
@@ -31,6 +30,13 @@ $color: #888da8;
 
 .amountPicker {
   margin-bottom: 1rem;
+  color: #515365;
+  select {
+    color: #515365;
+    margin: 0px 0.2rem;
+    padding: 0.5em 0.2rem;
+    border: var(#{$p}border);
+  }
 }
 
 .columnRearranger {
@@ -131,7 +137,7 @@ td {
   position: absolute;
   right: 0;
   top: 0;
-  z-index: 1;
+  z-index: var(--wdt-action-menu-zIndex);
   background: white;
   border: var(#{$p}border);
   border-radius: 0.2rem;

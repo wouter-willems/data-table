@@ -6,6 +6,11 @@
 		<img src="assets/cogwheel.svg" />
 	</button>
 </ng-template>
+<ng-template #actionMenuBtn let-clickHandler="clickHandler">
+	<button (click)="clickHandler($event.target)">
+		...x
+	</button>
+</ng-template>
 <ng-template #saveBtn let-clickHandler="clickHandler">
 	<button (click)="clickHandler()">SAVE IT</button>
 </ng-template>

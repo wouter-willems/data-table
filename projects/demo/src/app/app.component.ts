@@ -1,5 +1,9 @@
 import {Component, inject, InjectionToken, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {CheckBoxRefToken, ConfigBtnRefToken} from 'projects/wouter-willems/data-table/src/public-api';
+import {
+	ActionMenuBtnRefToken,
+	CheckBoxRefToken,
+	ConfigBtnRefToken
+} from 'projects/wouter-willems/data-table/src/public-api';
 import {MyToggleComponent} from "../my-toggle/my-toggle.component";
 import {ControlValueAccessor} from "@angular/forms";
 import {
@@ -48,6 +52,9 @@ const data  = [
 		}, {
 			provide: SaveBtnRefToken,
 			useFactory: () => inject(AppComponent, {self: true}).saveBtn,
+		}, {
+			provide: ActionMenuBtnRefToken,
+			useFactory: () => inject(AppComponent, {self: true}).actionMenuBtn,
 		}
 	]
 })
@@ -56,6 +63,7 @@ export class AppComponent implements OnInit {
 	@ViewChild('myToggle') myToggle: TemplateRef<any>;
 	@ViewChild('configBtn') configBtn: TemplateRef<any>;
 	@ViewChild('saveBtn') saveBtn: TemplateRef<any>;
+	@ViewChild('actionMenuBtn') actionMenuBtn: TemplateRef<any>;
 
 	getActionsForRowFn = (e) => {
 		console.log(e);

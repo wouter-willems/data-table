@@ -11,9 +11,6 @@
 		</select>
 		results
 	</div>
-	<div>
-
-	</div>
 </div>
 
 <div
@@ -51,7 +48,7 @@
 			</td>
 			<td>
 				<div class="actionMenuContainer">
-					<button (click)="showActions(row, $event.target)">...</button>
+					<ng-container [ngTemplateOutlet]="actionMenuBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsFn(row)}"></ng-container>
 					<div
 						class="actionMenu"
 						*ngIf="actionMenuActionForRow === row"
