@@ -13,7 +13,7 @@ import {WithTooltipDirective} from "./withTooltip.component";
 		JsonPipe,
 		FormsModule
 	],
-	exports: [DataTableComponent, ColumnKeyDirective, LibStyleComponent]
+	exports: [DataTableComponent, ColumnKeyDirective]
 })
 export class WutuDataTableModule {
 }
