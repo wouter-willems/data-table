@@ -2,7 +2,7 @@ import {Component, inject, InjectionToken, OnInit, TemplateRef, ViewChild} from 
 import {
 	ActionMenuBtnRefToken,
 	CheckBoxRefToken,
-	ConfigBtnRefToken
+	ConfigBtnRefToken, SearchInputRefToken
 } from 'projects/wouter-willems/data-table/src/public-api';
 import {MyToggleComponent} from "../my-toggle/my-toggle.component";
 import {ControlValueAccessor} from "@angular/forms";
@@ -55,6 +55,9 @@ const data  = [
 		}, {
 			provide: ActionMenuBtnRefToken,
 			useFactory: () => inject(AppComponent, {self: true}).actionMenuBtn,
+		}, {
+			provide: SearchInputRefToken,
+			useFactory: () => inject(AppComponent, {self: true}).searchInput,
 		}
 	]
 })
@@ -64,6 +67,9 @@ export class AppComponent implements OnInit {
 	@ViewChild('configBtn') configBtn: TemplateRef<any>;
 	@ViewChild('saveBtn') saveBtn: TemplateRef<any>;
 	@ViewChild('actionMenuBtn') actionMenuBtn: TemplateRef<any>;
+	@ViewChild('searchInput') searchInput: TemplateRef<any>;
+
+	public searchQuery: string;
 
 	getActionsForRowFn = (e) => {
 		console.log(e);
@@ -82,11 +88,13 @@ export class AppComponent implements OnInit {
 		}];
 	};
 
-	fetchItemsFn: (start: number, itemsPerPage: number) => Promise<{
+	fetchItemsFn = async (start: number, searchQuery: string, itemsPerPage: number): Promise<{
 		totalAmount: number,
 		data: Array<Record<string, any>>
-	}> = async (start: number) => {
+	}> => {
 		console.log('start', start);
+		console.log('search', searchQuery);
+		console.log('itemsPerPage', itemsPerPage);
 		if (start === 96) {
 			return {
 				totalAmount: 98,
@@ -98,6 +106,7 @@ export class AppComponent implements OnInit {
 			data: data.map(e => ({...e, name: e.name + '#' + start})),
 		};
 	};
+
 
 	ngOnInit(): void {
 

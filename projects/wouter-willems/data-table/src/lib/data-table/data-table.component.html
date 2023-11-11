@@ -11,6 +11,9 @@
 		</select>
 		results
 	</div>
+	<div>
+		<ng-container [ngTemplateOutlet]="searchInputRef" [ngTemplateOutletContext]="{changeHandler: searchQueryChanged}"></ng-container>
+	</div>
 </div>
 
 <div

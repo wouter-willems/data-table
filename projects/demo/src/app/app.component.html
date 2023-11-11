@@ -14,6 +14,9 @@
 <ng-template #saveBtn let-clickHandler="clickHandler">
 	<button (click)="clickHandler()">SAVE IT</button>
 </ng-template>
+<ng-template #searchInput let-changeHandler="changeHandler">
+	<input type="text" [(ngModel)]="searchQuery" (ngModelChange)="changeHandler($event)" />
+</ng-template>
 
 <div class="tableContainer">
 	<wutu-data-table

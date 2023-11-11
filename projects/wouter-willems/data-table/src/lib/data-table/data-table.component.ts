@@ -20,6 +20,7 @@ import {awaitableForNextCycle} from "../util/angular";
 export const CheckBoxRefToken = new InjectionToken('checkbox');
 export const ConfigBtnRefToken = new InjectionToken('config btn');
 export const ActionMenuBtnRefToken = new InjectionToken('actionMenu');
+export const SearchInputRefToken = new InjectionToken('searchInput');
 
 // tslint:disable-next-line:directive-selector
 @Directive({selector: '[columnKey]'})
@@ -38,7 +39,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) columnKeyDirectives: QueryList<ColumnKeyDirective>;
 
 	@Input() horizontalScroll = false;
-	@Input() fetchItemsFn: (start: number, itemsPerPage: number) => Promise<{
+	@Input() fetchItemsFn: (start: number, searchQuery: string, itemsPerPage: number) => Promise<{
 		totalAmount: number,
 		data: Array<Record<string, any>>
 	}>;
@@ -50,6 +51,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	public columnWidthsToBeCalculated = true;
 
 	public itemsPerPage = 3;
+	public searchQuery: string = '';
 	public headerKeys: Array<string> = [];
 	public headers: Array<string> = [];
 	public stuff: { totalAmount: number; data: Array<Record<string, any>> };
@@ -63,6 +65,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	public checkboxRef: TemplateRef<any>;
 	public configBtnRef: TemplateRef<any>;
 	public actionMenuBtnRef: TemplateRef<any>;
+	public searchInputRef: TemplateRef<any>;
 	public actionMenuOffset: { x: number, y: number };
 
 	constructor(private injector: Injector, private elRef: ElementRef) {
@@ -75,6 +78,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 			this.checkboxRef = this.injector.get<TemplateRef<any>>(CheckBoxRefToken);
 			this.configBtnRef = this.injector.get<TemplateRef<any>>(ConfigBtnRefToken);
 			this.actionMenuBtnRef = this.injector.get<TemplateRef<any>>(ActionMenuBtnRefToken);
+			this.searchInputRef = this.injector.get<TemplateRef<any>>(SearchInputRefToken);
 		});
 		await this.getData();
 		if (!this.horizontalScroll) {
@@ -90,7 +94,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	}
 
 	private async getData(): Promise<void> {
-		this.stuff = await this.fetchItemsFn((this.currentPage - 1) * (this.itemsPerPage ?? 1), (this.itemsPerPage ?? 1));
+		this.stuff = await this.fetchItemsFn((this.currentPage - 1) * (this.itemsPerPage ?? 1), this.searchQuery, (this.itemsPerPage ?? 1));
 		this.stuff.data.forEach(e => this.selectedState.set(e, false));
 		await this.extractHeaders();
 	}
@@ -183,6 +187,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.createBackdrop(() => this.showConfig = false, true);
 	}
 
+
 	private createBackdrop(clickHandler: () => void, blackBackground: boolean): void {
 		this.backdropDiv = document.createElement('div');
 		if (blackBackground) {
@@ -246,5 +251,10 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	getShowActionsFn(row: Record<string, any>) {
 		return (target) => this.showActions(row, target);
+	}
+
+	searchQueryChanged = (searchQuery: string) => {
+		this.searchQuery = searchQuery;
+		this.getData();
 	}
 }

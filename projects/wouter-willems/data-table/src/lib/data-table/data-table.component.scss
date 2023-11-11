@@ -9,7 +9,8 @@ $color: #888da8;
 }
 
 .topButtons {
-
+  display: flex;
+  justify-content: space-between;
 }
 .tableContainer {
   &.horizontalScroll {
