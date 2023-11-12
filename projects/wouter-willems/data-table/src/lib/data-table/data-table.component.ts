@@ -75,12 +75,11 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	async ngOnInit(): Promise<void> {
 		this.columnWidthsToBeCalculated = !this.horizontalScroll;
-		setTimeout(() => {
-			this.checkboxRef = this.injector.get<TemplateRef<any>>(CheckBoxRefToken);
-			this.configBtnRef = this.injector.get<TemplateRef<any>>(ConfigBtnRefToken);
-			this.actionMenuBtnRef = this.injector.get<TemplateRef<any>>(ActionMenuBtnRefToken);
-			this.searchInputRef = this.injector.get<TemplateRef<any>>(SearchInputRefToken);
-		});
+		await awaitableForNextCycle();
+		this.checkboxRef = this.injector.get<TemplateRef<any>>(CheckBoxRefToken);
+		this.configBtnRef = this.injector.get<TemplateRef<any>>(ConfigBtnRefToken);
+		this.actionMenuBtnRef = this.injector.get<TemplateRef<any>>(ActionMenuBtnRefToken);
+		this.searchInputRef = this.injector.get<TemplateRef<any>>(SearchInputRefToken);
 		await this.getData();
 		if (!this.horizontalScroll) {
 			this.calculateColumnWidths();
@@ -95,7 +94,17 @@ export class DataTableComponent implements OnChanges, OnInit {
 	}
 
 	private async getData(): Promise<void> {
-		this.stuff = await this.fetchItemsFn((this.currentPage - 1) * (this.itemsPerPage ?? 1), this.searchQuery, (this.itemsPerPage ?? 1), this.sortField, this.sortOrder);
+		const defaultSortField = this.columnKeyDirectives.find(e => stringIsSetAndFilled(e.defaultSort));
+		if (!stringIsSetAndFilled(this.sortField)) {
+			this.sortField = defaultSortField?.columnKey;
+			this.sortOrder = defaultSortField?.defaultSort;
+		}
+		this.stuff = await this.fetchItemsFn(
+			(this.currentPage - 1) * (this.itemsPerPage ?? 1),
+			this.searchQuery, (this.itemsPerPage ?? 1),
+			this.sortField,
+			this.sortOrder
+		);
 		this.stuff.data.forEach(e => this.selectedState.set(e, false));
 		await this.extractHeaders();
 	}
@@ -116,11 +125,6 @@ export class DataTableComponent implements OnChanges, OnInit {
 			return this.definedColumns.findIndex(e => e.key === a) > this.definedColumns.findIndex(e => e.key === b) ? 1 : -1;
 		});
 		this.headers = this.headerKeys.map(key => this.columnKeyDirectives.find(e => e.columnKey === key)?.columnCaption);
-		const defaultSortField = this.columnKeyDirectives.find(e => stringIsSetAndFilled(e.defaultSort));
-		if (!stringIsSetAndFilled(this.sortField)) {
-			this.sortField = defaultSortField.columnKey;
-			this.sortOrder = defaultSortField.defaultSort;
-		}
 		await awaitableForNextCycle();
 	}
 

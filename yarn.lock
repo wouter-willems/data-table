@@ -1448,11 +1448,6 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@klippa/responsive-scss@~1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@klippa/responsive-scss/-/responsive-scss-1.0.0.tgz#1f47258fe3006a9b4c1795b9eb670ba5e5d3621c"
-  integrity sha512-UPX5+kHARAMOmkGKN6cgTx5twZe8KhODv6YCP5DkPvJi7t0GbYcq5/99NEE3l/UcEw3FUysIP2or/jFU88mVIg==
-
 "@leichtgewicht/ip-codec@^2.0.1":
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/@leichtgewicht/ip-codec/-/ip-codec-2.0.4.tgz#b2ac626d6cb9c8718ab459166d4bb405b8ffa78b"
