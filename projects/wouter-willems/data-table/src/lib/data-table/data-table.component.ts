@@ -51,7 +51,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	public columnWidthsToBeCalculated = true;
 
-	public itemsPerPage = 3;
+	public itemsPerPage = 25;
 	public searchQuery: string = '';
 	public sortField: string;
 	public sortOrder: 'ASC' | 'DESC';
@@ -117,8 +117,10 @@ export class DataTableComponent implements OnChanges, OnInit {
 		});
 		this.headers = this.headerKeys.map(key => this.columnKeyDirectives.find(e => e.columnKey === key)?.columnCaption);
 		const defaultSortField = this.columnKeyDirectives.find(e => stringIsSetAndFilled(e.defaultSort));
-		this.sortField = defaultSortField.columnKey;
-		this.sortOrder = defaultSortField.defaultSort;
+		if (!stringIsSetAndFilled(this.sortField)) {
+			this.sortField = defaultSortField.columnKey;
+			this.sortOrder = defaultSortField.defaultSort;
+		}
 		await awaitableForNextCycle();
 	}
 
