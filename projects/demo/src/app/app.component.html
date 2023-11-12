@@ -28,7 +28,7 @@
 		<ng-template columnKey="name" columnCaption="NAMERINO" defaultSort="DESC" let-value="value">
 			name: {{value}}
 		</ng-template>
-		<ng-template columnKey="age" columnCaption="leeftijd" let-value="value">
+		<ng-template columnKey="age" columnCaption="leeftijd" let-value="value" [fixedWidth]="true">
 			age: {{value}}
 		</ng-template>
 		<ng-template columnKey="breed" columnCaption="soort" let-value="value">

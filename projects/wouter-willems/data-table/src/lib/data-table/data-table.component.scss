@@ -7,7 +7,11 @@ $color: #888da8;
   position: relative;
   font-size: 14px;
 }
-
+.dummies {
+  display: flex;
+  height: 0;
+  overflow: hidden;
+}
 .topButtons {
   display: flex;
   justify-content: space-between;
@@ -139,6 +143,7 @@ table {
       background: #fbfcfd;
     }
     td {
+      padding: 0;
       border-bottom: var(#{$p}border);
       &:not(:first-child) {
         cursor: pointer;

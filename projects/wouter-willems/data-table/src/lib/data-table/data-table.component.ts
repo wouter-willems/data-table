@@ -1,5 +1,5 @@
 import {
-	Component,
+	Component, ContentChild,
 	ContentChildren,
 	Directive, ElementRef,
 	EventEmitter,
@@ -11,7 +11,7 @@ import {
 	Output,
 	QueryList,
 	SimpleChanges,
-	TemplateRef
+	TemplateRef, ViewChild
 } from '@angular/core';
 import {arrayIsSetAndFilled, removeDuplicatesFromArray} from '../util/arrays';
 import {isValueSet, stringIsSetAndFilled} from '../util/values';
@@ -28,6 +28,7 @@ export class ColumnKeyDirective {
 	@Input() columnKey;
 	@Input() columnCaption;
 	@Input() defaultSort: 'ASC' | 'DESC';
+	@Input() fixedWidth: boolean;
 }
 
 @Component({
@@ -36,6 +37,9 @@ export class ColumnKeyDirective {
 	styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent implements OnChanges, OnInit {
+	@ViewChild('selectBoxDummy') selectBoxDummy: ElementRef;
+	@ViewChild('actionMenuDummy') actionMenuDummy: ElementRef;
+
 	@ContentChildren(ColumnKeyDirective, {read: TemplateRef}) templates: QueryList<TemplateRef<any>>;
 	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) columnKeyDirectives: QueryList<ColumnKeyDirective>;
 
@@ -74,7 +78,6 @@ export class DataTableComponent implements OnChanges, OnInit {
 	constructor(private injector: Injector, private elRef: ElementRef) {}
 
 	async ngOnInit(): Promise<void> {
-		this.columnWidthsToBeCalculated = !this.horizontalScroll;
 		await awaitableForNextCycle();
 		this.checkboxRef = this.injector.get<TemplateRef<any>>(CheckBoxRefToken);
 		this.configBtnRef = this.injector.get<TemplateRef<any>>(ConfigBtnRefToken);
@@ -128,17 +131,26 @@ export class DataTableComponent implements OnChanges, OnInit {
 		await awaitableForNextCycle();
 	}
 
-	private calculateColumnWidths(): void {
-		const staticCols = [...this.elRef.nativeElement.querySelectorAll('thead td:first-child, thead td:last-child')];
-		staticCols.forEach((e, i) => e.style.width = `${e.getBoundingClientRect().width}px`);
+	private async calculateColumnWidths(): Promise<void> {
+		this.columnWidthsToBeCalculated = true;
+		await awaitableForNextCycle();
+		const staticColsWidths = [this.selectBoxDummy, this.actionMenuDummy].map(e => Math.ceil(e.nativeElement.getBoundingClientRect().width));
+		this.elRef.nativeElement.querySelector('thead td:first-child').style.width = `${staticColsWidths[0]}px`;
+		this.elRef.nativeElement.querySelector('thead td:last-child').style.width = `${staticColsWidths[1]}px`;
 		const dynamicCols = [...this.elRef.nativeElement.querySelectorAll('thead td:not(:first-child):not(:last-child)')];
-		console.log(dynamicCols);
-		const widths = dynamicCols.map(e => {
+		const widths = dynamicCols.map((e, i) => {
 			return e.getBoundingClientRect().width;
 		});
 		const totalWidth = widths.reduce((acc, cur) => acc + cur, 0);
 		const percentages = widths.map(e => e / totalWidth * 100);
-		dynamicCols.forEach((e, i) => e.style.width = `${percentages[i]}%`);
+		dynamicCols.forEach((e, i) => {
+			const colDirective = this.columnKeyDirectives.find(e => e.columnKey === this.headerKeys[i]);
+			if (colDirective.fixedWidth) {
+				return e.style.width = `${widths[i]}px`;
+			} else {
+				return e.style.width = `${percentages[i]}%`;
+			}
+		});
 		this.columnWidthsToBeCalculated = false;
 	}
 
@@ -276,5 +288,10 @@ export class DataTableComponent implements OnChanges, OnInit {
 			this.sortOrder = 'ASC';
 		}
 		this.getData();
+	}
+
+	async onColumnsSaved() {
+		await this.extractHeaders();
+		this.calculateColumnWidths();
 	}
 }

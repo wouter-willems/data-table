@@ -1,5 +1,10 @@
 <wutu-lib-style></wutu-lib-style>
 
+<div class="dummies" *ngIf="columnWidthsToBeCalculated">
+	<div #selectBoxDummy><ng-container [ngTemplateOutlet]="checkboxRef"></ng-container></div>
+	<div #actionMenuDummy><ng-container [ngTemplateOutlet]="actionMenuBtnRef"></ng-container></div>
+</div>
+
 <div class="topButtons">
 	<div class="amountPicker">
 		Show
@@ -96,5 +101,5 @@
 		<div>Rearrange and enable columns</div>
 		<button class="closeButton" (click)="closeConfig()">X</button>
 	</header>
-	<wutu-column-rearranger [(ngModel)]="definedColumns" (onCloseRequest)="closeConfig()" (onColumnsSaved)="extractHeaders()"></wutu-column-rearranger>
+	<wutu-column-rearranger [(ngModel)]="definedColumns" (onCloseRequest)="closeConfig()" (onColumnsSaved)="onColumnsSaved()"></wutu-column-rearranger>
 </div>
