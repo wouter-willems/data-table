@@ -28,8 +28,14 @@
 					<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: getHeaderSelectState()}"></ng-container>
 				</div>
 			</td>
-			<td *ngFor="let header of headers" [klpWithTooltip]="true">
-				{{header}}
+			<td *ngFor="let header of headers; index as index">
+				<div class="colHeader">
+					<div class="caption" [klpWithTooltip]="true">{{header}}</div>
+					<button class="sortButton" (click)="setSortField(headerKeys[index])">
+						<svg height="5" width="10" [ngClass]="{'visible': sortField !== headerKeys[index] || sortOrder !== 'DESC'}"><polygon points="0,5 5,0 10,5" style="fill:#515365;" /></svg>
+						<svg height="5" width="10" [ngClass]="{'visible': sortField !== headerKeys[index] || sortOrder !== 'ASC'}"><polygon points="0,0 5,5 10,0" style="fill:#515365;" /></svg>
+					</button>
+				</div>
 			</td>
 			<td>
 				<ng-container [ngTemplateOutlet]="configBtnRef" [ngTemplateOutletContext]="{clickHandler: openConfig}"></ng-container>

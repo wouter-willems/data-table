@@ -25,7 +25,7 @@
 		[getActionsForRowFn]="getActionsForRowFn"
 		(onRowClicked)="onRowClicked($event)"
 	>
-		<ng-template columnKey="name" columnCaption="NAMERINO" let-value="value">
+		<ng-template columnKey="name" columnCaption="NAMERINO" defaultSort="DESC" let-value="value">
 			name: {{value}}
 		</ng-template>
 		<ng-template columnKey="age" columnCaption="leeftijd" let-value="value">

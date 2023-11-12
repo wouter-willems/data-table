@@ -88,13 +88,15 @@ export class AppComponent implements OnInit {
 		}];
 	};
 
-	fetchItemsFn = async (start: number, searchQuery: string, itemsPerPage: number): Promise<{
+	fetchItemsFn = async (start: number, searchQuery: string, itemsPerPage: number, sortField: string, sortOrder: 'ASC' | 'DESC'): Promise<{
 		totalAmount: number,
 		data: Array<Record<string, any>>
 	}> => {
 		console.log('start', start);
 		console.log('search', searchQuery);
 		console.log('itemsPerPage', itemsPerPage);
+		console.log('sortField', sortField);
+		console.log('sortOrder', sortOrder);
 		if (start === 96) {
 			return {
 				totalAmount: 98,

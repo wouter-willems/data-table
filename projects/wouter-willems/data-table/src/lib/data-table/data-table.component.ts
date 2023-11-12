@@ -14,7 +14,7 @@ import {
 	TemplateRef
 } from '@angular/core';
 import {arrayIsSetAndFilled, removeDuplicatesFromArray} from '../util/arrays';
-import {isValueSet} from '../util/values';
+import {isValueSet, stringIsSetAndFilled} from '../util/values';
 import {awaitableForNextCycle} from "../util/angular";
 
 export const CheckBoxRefToken = new InjectionToken('checkbox');
@@ -27,6 +27,7 @@ export const SearchInputRefToken = new InjectionToken('searchInput');
 export class ColumnKeyDirective {
 	@Input() columnKey;
 	@Input() columnCaption;
+	@Input() defaultSort: 'ASC' | 'DESC';
 }
 
 @Component({
@@ -39,7 +40,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) columnKeyDirectives: QueryList<ColumnKeyDirective>;
 
 	@Input() horizontalScroll = false;
-	@Input() fetchItemsFn: (start: number, searchQuery: string, itemsPerPage: number) => Promise<{
+	@Input() fetchItemsFn: (start: number, searchQuery: string, itemsPerPage: number, sortField: string, sortOrder: 'ASC' | 'DESC') => Promise<{
 		totalAmount: number,
 		data: Array<Record<string, any>>
 	}>;
@@ -52,6 +53,8 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	public itemsPerPage = 3;
 	public searchQuery: string = '';
+	public sortField: string;
+	public sortOrder: 'ASC' | 'DESC';
 	public headerKeys: Array<string> = [];
 	public headers: Array<string> = [];
 	public stuff: { totalAmount: number; data: Array<Record<string, any>> };
@@ -68,9 +71,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	public searchInputRef: TemplateRef<any>;
 	public actionMenuOffset: { x: number, y: number };
 
-	constructor(private injector: Injector, private elRef: ElementRef) {
-
-	}
+	constructor(private injector: Injector, private elRef: ElementRef) {}
 
 	async ngOnInit(): Promise<void> {
 		this.columnWidthsToBeCalculated = !this.horizontalScroll;
@@ -94,7 +95,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	}
 
 	private async getData(): Promise<void> {
-		this.stuff = await this.fetchItemsFn((this.currentPage - 1) * (this.itemsPerPage ?? 1), this.searchQuery, (this.itemsPerPage ?? 1));
+		this.stuff = await this.fetchItemsFn((this.currentPage - 1) * (this.itemsPerPage ?? 1), this.searchQuery, (this.itemsPerPage ?? 1), this.sortField, this.sortOrder);
 		this.stuff.data.forEach(e => this.selectedState.set(e, false));
 		await this.extractHeaders();
 	}
@@ -115,6 +116,9 @@ export class DataTableComponent implements OnChanges, OnInit {
 			return this.definedColumns.findIndex(e => e.key === a) > this.definedColumns.findIndex(e => e.key === b) ? 1 : -1;
 		});
 		this.headers = this.headerKeys.map(key => this.columnKeyDirectives.find(e => e.columnKey === key)?.columnCaption);
+		const defaultSortField = this.columnKeyDirectives.find(e => stringIsSetAndFilled(e.defaultSort));
+		this.sortField = defaultSortField.columnKey;
+		this.sortOrder = defaultSortField.defaultSort;
 		await awaitableForNextCycle();
 	}
 
@@ -255,6 +259,16 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	searchQueryChanged = (searchQuery: string) => {
 		this.searchQuery = searchQuery;
+		this.getData();
+	}
+
+	setSortField(headerKey: string) {
+		if (this.sortField === headerKey && this.sortOrder === 'ASC') {
+			this.sortOrder = 'DESC';
+		} else {
+			this.sortField = headerKey;
+			this.sortOrder = 'ASC';
+		}
 		this.getData();
 	}
 }

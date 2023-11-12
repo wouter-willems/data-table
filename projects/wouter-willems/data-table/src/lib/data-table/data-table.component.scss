@@ -40,6 +40,33 @@ $color: #888da8;
   }
 }
 
+.colHeader {
+  display: flex;
+  align-items: center;
+  .caption {
+    flex: 0 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  button {
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+  .sortButton {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.12rem;
+    svg {
+      opacity: 0;
+      &.visible {
+        opacity: 1;
+      }
+    }
+  }
+}
+
 .columnRearranger {
   position: fixed;
   top: 0;
