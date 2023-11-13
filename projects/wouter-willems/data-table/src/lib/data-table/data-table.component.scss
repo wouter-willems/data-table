@@ -52,6 +52,10 @@ $color: #888da8;
     flex: 0 1 auto;
     overflow: hidden;
     text-overflow: ellipsis;
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
   }
   button {
     cursor: pointer;
@@ -99,6 +103,9 @@ $color: #888da8;
   }
 }
 
+.selectBoxContainer {
+  cursor: pointer;
+}
 .selectBox {
   pointer-events: none;
 }

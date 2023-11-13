@@ -39,6 +39,7 @@ export class ColumnKeyDirective {
 export class DataTableComponent implements OnChanges, OnInit {
 	@ViewChild('selectBoxDummy') selectBoxDummy: ElementRef;
 	@ViewChild('actionMenuDummy') actionMenuDummy: ElementRef;
+	@ViewChild('configBtnDummy') configBtnDummy: ElementRef;
 
 	@ContentChildren(ColumnKeyDirective, {read: TemplateRef}) templates: QueryList<TemplateRef<any>>;
 	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) columnKeyDirectives: QueryList<ColumnKeyDirective>;
@@ -151,9 +152,10 @@ export class DataTableComponent implements OnChanges, OnInit {
 	private async calculateColumnWidths(): Promise<void> {
 		this.columnWidthsToBeCalculated = true;
 		await awaitableForNextCycle();
-		const staticColsWidths = [this.selectBoxDummy, this.actionMenuDummy].map(e => Math.ceil(e.nativeElement.getBoundingClientRect().width));
-		this.elRef.nativeElement.querySelector('thead td:first-child').style.width = `${staticColsWidths[0]}px`;
-		this.elRef.nativeElement.querySelector('thead td:last-child').style.width = `${staticColsWidths[1]}px`;
+		const selectBoxWidth = Math.ceil(this.selectBoxDummy.nativeElement.getBoundingClientRect().width);
+		const lastColWidth =  Math.ceil(Math.max(this.actionMenuDummy.nativeElement.getBoundingClientRect().width, this.configBtnDummy.nativeElement.getBoundingClientRect().width));
+		this.elRef.nativeElement.querySelector('thead td:first-child').style.width = `${selectBoxWidth}px`;
+		this.elRef.nativeElement.querySelector('thead td:last-child').style.width = `${lastColWidth}px`;
 		const dynamicCols = [...this.elRef.nativeElement.querySelectorAll('thead td:not(:first-child):not(:last-child)')];
 		const widths = dynamicCols.map((e, i) => {
 			return e.getBoundingClientRect().width;
