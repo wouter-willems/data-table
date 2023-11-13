@@ -1,6 +1,7 @@
 @import "../_variables.scss";
 
 $color: #888da8;
+$tdPadding: 1rem 1rem 1rem 0;
 
 :host {
   display: block;
@@ -11,6 +12,9 @@ $color: #888da8;
   display: flex;
   height: 0;
   overflow: hidden;
+  .includePadding {
+    padding: $tdPadding;
+  }
 }
 .topButtons {
   display: flex;
@@ -28,8 +32,8 @@ $color: #888da8;
       white-space: nowrap;
     }
   }
-  &.withPaddings td:not(:last-child) {
-    padding: 1rem 1rem 1rem 0;
+  td:not(:last-child) {
+    padding: $tdPadding;
   }
 }
 
@@ -152,7 +156,6 @@ table {
       background: #fbfcfd;
     }
     td {
-      padding: 0;
       border-bottom: var(#{$p}border);
       &:not(:first-child) {
         cursor: pointer;
@@ -168,6 +171,7 @@ input {
 td {
   white-space: nowrap;
   background: var(#{$p}background);
+  box-sizing: border-box;
 }
 
 .actionMenuContainer {

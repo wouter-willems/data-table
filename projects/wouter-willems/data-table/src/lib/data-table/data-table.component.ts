@@ -310,7 +310,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	}
 
 	async onColumnsSaved(): Promise<void> {
-		await this.persistColumnsFn(this.definedColumns);
+		await this.persistColumnsFn?.(this.definedColumns);
 		await this.extractHeaders();
 		await this.calculateColumnWidths();
 	}
