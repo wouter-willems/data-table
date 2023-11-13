@@ -24,6 +24,7 @@
 		[fetchItemsFn]="fetchItemsFn"
 		[getActionsForRowFn]="getActionsForRowFn"
 		(onRowClicked)="onRowClicked($event)"
+		localStorageKey="hond"
 	>
 		<ng-template columnKey="name" columnCaption="NAMERINO" defaultSort="DESC" let-value="value">
 			name: {{value}}

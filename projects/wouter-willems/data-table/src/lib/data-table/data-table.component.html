@@ -65,10 +65,10 @@
 					<ng-container [ngTemplateOutlet]="actionMenuBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsFn(row)}"></ng-container>
 					<div
 						class="actionMenu"
-						*ngIf="actionMenuActionForRow === row"
+						*ngIf="actionMenuForRow === row"
 						[ngStyle]="{transform: 'translate('+actionMenuOffset.x+ 'px,'+ actionMenuOffset.y + 'px)'}"
 					>
-						<button *ngFor="let action of actions" (click)="action.action()">
+						<button *ngFor="let action of actions" (click)="closeActionMenu(); action.action()">
 							{{action.caption}}
 						</button>
 					</div>
@@ -96,6 +96,7 @@
 	</div>
 </footer>
 
+{{definedColumns | json}}
 <div class="columnRearranger" *ngIf="showConfig">
 	<header>
 		<div>Rearrange and enable columns</div>

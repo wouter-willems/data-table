@@ -11,6 +11,7 @@ import {
 	ViewChildren
 } from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
+import {isValueSet} from "../util/values";
 
 export const SaveBtnRefToken = new InjectionToken('save btn');
 
@@ -52,6 +53,9 @@ export class ColumnRearrangerComponent implements OnInit, ControlValueAccessor {
 	}
 
 	writeValue(obj: any): void {
+		if (!isValueSet(obj)) {
+			return;
+		}
 		console.log('obj');
 		console.log(obj);
 		this.columns = obj?.map(e => ({...e})) ?? [];
@@ -63,23 +67,15 @@ export class ColumnRearrangerComponent implements OnInit, ControlValueAccessor {
 	}
 
 	dragStart($event: DragEvent) {
-		console.log($event);
-		console.log(this.dragItems);
 		this.dragSourceIndex = this.dragItems.map(e => e.nativeElement).findIndex(e => e === $event.target);
 		this.currentDragPosition = this.dragSourceIndex;
 	}
 
-	dragOver($event: DragEvent) {
-		console.log($event);
-	}
-
 	dragEnter($event: DragEvent) {
-		console.log($event.target);
 		const targetIndex = this.dragItems.map(e => e.nativeElement).findIndex(e => e === ($event.target as HTMLElement));
 		if (targetIndex === -1) {
 			return;
 		}
-		console.log(targetIndex);
 		this.currentDragPosition = targetIndex;
 	}
 

@@ -48,7 +48,18 @@ export class DataTableComponent implements OnChanges, OnInit {
 		totalAmount: number,
 		data: Array<Record<string, any>>
 	}>;
-	@Input() getActionsForRowFn: (r: any) => Array<any>;
+	@Input() getActionsForRowFn: (r: any) => Array<{
+		caption: string,
+		action: () => void,
+	}>;
+	@Input() retrieveColumnsFn: () => Promise<Array<{
+		key: string,
+		active: boolean,
+	}>>;
+	@Input() persistColumnsFn: (r: Array<{
+		key: string,
+		active: boolean,
+	}>) => Promise<void>;
 	@Input() public currentPage = 1;
 	@Output() onRowClicked = new EventEmitter<any>();
 	@Output() onPageChange = new EventEmitter<number>();
@@ -62,8 +73,11 @@ export class DataTableComponent implements OnChanges, OnInit {
 	public headerKeys: Array<string> = [];
 	public headers: Array<string> = [];
 	public stuff: { totalAmount: number; data: Array<Record<string, any>> };
-	public actions: any[];
-	public actionMenuActionForRow: any;
+	public actions: Array<{
+		caption: string,
+		action: () => void,
+	}>;
+	public actionMenuForRow: any;
 	public definedColumns: Array<{ key: string, active: boolean }>;
 	public showConfig: boolean = false;
 	private backdropDiv: HTMLDivElement;
@@ -119,7 +133,10 @@ export class DataTableComponent implements OnChanges, OnInit {
 			return [...acc, ...cur];
 		}, []));
 		if (!arrayIsSetAndFilled(this.definedColumns)) {
-			this.definedColumns = this.columnKeyDirectives.map(e => e.columnKey).map(e => ({key: e, active: true}));
+			this.definedColumns = (await this.retrieveColumnsFn?.()) ?? [];
+			if (!arrayIsSetAndFilled(this.definedColumns)) {
+				this.definedColumns = this.columnKeyDirectives.map(e => e.columnKey).map(e => ({key: e, active: true}));
+			}
 		}
 		this.headerKeys = keys
 		.filter(key => this.columnKeyDirectives.some(e => e.columnKey === key))
@@ -146,7 +163,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 		dynamicCols.forEach((e, i) => {
 			const colDirective = this.columnKeyDirectives.find(e => e.columnKey === this.headerKeys[i]);
 			if (colDirective.fixedWidth) {
-				return e.style.width = `${widths[i]}px`;
+				return e.style.width = `${Math.ceil(widths[i])}px`;
 			} else {
 				return e.style.width = `${percentages[i]}%`;
 			}
@@ -175,16 +192,16 @@ export class DataTableComponent implements OnChanges, OnInit {
 			y: (target as HTMLElement).getBoundingClientRect().top - this.elRef.nativeElement.getBoundingClientRect().top,
 		};
 		const actions = this.getActionsForRowFn(row);
-		this.actionMenuActionForRow = row;
+		this.actionMenuForRow = row;
 		this.actions = actions;
 		this.createBackdrop(() => {
-			this.actionMenuActionForRow = null;
+			this.actionMenuForRow = null;
 			this.actions = null;
 		}, false);
 	}
 
-	hasActionMenuOpen() {
-		return isValueSet(this.actionMenuActionForRow);
+	hasActionMenuOpen(): boolean {
+		return isValueSet(this.actionMenuForRow);
 	}
 
 	getPageNumbers(): Array<number> {
@@ -197,7 +214,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 		return Math.ceil(this.stuff.totalAmount / (this.itemsPerPage ?? 1));
 	}
 
-	toPage(pageNr: number) {
+	toPage(pageNr: number): void {
 		this.currentPage = pageNr;
 		this.onPageChange.emit(pageNr);
 
@@ -229,7 +246,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 		document.body.appendChild(this.backdropDiv);
 	}
 
-	closeConfig() {
+	closeConfig(): void {
 		this.showConfig = false;
 		document.body.removeChild(this.backdropDiv);
 	}
@@ -266,12 +283,12 @@ export class DataTableComponent implements OnChanges, OnInit {
 		}
 	}
 
-	itemsPerPageChanged() {
+	itemsPerPageChanged(): void {
 		this.currentPage = 1;
 		this.getData();
 	}
 
-	getShowActionsFn(row: Record<string, any>) {
+	getShowActionsFn(row: Record<string, any>): (target) => void {
 		return (target) => this.showActions(row, target);
 	}
 
@@ -280,7 +297,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.getData();
 	}
 
-	setSortField(headerKey: string) {
+	setSortField(headerKey: string): void {
 		if (this.sortField === headerKey && this.sortOrder === 'ASC') {
 			this.sortOrder = 'DESC';
 		} else {
@@ -290,8 +307,14 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.getData();
 	}
 
-	async onColumnsSaved() {
+	async onColumnsSaved(): Promise<void> {
+		await this.persistColumnsFn(this.definedColumns);
 		await this.extractHeaders();
-		this.calculateColumnWidths();
+		await this.calculateColumnWidths();
+	}
+
+	closeActionMenu(): void {
+		this.actionMenuForRow = null;
+		this.actions = null;
 	}
 }

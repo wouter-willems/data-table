@@ -71,7 +71,10 @@ export class AppComponent implements OnInit {
 
 	public searchQuery: string;
 
-	getActionsForRowFn = (e) => {
+	getActionsForRowFn = (e): Array<{
+		caption: string,
+		action: () => void,
+	}> => {
 		console.log(e);
 		return [{
 			caption: 'Export',
@@ -108,6 +111,24 @@ export class AppComponent implements OnInit {
 			data: data.map(e => ({...e, name: e.name + '#' + start})),
 		};
 	};
+
+	retrieveColumns = async (): Promise<Array<{
+		key: string,
+		active: boolean,
+	}>> => {
+		try {
+			return JSON.parse(localStorage.getItem('cols'));
+		} catch (e) {
+			return [];
+		}
+	}
+
+	persistColumns = async (r: Array<{
+		key: string,
+		active: boolean,
+	}>): Promise<void> => {
+		localStorage.setItem('cols', JSON.stringify(r));
+	}
 
 
 	ngOnInit(): void {
