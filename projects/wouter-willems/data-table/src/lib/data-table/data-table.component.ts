@@ -28,7 +28,9 @@ export class ColumnKeyDirective {
 	@Input() columnKey;
 	@Input() columnCaption;
 	@Input() defaultSort: 'ASC' | 'DESC';
-	@Input() fixedWidth: boolean;
+	@Input() fixedWidthOnContents: boolean;
+	@Input() fixedWidthInREM: number;
+	@Input() widthAsRatio: number = 1;
 }
 
 @Component({
@@ -157,18 +159,35 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.elRef.nativeElement.querySelector('thead td:first-child').style.width = `${selectBoxWidth}px`;
 		this.elRef.nativeElement.querySelector('thead td:last-child').style.width = `${lastColWidth}px`;
 		const dynamicCols = [...this.elRef.nativeElement.querySelectorAll('thead td:not(:first-child):not(:last-child)')];
-		const widths = dynamicCols.map((e, i) => {
-			return e.getBoundingClientRect().width;
-		});
-		const totalWidth = widths.reduce((acc, cur) => acc + cur, 0);
-		const percentages = widths.map(e => e / totalWidth * 100);
-		dynamicCols.forEach((e, i) => {
-			const colDirective = this.columnKeyDirectives.find(e => e.columnKey === this.headerKeys[i]);
-			if (colDirective.fixedWidth) {
-				return e.style.width = `${Math.ceil(widths[i])}px`;
-			} else {
-				return e.style.width = `${percentages[i]}%`;
+		// const widths = dynamicCols.map((e, i) => {
+		// 	return e.getBoundingClientRect().width;
+		// });
+		// const totalWidth = widths.reduce((acc, cur) => acc + cur, 0);
+		// const percentages = widths.map(e => e / totalWidth * 100);
+		const ratiosCumulative = this.columnKeyDirectives.filter(e => {
+			if (e.fixedWidthOnContents) {
+				return false;
 			}
+			if (e.fixedWidthInREM) {
+				return false;
+			}
+			return true;
+		}).reduce((acc, cur) => cur.widthAsRatio + acc, 0);
+		console.log(ratiosCumulative);
+		dynamicCols.forEach((e, i) => {
+			const colDirective = this.columnKeyDirectives.find(col => col.columnKey === this.headerKeys[i]);
+			if (colDirective.fixedWidthOnContents) {
+				return e.style.width = `${Math.ceil(e.getBoundingClientRect().width)}px`;
+			}
+			if (Number.isFinite(colDirective.fixedWidthInREM)) {
+				e.style.width = `${colDirective.fixedWidthInREM}rem`;
+				e.style.boxSizing = 'content-box';
+				return;
+			}
+			if (Number.isFinite(colDirective.widthAsRatio)) {
+				return e.style.width = `${colDirective.widthAsRatio / ratiosCumulative * 100}%`;
+			}
+			// return e.style.width = `${percentages[i]}%`;
 		});
 		this.columnWidthsToBeCalculated = false;
 	}

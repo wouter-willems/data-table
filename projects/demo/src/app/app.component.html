@@ -26,10 +26,10 @@
 		(onRowClicked)="onRowClicked($event)"
 		localStorageKey="hond"
 	>
-		<ng-template columnKey="name" columnCaption="NAMERINO" defaultSort="DESC" let-value="value">
+		<ng-template columnKey="name" columnCaption="NAMERINO" defaultSort="DESC" let-value="value" [fixedWidthInREM]="2">
 			name: {{value}}
 		</ng-template>
-		<ng-template columnKey="age" columnCaption="leeftijd" let-value="value" [fixedWidth]="true">
+		<ng-template columnKey="age" columnCaption="leeftijd" let-value="value" [fixedWidthOnContents]="true">
 			age: {{value}}
 		</ng-template>
 		<ng-template columnKey="breed" columnCaption="soort" let-value="value">
