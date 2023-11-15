@@ -62,7 +62,7 @@
 				></ng-container>
 			</td>
 			<td>
-				<div class="actionMenuContainer">
+				<div class="actionMenuContainer" *ngIf="getActionsForRowFn?.(row)?.length > 0">
 					<ng-container [ngTemplateOutlet]="actionMenuBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsFn(row)}"></ng-container>
 					<div
 						class="actionMenu"

@@ -12,7 +12,7 @@ import {
 
 const data  = [
 	{
-		id: 123,
+		id: 1,
 		id2: 123,
 		id23: 123,
 		name: 'Wutu',
@@ -23,6 +23,7 @@ const data  = [
 			number: 22,
 		}
 	}, {
+		id: 2,
 		name: 'Gert',
 		age: 22,
 		address: {
@@ -31,6 +32,7 @@ const data  = [
 		}
 	},
 	{
+		id: 3,
 		name: 'Samson met een naam',
 		age: 22,
 		breed: 'Hond',
@@ -75,7 +77,9 @@ export class AppComponent implements OnInit {
 		caption: string,
 		action: () => void,
 	}> => {
-		console.log(e);
+		if (e.id > 2) {
+			return [];
+		}
 		return [{
 			caption: 'Export',
 			action: () => {
