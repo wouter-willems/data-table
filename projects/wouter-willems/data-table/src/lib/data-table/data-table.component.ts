@@ -160,6 +160,9 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.elRef.nativeElement.querySelector('thead td:last-child').style.width = `${lastColWidth}px`;
 		const dynamicCols = [...this.elRef.nativeElement.querySelectorAll('thead td:not(:first-child):not(:last-child)')];
 		const ratiosCumulative = this.columnKeyDirectives.filter(e => {
+			if (!this.headerKeys.includes(e.columnKey)) {
+				return false;
+			}
 			if (e.fixedWidthOnContents) {
 				return false;
 			}

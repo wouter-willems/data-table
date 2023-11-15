@@ -1,12 +1,14 @@
 @import "../_variables.scss";
 
 $color: #60626c;
-$tdPadding: 1rem 1rem 1rem 0;
+$tdPadding: 1rem 1.8rem 1rem 0;
 
 :host {
   display: block;
   position: relative;
   font-size: 14px;
+  padding: 2rem 2rem 1rem;
+  background: white;
 }
 .dummies {
   display: flex;

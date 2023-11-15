@@ -99,11 +99,6 @@ export class AppComponent implements OnInit {
 		totalAmount: number,
 		data: Array<Record<string, any>>
 	}> => {
-		console.log('start', start);
-		console.log('search', searchQuery);
-		console.log('itemsPerPage', itemsPerPage);
-		console.log('sortField', sortField);
-		console.log('sortOrder', sortOrder);
 		if (start === 96) {
 			return {
 				totalAmount: 98,

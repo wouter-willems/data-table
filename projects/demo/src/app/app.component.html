@@ -20,11 +20,9 @@
 
 <div class="tableContainer">
 	<wutu-data-table
-		[horizontalScroll]="false"
 		[fetchItemsFn]="fetchItemsFn"
 		[getActionsForRowFn]="getActionsForRowFn"
 		(onRowClicked)="onRowClicked($event)"
-		localStorageKey="hond"
 	>
 		<ng-template columnKey="name" columnCaption="NAMERINO" defaultSort="DESC" let-value="value" [fixedWidthInREM]="2">
 			name: {{value}}
