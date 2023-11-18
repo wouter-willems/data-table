@@ -1,11 +1,10 @@
-import {Component, inject, InjectionToken, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {Component, inject, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {
 	ActionMenuBtnRefToken,
 	CheckBoxRefToken,
-	ConfigBtnRefToken, SearchInputRefToken
+	ConfigBtnRefToken,
+	SearchInputRefToken
 } from 'projects/wouter-willems/data-table/src/public-api';
-import {MyToggleComponent} from "../my-toggle/my-toggle.component";
-import {ControlValueAccessor} from "@angular/forms";
 import {
 	SaveBtnRefToken
 } from "../../../wouter-willems/data-table/src/lib/column-rearranger/column-rearranger.component";
@@ -13,31 +12,33 @@ import {
 const data  = [
 	{
 		id: 1,
-		id2: 123,
-		id23: 123,
 		name: 'Wutu',
 		age: 36,
-		id24: 123,
 		address: {
-			street: 'Apenlaan',
+			street: 'Streetname',
 			number: 22,
-		}
+		},
+		occupation: 'Software Architect',
 	}, {
 		id: 2,
-		name: 'Gert',
+		name: 'John',
 		age: 22,
 		address: {
-			street: 'Belgie 34',
-			number: 101,
-		}
+			street: 'Some street',
+			number: 123,
+		},
+		occupation: 'Lawyer',
 	},
 	{
 		id: 3,
-		name: 'Samson met een naam',
-		age: 22,
-		breed: 'Hond',
-		comments: 'ik ben een hond',
-	},
+		name: 'Lance',
+		age: 47,
+		address: {
+			street: 'Sim City',
+			number: 88,
+		},
+		occupation: 'Astronaut',
+	}
 ];
 
 @Component({
@@ -73,24 +74,19 @@ export class AppComponent implements OnInit {
 
 	public searchQuery: string;
 
-	getActionsForRowFn = (e): Array<{
+	getActionsForRowFn = (): Array<{
 		caption: string,
 		action: () => void,
 	}> => {
-		if (e.id > 2) {
-			return [];
-		}
 		return [{
 			caption: 'Export',
 			action: () => {
-				console.log('chosen pick me');
-				console.log(e);
+				console.log('chosen Export');
 			}
 		}, {
 			caption: 'Delete',
 			action: () => {
-				console.log('chosen other');
-				console.log(e);
+				console.log('chosen Delete');
 			}
 		}];
 	};
