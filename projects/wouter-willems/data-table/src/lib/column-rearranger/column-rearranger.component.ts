@@ -4,6 +4,7 @@ import {
 	EventEmitter,
 	InjectionToken,
 	Injector,
+	Input,
 	OnInit,
 	Output,
 	QueryList,
@@ -14,6 +15,7 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {isValueSet} from "../util/values";
 
 export const SaveBtnRefToken = new InjectionToken('save btn');
+export const ToggleRefToken = new InjectionToken('toggle btn');
 
 @Component({
 	selector: 'wutu-column-rearranger',
@@ -23,6 +25,7 @@ export const SaveBtnRefToken = new InjectionToken('save btn');
 })
 export class ColumnRearrangerComponent implements OnInit, ControlValueAccessor {
 
+	@Input() headerCaptionByKey: Map<string, string>;
 	@Output() onColumnsSaved = new EventEmitter();
 	@Output() onCloseRequest = new EventEmitter();
 
@@ -35,12 +38,14 @@ export class ColumnRearrangerComponent implements OnInit, ControlValueAccessor {
 	public dragSourceIndex: number;
 	private currentDragPosition: number;
 	public saveBtnRef: TemplateRef<any>;
+	public toggleBtnRef: TemplateRef<any>;
 
 	constructor(private injector: Injector) {}
 
 	ngOnInit(): void {
 		setTimeout(() => {
 			this.saveBtnRef = this.injector.get<TemplateRef<any>>(SaveBtnRefToken);
+			this.toggleBtnRef = this.injector.get<TemplateRef<any>>(ToggleRefToken);
 		});
 	}
 
@@ -56,8 +61,6 @@ export class ColumnRearrangerComponent implements OnInit, ControlValueAccessor {
 		if (!isValueSet(obj)) {
 			return;
 		}
-		console.log('obj');
-		console.log(obj);
 		this.columns = obj?.map(e => ({...e})) ?? [];
 	}
 

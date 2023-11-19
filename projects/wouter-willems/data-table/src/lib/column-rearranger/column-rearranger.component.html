@@ -13,9 +13,15 @@
 			#dragItem
 		>
 			<div class="visual" [ngStyle]="{transform: 'translateY('+ getTransform(index) + '%)'}">
-				<div class="hamburger">☰</div>
-				<div>{{col.key}}</div>
-				<input type="checkbox" [(ngModel)]="col.active"/>
+				<div class="iconAndName">
+					<div class="hamburger">☰</div>
+					<div>{{headerCaptionByKey.get(col.key)}}</div>
+				</div>
+				<div class="toggleContainer" (click)="col.active = !col.active">
+					<div class="toggleContainerInner">
+						<ng-container [ngTemplateOutlet]="toggleBtnRef" [ngTemplateOutletContext]="{isSelected: col.active}"></ng-container>
+					</div>
+				</div>
 			</div>
 		</div>
 	</li>

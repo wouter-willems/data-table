@@ -74,7 +74,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	public sortField: string;
 	public sortOrder: 'ASC' | 'DESC';
 	public headerKeys: Array<string> = [];
-	public headers: Array<string> = [];
+	public headerCaptionByKey: Map<string, string> = new Map();
 	public stuff: { totalAmount: number; data: Array<Record<string, any>> };
 	public actions: Array<{
 		caption: string,
@@ -147,7 +147,9 @@ export class DataTableComponent implements OnChanges, OnInit {
 		.sort((a, b) => {
 			return this.definedColumns.findIndex(e => e.key === a) > this.definedColumns.findIndex(e => e.key === b) ? 1 : -1;
 		});
-		this.headers = this.headerKeys.map(key => this.columnKeyDirectives.find(e => e.columnKey === key)?.columnCaption);
+		this.headerKeys.forEach(key => {
+			this.headerCaptionByKey.set(key, this.columnKeyDirectives.find(e => e.columnKey === key)?.columnCaption);
+		});
 		await awaitableForNextCycle();
 	}
 

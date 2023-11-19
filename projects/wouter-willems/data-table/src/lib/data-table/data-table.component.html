@@ -34,12 +34,12 @@
 					<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: getHeaderSelectState()}"></ng-container>
 				</div>
 			</td>
-			<td *ngFor="let header of headers; index as index">
+			<td *ngFor="let headerKey of headerKeys">
 				<div class="colHeader">
-					<div class="caption" [klpWithTooltip]="true" (click)="setSortField(headerKeys[index])">{{header}}</div>
-					<button class="sortButton" (click)="setSortField(headerKeys[index])">
-						<svg height="5" width="10" [ngClass]="{'visible': sortField !== headerKeys[index] || sortOrder !== 'DESC'}"><polygon points="0,5 5,0 10,5" style="fill:#515365;" /></svg>
-						<svg height="5" width="10" [ngClass]="{'visible': sortField !== headerKeys[index] || sortOrder !== 'ASC'}"><polygon points="0,0 5,5 10,0" style="fill:#515365;" /></svg>
+					<div class="caption" [klpWithTooltip]="true" (click)="setSortField(headerKey)">{{headerCaptionByKey.get(headerKey)}}</div>
+					<button class="sortButton" (click)="setSortField(headerKey)">
+						<svg height="5" width="10" [ngClass]="{'visible': sortField !== headerKey || sortOrder !== 'DESC'}"><polygon points="0,5 5,0 10,5" style="fill:#515365;" /></svg>
+						<svg height="5" width="10" [ngClass]="{'visible': sortField !== headerKey || sortOrder !== 'ASC'}"><polygon points="0,0 5,5 10,0" style="fill:#515365;" /></svg>
 					</button>
 				</div>
 			</td>
@@ -99,8 +99,8 @@
 
 <div class="columnRearranger" *ngIf="showConfig">
 	<header>
-		<div>Rearrange and enable columns</div>
-		<button class="closeButton" (click)="closeConfig()">X</button>
+		<div>Configure your table</div>
+		<button class="closeButton" (click)="closeConfig()">×</button>
 	</header>
-	<wutu-column-rearranger [(ngModel)]="definedColumns" (onCloseRequest)="closeConfig()" (onColumnsSaved)="onColumnsSaved()"></wutu-column-rearranger>
+	<wutu-column-rearranger [(ngModel)]="definedColumns" [headerCaptionByKey]="headerCaptionByKey" (onCloseRequest)="closeConfig()" (onColumnsSaved)="onColumnsSaved()"></wutu-column-rearranger>
 </div>

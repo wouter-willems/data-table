@@ -3,7 +3,7 @@ import {
 	ActionMenuBtnRefToken,
 	CheckBoxRefToken,
 	ConfigBtnRefToken,
-	SearchInputRefToken
+	SearchInputRefToken, ToggleRefToken
 } from 'projects/wouter-willems/data-table/src/public-api';
 import {
 	SaveBtnRefToken
@@ -53,6 +53,10 @@ const data  = [
 			provide: ConfigBtnRefToken,
 			useFactory: () => inject(AppComponent, {self: true}).configBtn,
 		}, {
+			provide: ToggleRefToken,
+			useFactory: () => inject(AppComponent, {self: true}).toggleBtn,
+		},
+		{
 			provide: SaveBtnRefToken,
 			useFactory: () => inject(AppComponent, {self: true}).saveBtn,
 		}, {
@@ -68,6 +72,7 @@ export class AppComponent implements OnInit {
 
 	@ViewChild('myToggle') myToggle: TemplateRef<any>;
 	@ViewChild('configBtn') configBtn: TemplateRef<any>;
+	@ViewChild('toggleBtnRef') toggleBtn: TemplateRef<any>;
 	@ViewChild('saveBtn') saveBtn: TemplateRef<any>;
 	@ViewChild('actionMenuBtn') actionMenuBtn: TemplateRef<any>;
 	@ViewChild('searchInput') searchInput: TemplateRef<any>;

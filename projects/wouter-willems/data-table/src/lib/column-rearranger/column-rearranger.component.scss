@@ -37,8 +37,17 @@ li {
   display: flex;
   align-items: center;
   gap: 1rem;
+  .iconAndName {
+    flex-grow: 1;
+    align-items: center;
+    gap: 1rem;
+    display: flex;
+  }
   .hamburger {
     font-size: 1.5rem;
+  }
+  .toggleContainer .toggleContainerInner {
+    pointer-events: none;
   }
 }
 .dragInProgress .visual {
