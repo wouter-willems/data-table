@@ -139,4 +139,10 @@ export class AppComponent implements OnInit {
 		console.log('$event');
 		console.log($event);
 	}
+
+	getSearchParams() {
+		return {
+			currentPage: 4,
+		};
+	}
 }

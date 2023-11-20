@@ -25,6 +25,7 @@
 	<wutu-data-table
 		[fetchItemsFn]="fetchItemsFn"
 		[getActionsForRowFn]="getActionsForRowFn"
+		[searchParams]="getSearchParams()"
 		(onRowClicked)="onRowClicked($event)"
 	>
 		<ng-template columnKey="name" columnCaption="Full name" defaultSort="DESC" let-value="value" [fixedWidthInREM]="6">

@@ -48,6 +48,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) columnKeyDirectives: QueryList<ColumnKeyDirective>;
 
 	@Input() horizontalScroll = false;
+	@Input() searchParams;
 	@Input() fetchItemsFn: (start: number, searchQuery: string, itemsPerPage: number, sortField: string, sortOrder: 'ASC' | 'DESC') => Promise<{
 		totalAmount: number,
 		data: Array<Record<string, any>>
@@ -92,6 +93,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	public actionMenuBtnRef: TemplateRef<any>;
 	public searchInputRef: TemplateRef<any>;
 	public actionMenuOffset: { x: number, y: number };
+	private initiated = false;
 
 	constructor(private injector: Injector, private elRef: ElementRef) {}
 
@@ -101,6 +103,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.configBtnRef = this.injector.get<TemplateRef<any>>(ConfigBtnRefToken);
 		this.actionMenuBtnRef = this.injector.get<TemplateRef<any>>(ActionMenuBtnRefToken);
 		this.searchInputRef = this.injector.get<TemplateRef<any>>(SearchInputRefToken);
+		this.initiated = true;
 		await this.getData();
 		if (!this.horizontalScroll) {
 			await this.calculateColumnWidths();
@@ -112,6 +115,33 @@ export class DataTableComponent implements OnChanges, OnInit {
 		if (isValueSet(simpleChanges.currentPage)) {
 			this.toPage(simpleChanges.currentPage.currentValue);
 		}
+		if (isValueSet(simpleChanges.searchParams)) {
+			const stateInternal =  {
+				page: this.currentPage,
+				itemsPerPage: this.itemsPerPage,
+				searchQuery: this.searchQuery,
+				sortField: this.sortField,
+				sortOrder: this.sortOrder,
+			};
+			const c = simpleChanges.searchParams.currentValue;
+			const stateExternal = {
+				page: c.currentPage ?? stateInternal.page,
+				itemsPerPage: c.itemsPerPage ?? stateInternal.itemsPerPage,
+				searchQuery: c.searchQuery ?? stateInternal.searchQuery,
+				sortField: c.sortField ?? stateInternal.sortField,
+				sortOrder: c.sortOrder ?? stateInternal.sortOrder
+			};
+			if (!isEqual(stateInternal, stateExternal)) {
+				this.currentPage = c.currentPage ?? stateInternal.page;
+				this.itemsPerPage = c.itemsPerPage ?? stateInternal.itemsPerPage;
+				this.searchQuery = c.searchQuery ?? stateInternal.searchQuery;
+				this.sortField = c.sortField ?? stateInternal.sortField;
+				this.sortOrder = c.sortOrder ?? stateInternal.sortOrder;
+				if (this.initiated) {
+					this.getData();
+				}
+			}
+		}
 	}
 
 	private prevSearchParams = {};
@@ -121,17 +151,18 @@ export class DataTableComponent implements OnChanges, OnInit {
 			this.sortField = defaultSortField?.columnKey;
 			this.sortOrder = defaultSortField?.defaultSort;
 		}
-		const params = {
-			start: (this.currentPage - 1) * (this.itemsPerPage ?? 1),
-			searchQuery: this.searchQuery,
-			itemsPerPage: (this.itemsPerPage ?? 1),
-			sortField: this.sortField,
-			sortOrder: this.sortOrder,
-		};
+		const params = this.getParams();
 		if (!isEqual(params, this.prevSearchParams)) {
-			this.onParamsChanged.emit(params);
+			this.onParamsChanged.emit({
+				page: this.currentPage,
+				itemsPerPage: this.itemsPerPage,
+				searchQuery: this.searchQuery,
+				sortField: this.sortField,
+				sortOrder: this.sortOrder,
+			});
 		}
 		this.prevSearchParams = {...params};
+		console.log(params);
 		this.pageData = await this.fetchItemsFn(
 			params.start,
 			params.searchQuery,
@@ -141,6 +172,16 @@ export class DataTableComponent implements OnChanges, OnInit {
 		);
 		this.pageData.data.forEach(e => this.selectedState.set(e, false));
 		await this.extractHeaders();
+	}
+
+	private getParams(): { itemsPerPage: number; searchQuery: string; sortOrder: 'ASC' | 'DESC'; start: number; sortField: string } {
+		return {
+			start: (this.currentPage - 1) * (this.itemsPerPage ?? 1),
+			searchQuery: this.searchQuery,
+			itemsPerPage: (this.itemsPerPage ?? 1),
+			sortField: this.sortField,
+			sortOrder: this.sortOrder,
+		};
 	}
 
 	private async extractHeaders(): Promise<void> {
