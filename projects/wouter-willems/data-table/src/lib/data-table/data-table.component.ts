@@ -65,12 +65,12 @@ export class DataTableComponent implements OnChanges, OnInit {
 		key: string,
 		active: boolean,
 	}>) => Promise<void>;
-	@Input() public currentPage = 1;
 	@Output() onRowClicked = new EventEmitter<any>();
 	@Output() onParamsChanged = new EventEmitter<any>();
 
 	public columnWidthsToBeCalculated = true;
 
+	public currentPage = 1;
 	public itemsPerPage = 25;
 	public searchQuery: string = '';
 	public sortField: string;

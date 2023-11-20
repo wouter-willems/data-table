@@ -18,7 +18,7 @@
 		results
 	</div>
 	<div>
-		<ng-container [ngTemplateOutlet]="searchInputRef" [ngTemplateOutletContext]="{changeHandler: searchQueryChanged}"></ng-container>
+		<ng-container [ngTemplateOutlet]="searchInputRef" [ngTemplateOutletContext]="{changeHandler: searchQueryChanged, searchQuery: searchQuery}"></ng-container>
 	</div>
 </div>
 
