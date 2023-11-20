@@ -16,6 +16,7 @@ import {
 import {arrayIsSetAndFilled, removeDuplicatesFromArray} from '../util/arrays';
 import {isValueSet, stringIsSetAndFilled} from '../util/values';
 import {awaitableForNextCycle} from "../util/angular";
+import {isEqual} from 'lodash';
 
 export const CheckBoxRefToken = new InjectionToken('checkbox');
 export const ConfigBtnRefToken = new InjectionToken('config btn');
@@ -65,7 +66,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	}>) => Promise<void>;
 	@Input() public currentPage = 1;
 	@Output() onRowClicked = new EventEmitter<any>();
-	@Output() onPageChange = new EventEmitter<number>();
+	@Output() onParamsChanged = new EventEmitter<any>();
 
 	public columnWidthsToBeCalculated = true;
 
@@ -75,7 +76,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	public sortOrder: 'ASC' | 'DESC';
 	public headerKeys: Array<string> = [];
 	public headerCaptionByKey: Map<string, string> = new Map();
-	public stuff: { totalAmount: number; data: Array<Record<string, any>> };
+	public pageData: { totalAmount: number; data: Array<Record<string, any>> };
 	public actions: Array<{
 		caption: string,
 		action: () => void,
@@ -113,24 +114,37 @@ export class DataTableComponent implements OnChanges, OnInit {
 		}
 	}
 
+	private prevSearchParams = {};
 	private async getData(): Promise<void> {
 		const defaultSortField = this.columnKeyDirectives.find(e => stringIsSetAndFilled(e.defaultSort));
 		if (!stringIsSetAndFilled(this.sortField)) {
 			this.sortField = defaultSortField?.columnKey;
 			this.sortOrder = defaultSortField?.defaultSort;
 		}
-		this.stuff = await this.fetchItemsFn(
-			(this.currentPage - 1) * (this.itemsPerPage ?? 1),
-			this.searchQuery, (this.itemsPerPage ?? 1),
-			this.sortField,
-			this.sortOrder
+		const params = {
+			start: (this.currentPage - 1) * (this.itemsPerPage ?? 1),
+			searchQuery: this.searchQuery,
+			itemsPerPage: (this.itemsPerPage ?? 1),
+			sortField: this.sortField,
+			sortOrder: this.sortOrder,
+		};
+		if (!isEqual(params, this.prevSearchParams)) {
+			this.onParamsChanged.emit(params);
+		}
+		this.prevSearchParams = {...params};
+		this.pageData = await this.fetchItemsFn(
+			params.start,
+			params.searchQuery,
+			params.itemsPerPage,
+			params.sortField,
+			params.sortOrder
 		);
-		this.stuff.data.forEach(e => this.selectedState.set(e, false));
+		this.pageData.data.forEach(e => this.selectedState.set(e, false));
 		await this.extractHeaders();
 	}
 
 	private async extractHeaders(): Promise<void> {
-		const keys = removeDuplicatesFromArray(Object.values(this.stuff.data).map(e => {
+		const keys = removeDuplicatesFromArray(Object.values(this.pageData.data).map(e => {
 			return Object.keys(e);
 		}).reduce((acc, cur) => {
 			return [...acc, ...cur];
@@ -227,13 +241,11 @@ export class DataTableComponent implements OnChanges, OnInit {
 	}
 
 	public getLastPage(): number {
-		return Math.ceil(this.stuff.totalAmount / (this.itemsPerPage ?? 1));
+		return Math.ceil(this.pageData.totalAmount / (this.itemsPerPage ?? 1));
 	}
 
 	toPage(pageNr: number): void {
 		this.currentPage = pageNr;
-		this.onPageChange.emit(pageNr);
-
 		this.getData();
 	}
 
@@ -291,11 +303,11 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	headerSelectClicked(): void {
 		if ([...this.selectedState.values()].every(e => e === true)) {
-			this.stuff.data.forEach((row, i) => this.setRowSelect(row, false));
+			this.pageData.data.forEach((row, i) => this.setRowSelect(row, false));
 		} else if ([...this.selectedState.values()].every(e => e === false)) {
-			this.stuff.data.forEach((row, i) => this.setRowSelect(row, true));
+			this.pageData.data.forEach((row, i) => this.setRowSelect(row, true));
 		} else {
-			this.stuff.data.forEach((row, i) => this.setRowSelect(row, true));
+			this.pageData.data.forEach((row, i) => this.setRowSelect(row, true));
 		}
 	}
 
