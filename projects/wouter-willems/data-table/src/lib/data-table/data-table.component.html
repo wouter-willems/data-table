@@ -82,18 +82,18 @@
 
 <footer *ngIf="pageData">
 	<div>
-		Showing {{(currentPage -1) * itemsPerPage + 1}} to {{(currentPage -1) * itemsPerPage + pageData.data.length}} of {{pageData.totalAmount}} results
+		Showing {{(page -1) * itemsPerPage + 1}} to {{(page -1) * itemsPerPage + pageData.data.length}} of {{pageData.totalAmount}} results
 	</div>
 	<div class="pageNumbers" *ngIf="pageData">
-		<button (click)="toPage(1)" [disabled]="currentPage === 1">First</button>
-		<button (click)="toPage(currentPage-1)" [disabled]="currentPage === 1">Previous</button>
+		<button (click)="toPage(1)" [disabled]="page === 1">First</button>
+		<button (click)="toPage(page-1)" [disabled]="page === 1">Previous</button>
 		<div class="pageNrButtons">
-			<button class="pageNrButton" *ngFor="let pageNr of getPageNumbers()" (click)="toPage(pageNr)" [ngClass]="{selected: currentPage === pageNr}">
+			<button class="pageNrButton" *ngFor="let pageNr of getPageNumbers()" (click)="toPage(pageNr)" [ngClass]="{selected: page === pageNr}">
 				<span>{{pageNr}}</span>
 			</button>
 		</div>
-		<button (click)="toPage(currentPage+1)" [disabled]="currentPage === this.getLastPage()">Next</button>
-		<button (click)="toPage(this.getLastPage())" [disabled]="currentPage === this.getLastPage()">Last</button>
+		<button (click)="toPage(page+1)" [disabled]="page === this.getLastPage()">Next</button>
+		<button (click)="toPage(this.getLastPage())" [disabled]="page === this.getLastPage()">Last</button>
 	</div>
 </footer>
 

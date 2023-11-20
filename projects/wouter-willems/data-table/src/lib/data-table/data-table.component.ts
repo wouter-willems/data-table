@@ -70,7 +70,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	public columnWidthsToBeCalculated = true;
 
-	public currentPage = 1;
+	public page = 1;
 	public itemsPerPage = 25;
 	public searchQuery: string = '';
 	public sortField: string;
@@ -112,12 +112,9 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 
 	ngOnChanges(simpleChanges: SimpleChanges): void {
-		if (isValueSet(simpleChanges.currentPage)) {
-			this.toPage(simpleChanges.currentPage.currentValue);
-		}
 		if (isValueSet(simpleChanges.searchParams)) {
 			const stateInternal =  {
-				page: this.currentPage,
+				page: this.page,
 				itemsPerPage: this.itemsPerPage,
 				searchQuery: this.searchQuery,
 				sortField: this.sortField,
@@ -125,14 +122,14 @@ export class DataTableComponent implements OnChanges, OnInit {
 			};
 			const c = simpleChanges.searchParams.currentValue;
 			const stateExternal = {
-				page: c.currentPage ?? stateInternal.page,
+				page: c.page ?? stateInternal.page,
 				itemsPerPage: c.itemsPerPage ?? stateInternal.itemsPerPage,
 				searchQuery: c.searchQuery ?? stateInternal.searchQuery,
 				sortField: c.sortField ?? stateInternal.sortField,
 				sortOrder: c.sortOrder ?? stateInternal.sortOrder
 			};
 			if (!isEqual(stateInternal, stateExternal)) {
-				this.currentPage = c.currentPage ?? stateInternal.page;
+				this.page = c.page ?? stateInternal.page;
 				this.itemsPerPage = c.itemsPerPage ?? stateInternal.itemsPerPage;
 				this.searchQuery = c.searchQuery ?? stateInternal.searchQuery;
 				this.sortField = c.sortField ?? stateInternal.sortField;
@@ -154,7 +151,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 		const params = this.getParams();
 		if (!isEqual(params, this.prevSearchParams)) {
 			this.onParamsChanged.emit({
-				page: this.currentPage,
+				page: this.page,
 				itemsPerPage: this.itemsPerPage,
 				searchQuery: this.searchQuery,
 				sortField: this.sortField,
@@ -176,7 +173,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	private getParams(): { itemsPerPage: number; searchQuery: string; sortOrder: 'ASC' | 'DESC'; start: number; sortField: string } {
 		return {
-			start: (this.currentPage - 1) * (this.itemsPerPage ?? 1),
+			start: (this.page - 1) * (this.itemsPerPage ?? 1),
 			searchQuery: this.searchQuery,
 			itemsPerPage: (this.itemsPerPage ?? 1),
 			sortField: this.sortField,
@@ -278,7 +275,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	getPageNumbers(): Array<number> {
 		const totalPages = this.getLastPage();
 		const allPageNumbers = [...Array(totalPages).keys()].map(i => i + 1);
-		return allPageNumbers.filter(i => Math.abs(i - this.currentPage) < 4);
+		return allPageNumbers.filter(i => Math.abs(i - this.page) < 4);
 	}
 
 	public getLastPage(): number {
@@ -286,7 +283,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	}
 
 	toPage(pageNr: number): void {
-		this.currentPage = pageNr;
+		this.page = pageNr;
 		this.getData();
 	}
 
@@ -353,7 +350,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	}
 
 	itemsPerPageChanged(): void {
-		this.currentPage = 1;
+		this.page = 1;
 		this.getData();
 	}
 

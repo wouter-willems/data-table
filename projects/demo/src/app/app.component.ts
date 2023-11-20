@@ -142,7 +142,12 @@ export class AppComponent implements OnInit {
 
 	getSearchParams() {
 		return {
-			currentPage: 4,
+			page: 4,
+			searchQuery: 'something',
 		};
+	}
+
+	setQuery(searchQuery2: any) {
+		this.searchQuery = searchQuery2;
 	}
 }
