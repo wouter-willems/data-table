@@ -17,6 +17,7 @@ import {FormsModule} from "@angular/forms";
 		RouterModule,
 		WutuDataTableModule,
 		FormsModule,
+		RouterModule.forRoot([]),
 	],
 	providers: [],
 	bootstrap: [AppComponent]

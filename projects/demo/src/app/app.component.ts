@@ -8,6 +8,7 @@ import {
 import {
 	SaveBtnRefToken
 } from "../../../wouter-willems/data-table/src/lib/column-rearranger/column-rearranger.component";
+import {ActivatedRoute, Router} from "@angular/router";
 
 const data  = [
 	{
@@ -79,6 +80,9 @@ export class AppComponent implements OnInit {
 
 	public searchQuery: string;
 
+	constructor(private router: Router, private activatedRoute: ActivatedRoute) {
+	}
+
 	getActionsForRowFn = (): Array<{
 		caption: string,
 		action: () => void,
@@ -140,11 +144,16 @@ export class AppComponent implements OnInit {
 		console.log($event);
 	}
 
-	getSearchParams() {
-		return {
-			page: 4,
-			searchQuery: 'something',
-		};
+	public async updateRoute(queryParams) {
+		await this.router.navigate([], {
+			relativeTo: this.activatedRoute,
+			queryParams,
+			queryParamsHandling: 'merge',
+		});
+	}
+
+	public getSearchParams() {
+		return this.activatedRoute.snapshot.queryParams;
 	}
 
 	setQuery(searchQuery2: any) {

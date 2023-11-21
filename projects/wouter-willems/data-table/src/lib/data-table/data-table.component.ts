@@ -16,7 +16,7 @@ import {
 import {arrayIsSetAndFilled, removeDuplicatesFromArray} from '../util/arrays';
 import {isValueSet, stringIsSetAndFilled} from '../util/values';
 import {awaitableForNextCycle} from "../util/angular";
-import {isEqual} from 'lodash';
+import {isEqual, debounce} from 'lodash';
 
 export const CheckBoxRefToken = new InjectionToken('checkbox');
 export const ConfigBtnRefToken = new InjectionToken('config btn');
@@ -129,8 +129,8 @@ export class DataTableComponent implements OnChanges, OnInit {
 				sortOrder: c.sortOrder ?? stateInternal.sortOrder
 			};
 			if (!isEqual(stateInternal, stateExternal)) {
-				this.page = c.page ?? stateInternal.page;
-				this.itemsPerPage = c.itemsPerPage ?? stateInternal.itemsPerPage;
+				this.page = Number.isFinite(Number(c.page)) ? Number(c.page) : stateInternal.page;
+				this.itemsPerPage = Number.isFinite(Number(c.itemsPerPage)) ? Number(c.itemsPerPage) : stateInternal.itemsPerPage;
 				this.searchQuery = c.searchQuery ?? stateInternal.searchQuery;
 				this.sortField = c.sortField ?? stateInternal.sortField;
 				this.sortOrder = c.sortOrder ?? stateInternal.sortOrder;
@@ -159,7 +159,6 @@ export class DataTableComponent implements OnChanges, OnInit {
 			});
 		}
 		this.prevSearchParams = {...params};
-		console.log(params);
 		this.pageData = await this.fetchItemsFn(
 			params.start,
 			params.searchQuery,
@@ -358,10 +357,11 @@ export class DataTableComponent implements OnChanges, OnInit {
 		return (target) => this.showActions(row, target);
 	}
 
-	searchQueryChanged = (searchQuery: string) => {
+	public searchQueryChanged = debounce((searchQuery: string) => {
+		this.page = 1;
 		this.searchQuery = searchQuery;
 		this.getData();
-	}
+	}, 300);
 
 	setSortField(headerKey: string): void {
 		if (this.sortField === headerKey && this.sortOrder === 'ASC') {
