@@ -57,6 +57,10 @@ export class DataTableComponent implements OnChanges, OnInit {
 		caption: string,
 		action: () => void,
 	}>;
+	@Input() getActionsForMultipleRowsFn: (r: Array<any>) => Array<{
+		caption: string,
+		action: () => void,
+	}>;
 	@Input() retrieveColumnsFn: () => Promise<Array<{
 		key: string,
 		active: boolean,
@@ -83,6 +87,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 		action: () => void,
 	}>;
 	public actionMenuForRow: any;
+	public multipleRowsActionsShown: boolean = false;
 	public definedColumns: Array<{ key: string, active: boolean }>;
 	public showConfig: boolean = false;
 	private backdropDiv: HTMLDivElement;
@@ -95,7 +100,8 @@ export class DataTableComponent implements OnChanges, OnInit {
 	public actionMenuOffset: { x: number, y: number };
 	private initiated = false;
 
-	constructor(private injector: Injector, private elRef: ElementRef) {}
+	constructor(private injector: Injector, private elRef: ElementRef) {
+	}
 
 	async ngOnInit(): Promise<void> {
 		await awaitableForNextCycle();
@@ -113,7 +119,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	ngOnChanges(simpleChanges: SimpleChanges): void {
 		if (isValueSet(simpleChanges.searchParams)) {
-			const stateInternal =  {
+			const stateInternal = {
 				page: this.page,
 				itemsPerPage: this.itemsPerPage,
 				searchQuery: this.searchQuery,
@@ -142,6 +148,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	}
 
 	private prevSearchParams = {};
+
 	private async getData(): Promise<void> {
 		const defaultSortField = this.columnKeyDirectives.find(e => stringIsSetAndFilled(e.defaultSort));
 		if (!stringIsSetAndFilled(this.sortField)) {
@@ -208,10 +215,16 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.columnWidthsToBeCalculated = true;
 		await awaitableForNextCycle();
 		const selectBoxWidth = Math.ceil(this.selectBoxDummy.nativeElement.getBoundingClientRect().width);
-		const lastColWidth =  Math.ceil(Math.max(this.actionMenuDummy.nativeElement.getBoundingClientRect().width, this.configBtnDummy.nativeElement.getBoundingClientRect().width));
-		this.elRef.nativeElement.querySelector('thead td:first-child').style.width = `${selectBoxWidth}px`;
-		this.elRef.nativeElement.querySelector('thead td:last-child').style.width = `${lastColWidth}px`;
-		const dynamicCols = [...this.elRef.nativeElement.querySelectorAll('thead td:not(:first-child):not(:last-child)')];
+		const lastColWidth = Math.ceil(Math.max(this.actionMenuDummy.nativeElement.getBoundingClientRect().width, this.configBtnDummy.nativeElement.getBoundingClientRect().width));
+		const selectBoxContainerRef = this.elRef.nativeElement.querySelector('thead td.selectBoxContainer');
+		const configBtnContainerRef = this.elRef.nativeElement.querySelector('thead td.configButtonContainer');
+		if (selectBoxContainerRef) {
+			selectBoxContainerRef.style.width = `${selectBoxWidth}px`;
+		}
+		if (configBtnContainerRef) {
+			configBtnContainerRef.style.width = `${lastColWidth}px`;
+		}
+		const dynamicCols = [...this.elRef.nativeElement.querySelectorAll('thead td:not(.selectBoxContainer):not(.configButtonContainer)')];
 		const ratiosCumulative = this.columnKeyDirectives.filter(e => {
 			if (!this.headerKeys.includes(e.columnKey)) {
 				return false;
@@ -263,6 +276,20 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.actions = actions;
 		this.createBackdrop(() => {
 			this.actionMenuForRow = null;
+			this.actions = null;
+		}, false);
+	}
+
+	showActionsMultipleRows(rows: Array<any>, target: EventTarget): void {
+		this.multipleRowsActionsShown = true;
+		this.actionMenuOffset = {
+			x: (target as HTMLElement).getBoundingClientRect().right - this.elRef.nativeElement.getBoundingClientRect().right,
+			y: (target as HTMLElement).getBoundingClientRect().top - this.elRef.nativeElement.getBoundingClientRect().top,
+		};
+		const actions = this.getActionsForMultipleRowsFn(rows) ?? [];
+		this.actions = actions;
+		this.createBackdrop(() => {
+			this.multipleRowsActionsShown = false;
 			this.actions = null;
 		}, false);
 	}
@@ -338,6 +365,12 @@ export class DataTableComponent implements OnChanges, OnInit {
 		return this.selectedState.get(row);
 	}
 
+	public getSelectedRows(): Array<Record<string, any>> {
+		return [...this.selectedState.entries()]
+			.filter(e => e[1] === true)
+			.map(e => e[0]);
+	}
+
 	headerSelectClicked(): void {
 		if ([...this.selectedState.values()].every(e => e === true)) {
 			this.pageData.data.forEach((row, i) => this.setRowSelect(row, false));
@@ -355,6 +388,9 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	getShowActionsFn(row: Record<string, any>): (target) => void {
 		return (target) => this.showActions(row, target);
+	}
+	getShowActionsMultipleFn(rows: Array<Record<string, any>>): (target) => void {
+		return (target) => this.showActionsMultipleRows(rows, target);
 	}
 
 	public searchQueryChanged = debounce((searchQuery: string) => {
@@ -382,5 +418,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	closeActionMenu(): void {
 		this.actionMenuForRow = null;
 		this.actions = null;
+		this.multipleRowsActionsShown = false;
+		document.body.removeChild(this.backdropDiv);
 	}
 }

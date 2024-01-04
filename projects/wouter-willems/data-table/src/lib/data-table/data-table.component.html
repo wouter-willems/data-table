@@ -7,18 +7,35 @@
 </div>
 
 <div class="topButtons">
-	<div class="amountPicker">
-		Show
-		<select [(ngModel)]="itemsPerPage" (ngModelChange)="itemsPerPageChanged()">
-			<option value="10">10</option>
-			<option value="25">25</option>
-			<option value="50">50</option>
-			<option value="100">100</option>
-		</select>
-		results
+	<div class="amountAndMultiSelect">
+		<div class="amountPicker">
+			Show
+			<select [(ngModel)]="itemsPerPage" (ngModelChange)="itemsPerPageChanged()">
+				<option value="10">10</option>
+				<option value="25">25</option>
+				<option value="50">50</option>
+				<option value="100">100</option>
+			</select>
+			results
+		</div>
 	</div>
-	<div>
+	<div class="searchAndMultiSelect">
 		<ng-container [ngTemplateOutlet]="searchInputRef" [ngTemplateOutletContext]="{changeHandler: searchQueryChanged, searchQuery: searchQuery}"></ng-container>
+		<div class="multiSelectActionMenu" *ngIf="getSelectedRows().length > 0">
+			Selected {{getSelectedRows().length}} items
+			<div class="actionMenuContainer" *ngIf="getActionsForMultipleRowsFn?.(getSelectedRows())?.length > 0">
+				<ng-container [ngTemplateOutlet]="actionMenuBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsMultipleFn(getSelectedRows())}"></ng-container>
+				<div
+					*ngIf="multipleRowsActionsShown"
+					class="actionMenu"
+					[ngStyle]="{transform: 'translate('+actionMenuOffset.x+ 'px,'+ actionMenuOffset.y + 'px)'}"
+				>
+					<button *ngFor="let action of actions" (click)="closeActionMenu(); action.action()">
+						{{action.caption}}
+					</button>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -29,7 +46,7 @@
 	<table [ngClass]="{actionMenuOpen: hasActionMenuOpen(), fullWidth: horizontalScroll || !columnWidthsToBeCalculated}">
 		<thead>
 		<tr>
-			<td (click)="headerSelectClicked()" class="selectBoxContainer">
+			<td (click)="headerSelectClicked()" class="selectBoxContainer" *ngIf="getActionsForMultipleRowsFn">
 				<div class="selectBox">
 					<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: getHeaderSelectState()}"></ng-container>
 				</div>
@@ -43,14 +60,14 @@
 					</button>
 				</div>
 			</td>
-			<td>
+			<td class="configButtonContainer">
 				<ng-container [ngTemplateOutlet]="configBtnRef" [ngTemplateOutletContext]="{clickHandler: openConfig}"></ng-container>
 			</td>
 		</tr>
 		</thead>
 		<tbody>
 		<tr *ngFor="let row of pageData?.data">
-			<td (click)="rowSelectClicked(row)" class="selectBoxContainer">
+			<td (click)="rowSelectClicked(row)" class="selectBoxContainer" *ngIf="getActionsForMultipleRowsFn">
 				<div class="selectBox">
 					<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: isSelected(row)}"></ng-container>
 				</div>

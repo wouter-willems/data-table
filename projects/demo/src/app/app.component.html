@@ -26,6 +26,7 @@
 	<wutu-data-table
 		[fetchItemsFn]="fetchItemsFn"
 		[getActionsForRowFn]="getActionsForRowFn"
+		[getActionsForMultipleRowsFn]="getActionsForMultipleRowsFn"
 		[searchParams]="getSearchParams()"
 		(onParamsChanged)="updateRoute($event)"
 		(onRowClicked)="onRowClicked($event)"

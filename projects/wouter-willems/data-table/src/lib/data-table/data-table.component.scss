@@ -21,6 +21,18 @@ $tdPadding: 1rem 1.8rem 1rem 0;
 .topButtons {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  height: 3rem;
+  .searchAndMultiSelect {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .multiSelectActionMenu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
 }
 .tableContainer {
   &.horizontalScroll {
@@ -40,7 +52,6 @@ $tdPadding: 1rem 1.8rem 1rem 0;
 }
 
 .amountPicker {
-  margin-bottom: 1rem;
   color: #515365;
   select {
     color: #515365;
@@ -166,7 +177,7 @@ table {
     }
     td {
       border-bottom: var(#{$p}border);
-      &:not(:first-child) {
+      &:not(.selectBoxContainer) {
         cursor: pointer;
       }
     }

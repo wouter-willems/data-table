@@ -83,7 +83,7 @@ export class AppComponent implements OnInit {
 	constructor(private router: Router, private activatedRoute: ActivatedRoute) {
 	}
 
-	getActionsForRowFn = (): Array<{
+	getActionsForRowFn = (row: any): Array<{
 		caption: string,
 		action: () => void,
 	}> => {
@@ -96,6 +96,23 @@ export class AppComponent implements OnInit {
 			caption: 'Delete',
 			action: () => {
 				console.log('chosen Delete');
+			}
+		}];
+	};
+
+	getActionsForMultipleRowsFn = (rows: Array<any>): Array<{
+		caption: string,
+		action: () => void,
+	}> => {
+		return [{
+			caption: 'Export ALL',
+			action: () => {
+				console.log('chosen Export ALL');
+			}
+		}, {
+			caption: 'Delete ALL',
+			action: () => {
+				console.log('chosen Delete ALL');
 			}
 		}];
 	};
