@@ -28,6 +28,7 @@ export const SearchInputRefToken = new InjectionToken('searchInput');
 export class ColumnKeyDirective {
 	@Input() columnKey;
 	@Input() columnCaption;
+	@Input() sortKey;
 	@Input() defaultSort: 'ASC' | 'DESC';
 	@Input() fixedWidthOnContents: boolean;
 	@Input() fixedWidthInREM: number;
@@ -166,11 +167,14 @@ export class DataTableComponent implements OnChanges, OnInit {
 			});
 		}
 		this.prevSearchParams = {...params};
+
+		const targetedColumn = this.columnKeyDirectives.find(e => e.columnKey === this.sortField);
+		const sortFieldToUse = targetedColumn.sortKey ?? this.sortField;
 		this.pageData = await this.fetchItemsFn(
 			params.start,
 			params.searchQuery,
 			params.itemsPerPage,
-			params.sortField,
+			sortFieldToUse,
 			params.sortOrder
 		);
 		this.pageData.data.forEach(e => this.selectedState.set(e, false));
@@ -407,6 +411,10 @@ export class DataTableComponent implements OnChanges, OnInit {
 			this.sortOrder = 'ASC';
 		}
 		this.getData();
+	}
+
+	isSortable(headerKey: string): boolean {
+		return this.columnKeyDirectives.find(e => e.columnKey === headerKey).sortKey !== null;
 	}
 
 	async onColumnsSaved(): Promise<void> {

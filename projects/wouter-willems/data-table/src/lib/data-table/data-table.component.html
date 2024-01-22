@@ -54,7 +54,7 @@
 			<td *ngFor="let headerKey of headerKeys">
 				<div class="colHeader">
 					<div class="caption" [klpWithTooltip]="true" (click)="setSortField(headerKey)">{{headerCaptionByKey.get(headerKey)}}</div>
-					<button class="sortButton" (click)="setSortField(headerKey)">
+					<button class="sortButton" *ngIf="isSortable(headerKey)" (click)="setSortField(headerKey)">
 						<svg height="5" width="10" [ngClass]="{'visible': sortField !== headerKey || sortOrder !== 'DESC'}"><polygon points="0,5 5,0 10,5" style="fill:#515365;" /></svg>
 						<svg height="5" width="10" [ngClass]="{'visible': sortField !== headerKey || sortOrder !== 'ASC'}"><polygon points="0,0 5,5 10,0" style="fill:#515365;" /></svg>
 					</button>

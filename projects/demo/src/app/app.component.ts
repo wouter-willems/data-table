@@ -121,6 +121,7 @@ export class AppComponent implements OnInit {
 		totalAmount: number,
 		data: Array<Record<string, any>>
 	}> => {
+		console.log(sortField);
 		if (start === 96) {
 			return {
 				totalAmount: 98,

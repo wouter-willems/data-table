@@ -37,10 +37,10 @@
 		<ng-template columnKey="age" columnCaption="Age" let-value="value" [fixedWidthOnContents]="true">
 			{{value}} years old
 		</ng-template>
-		<ng-template columnKey="address" columnCaption="Address" let-value="value">
+		<ng-template columnKey="address" columnCaption="Address" [sortKey]="null" let-value="value">
 			{{value.street}} at number {{value.number}}
 		</ng-template>
-		<ng-template columnKey="occupation" columnCaption="Occupation" let-value="value">
+		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value">
 			{{value}}
 		</ng-template>
 	</wutu-data-table>
