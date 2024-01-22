@@ -121,26 +121,26 @@ export class DataTableComponent implements OnChanges, OnInit {
 	ngOnChanges(simpleChanges: SimpleChanges): void {
 		if (isValueSet(simpleChanges.searchParams)) {
 			const stateInternal = {
-				page: this.page,
-				itemsPerPage: this.itemsPerPage,
+				page: Number(this.page),
+				itemsPerPage: Number(this.itemsPerPage),
 				searchQuery: this.searchQuery,
 				sortField: this.sortField,
 				sortOrder: this.sortOrder,
 			};
 			const c = simpleChanges.searchParams.currentValue;
 			const stateExternal = {
-				page: c.page ?? stateInternal.page,
-				itemsPerPage: c.itemsPerPage ?? stateInternal.itemsPerPage,
+				page: Number(c.page ?? stateInternal.page),
+				itemsPerPage: Number(c.itemsPerPage ?? stateInternal.itemsPerPage),
 				searchQuery: c.searchQuery ?? stateInternal.searchQuery,
 				sortField: c.sortField ?? stateInternal.sortField,
 				sortOrder: c.sortOrder ?? stateInternal.sortOrder
 			};
 			if (!isEqual(stateInternal, stateExternal)) {
-				this.page = Number.isFinite(Number(c.page)) ? Number(c.page) : stateInternal.page;
-				this.itemsPerPage = Number.isFinite(Number(c.itemsPerPage)) ? Number(c.itemsPerPage) : stateInternal.itemsPerPage;
-				this.searchQuery = c.searchQuery ?? stateInternal.searchQuery;
-				this.sortField = c.sortField ?? stateInternal.sortField;
-				this.sortOrder = c.sortOrder ?? stateInternal.sortOrder;
+				this.page = stateExternal.page || stateInternal.page;
+				this.itemsPerPage = stateExternal.itemsPerPage || stateInternal.itemsPerPage;
+				this.searchQuery = stateExternal.searchQuery ?? stateInternal.searchQuery;
+				this.sortField = stateExternal.sortField ?? stateInternal.sortField;
+				this.sortOrder = stateExternal.sortOrder ?? stateInternal.sortOrder;
 				if (this.initiated) {
 					this.getData();
 				}
@@ -149,7 +149,6 @@ export class DataTableComponent implements OnChanges, OnInit {
 	}
 
 	private prevSearchParams = {};
-
 	private async getData(): Promise<void> {
 		const defaultSortField = this.columnKeyDirectives.find(e => stringIsSetAndFilled(e.defaultSort));
 		if (!stringIsSetAndFilled(this.sortField)) {
@@ -160,7 +159,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 		if (!isEqual(params, this.prevSearchParams)) {
 			this.onParamsChanged.emit({
 				page: this.page,
-				itemsPerPage: this.itemsPerPage,
+				itemsPerPage: Number(this.itemsPerPage) ?? 1,
 				searchQuery: this.searchQuery,
 				sortField: this.sortField,
 				sortOrder: this.sortOrder,
@@ -183,9 +182,9 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	private getParams(): { itemsPerPage: number; searchQuery: string; sortOrder: 'ASC' | 'DESC'; start: number; sortField: string } {
 		return {
-			start: (this.page - 1) * (this.itemsPerPage ?? 1),
+			start: (this.page - 1) * (Number(this.itemsPerPage) ?? 1),
 			searchQuery: this.searchQuery,
-			itemsPerPage: (this.itemsPerPage ?? 1),
+			itemsPerPage: (Number(this.itemsPerPage) ?? 1),
 			sortField: this.sortField,
 			sortOrder: this.sortOrder,
 		};
