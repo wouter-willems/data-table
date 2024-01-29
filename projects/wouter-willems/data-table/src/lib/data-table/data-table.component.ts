@@ -70,6 +70,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 		key: string,
 		active: boolean,
 	}>) => Promise<void>;
+	@Input() emptyTpl: TemplateRef<any>;
 	@Output() onRowClicked = new EventEmitter<any>();
 	@Output() onParamsChanged = new EventEmitter<any>();
 
@@ -99,6 +100,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	public actionMenuBtnRef: TemplateRef<any>;
 	public searchInputRef: TemplateRef<any>;
 	public actionMenuOffset: { x: number, y: number };
+	public loading = true;
 	private initiated = false;
 
 	constructor(private injector: Injector, private elRef: ElementRef) {
@@ -150,6 +152,8 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	private prevSearchParams = {};
 	private async getData(): Promise<void> {
+		this.loading = true;
+		const resultsBefore = this.pageData?.totalAmount ?? 0;
 		const defaultSortField = this.columnKeyDirectives.find(e => stringIsSetAndFilled(e.defaultSort));
 		if (!stringIsSetAndFilled(this.sortField)) {
 			this.sortField = defaultSortField?.columnKey;
@@ -178,6 +182,10 @@ export class DataTableComponent implements OnChanges, OnInit {
 		);
 		this.pageData.data.forEach(e => this.selectedState.set(e, false));
 		await this.extractHeaders();
+		if (resultsBefore === 0) {
+			await this.calculateColumnWidths();
+		}
+		this.loading = false;
 	}
 
 	private getParams(): { itemsPerPage: number; searchQuery: string; sortOrder: 'ASC' | 'DESC'; start: number; sortField: string } {
@@ -428,4 +436,13 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.multipleRowsActionsShown = false;
 		document.body.removeChild(this.backdropDiv);
 	}
+
+	public hasAtLeastOneResult(): boolean {
+		return this.pageData?.totalAmount > 0;
+	}
+
+	public _ext_refreshTable(): void {
+		this.getData();
+	}
+
 }

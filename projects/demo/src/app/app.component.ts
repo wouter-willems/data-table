@@ -122,6 +122,12 @@ export class AppComponent implements OnInit {
 		data: Array<Record<string, any>>
 	}> => {
 		console.log(start, searchQuery, itemsPerPage, sortField, sortOrder);
+		if (searchQuery === 'empty') {
+			return {
+				totalAmount: 0,
+				data: [],
+			};
+		}
 		if (start === 96) {
 			return {
 				totalAmount: 98,

@@ -30,6 +30,7 @@
 		[searchParams]="getSearchParams()"
 		(onParamsChanged)="updateRoute($event)"
 		(onRowClicked)="onRowClicked($event)"
+		[emptyTpl]="empty"
 	>
 		<ng-template columnKey="name" columnCaption="Full name" defaultSort="DESC" let-value="value" [fixedWidthInREM]="6">
 			{{value}}
@@ -45,3 +46,7 @@
 		</ng-template>
 	</wutu-data-table>
 </div>
+
+<ng-template #empty>
+ Empty state
+</ng-template>

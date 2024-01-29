@@ -43,7 +43,8 @@
 	class="tableContainer"
 	[ngClass]="{horizontalScroll: horizontalScroll || columnWidthsToBeCalculated}"
 >
-	<table [ngClass]="{actionMenuOpen: hasActionMenuOpen(), fullWidth: horizontalScroll || !columnWidthsToBeCalculated}">
+	<ng-container *ngIf="!loading && !hasAtLeastOneResult()" [ngTemplateOutlet]="emptyTpl"></ng-container>
+	<table *ngIf="hasAtLeastOneResult()" [ngClass]="{actionMenuOpen: hasActionMenuOpen(), fullWidth: horizontalScroll || !columnWidthsToBeCalculated}">
 		<thead>
 		<tr>
 			<td (click)="headerSelectClicked()" class="selectBoxContainer" *ngIf="getActionsForMultipleRowsFn">
@@ -97,7 +98,7 @@
 	</table>
 </div>
 
-<footer *ngIf="pageData">
+<footer *ngIf="hasAtLeastOneResult()">
 	<div>
 		Showing {{(page -1) * itemsPerPage + 1}} to {{(page -1) * itemsPerPage + pageData.data.length}} of {{pageData.totalAmount}} results
 	</div>
