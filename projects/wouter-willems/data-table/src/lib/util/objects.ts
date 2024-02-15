@@ -29,7 +29,7 @@ export function filterUndefinedValues(object: Record<any, string>): Record<any, 
 	}, {});
 }
 
-export function filterUnsetValues(object: Record<any, string>): Record<any, string> {
+export function filterUnsetValues(object: Record<any, any>): Record<any, string> {
 	return Object.entries(object).reduce((acc, cur) => {
 		if (isValueSet(cur[1])) {
 			return { ...acc, [cur[0]]: cur[1] };

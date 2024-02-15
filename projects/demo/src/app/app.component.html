@@ -32,7 +32,7 @@
 		(onRowClicked)="onRowClicked($event)"
 		[emptyTpl]="empty"
 	>
-		<ng-template columnKey="name" columnCaption="Full name" defaultSort="DESC" let-value="value" [fixedWidthInREM]="6">
+		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [fixedWidthInREM]="6">
 			{{value}}
 		</ng-template>
 		<ng-template columnKey="age" columnCaption="Age" let-value="value" [fixedWidthOnContents]="true">

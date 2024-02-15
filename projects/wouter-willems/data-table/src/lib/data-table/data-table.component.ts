@@ -14,9 +14,10 @@ import {
 	TemplateRef, ViewChild
 } from '@angular/core';
 import {arrayIsSetAndFilled, removeDuplicatesFromArray} from '../util/arrays';
-import {isValueSet, stringIsSetAndFilled} from '../util/values';
+import {isValueSet, stringIsSetAndFilled, useIfStringIsSet} from '../util/values';
 import {awaitableForNextCycle} from "../util/angular";
 import {isEqual, debounce} from 'lodash';
+import {filterUnsetValues} from "../util/objects";
 
 export const CheckBoxRefToken = new InjectionToken('checkbox');
 export const ConfigBtnRefToken = new InjectionToken('config btn');
@@ -161,18 +162,19 @@ export class DataTableComponent implements OnChanges, OnInit {
 		}
 		const params = this.getParams();
 		if (!isEqual(params, this.prevSearchParams)) {
-			this.onParamsChanged.emit({
+			const allParams = {
 				page: this.page,
 				itemsPerPage: Number(this.itemsPerPage) ?? 1,
-				searchQuery: this.searchQuery,
+				searchQuery: useIfStringIsSet(this.searchQuery),
 				sortField: this.sortField,
 				sortOrder: this.sortOrder,
-			});
+			};
+			this.onParamsChanged.emit(allParams);
 		}
 		this.prevSearchParams = {...params};
 
 		const targetedColumn = this.columnKeyDirectives.find(e => e.columnKey === this.sortField);
-		const sortFieldToUse = targetedColumn.sortKey ?? this.sortField;
+		const sortFieldToUse = targetedColumn?.sortKey ?? this.sortField;
 		this.pageData = await this.fetchItemsFn(
 			params.start,
 			params.searchQuery,
@@ -411,7 +413,13 @@ export class DataTableComponent implements OnChanges, OnInit {
 	}, 300);
 
 	setSortField(headerKey: string): void {
-		if (this.sortField === headerKey && this.sortOrder === 'ASC') {
+		if (!this.isSortable(headerKey)) {
+			return;
+		}
+		if (this.sortField === headerKey && this.sortOrder === 'DESC') {
+			this.sortOrder = null;
+			this.sortField = null;
+		} else if (this.sortField === headerKey && this.sortOrder === 'ASC') {
 			this.sortOrder = 'DESC';
 		} else {
 			this.sortField = headerKey;
