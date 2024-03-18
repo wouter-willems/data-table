@@ -21,6 +21,12 @@
 	<span>{{setQuery(searchQuery2)}}</span>
 	<input type="text" [(ngModel)]="searchQuery" (ngModelChange)="changeHandler($event)" />
 </ng-template>
+<ng-template #filterButton let-clickHandler="clickHandler">
+	<button (click)="clickHandler($event.target)">
+		Filter
+	</button>
+</ng-template>
+
 
 <div class="tableContainer">
 	<wutu-data-table
@@ -43,6 +49,14 @@
 		</ng-template>
 		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value">
 			{{value}}
+		</ng-template>
+
+		<ng-template filterForm>
+			<form [formGroup]="myFilterForm" class="filterForm">
+				<input type="text" formControlName="name" />
+				<input type="text" formControlName="email" />
+				<button (click)="setFilters()">Submit</button>
+			</form>
 		</ng-template>
 	</wutu-data-table>
 </div>

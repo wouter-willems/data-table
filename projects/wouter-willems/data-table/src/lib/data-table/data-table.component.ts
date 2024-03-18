@@ -1,28 +1,32 @@
 import {
-	Component, ContentChild,
+	Component,
+	ContentChild,
 	ContentChildren,
-	Directive, ElementRef,
+	Directive,
+	ElementRef,
 	EventEmitter,
-	inject,
-	InjectionToken, Injector,
+	InjectionToken,
+	Injector,
 	Input,
 	OnChanges,
 	OnInit,
 	Output,
 	QueryList,
 	SimpleChanges,
-	TemplateRef, ViewChild
+	TemplateRef,
+	ViewChild
 } from '@angular/core';
 import {arrayIsSetAndFilled, removeDuplicatesFromArray} from '../util/arrays';
 import {isValueSet, stringIsSetAndFilled, useIfStringIsSet} from '../util/values';
 import {awaitableForNextCycle} from "../util/angular";
-import {isEqual, debounce} from 'lodash';
-import {filterUnsetValues} from "../util/objects";
+import {debounce, isEqual} from 'lodash';
 
+export const TranslationsToken = new InjectionToken('translations');
 export const CheckBoxRefToken = new InjectionToken('checkbox');
 export const ConfigBtnRefToken = new InjectionToken('config btn');
 export const ActionMenuBtnRefToken = new InjectionToken('actionMenu');
 export const SearchInputRefToken = new InjectionToken('searchInput');
+export const FilterBtnRefToken = new InjectionToken('filter btn');
 
 // tslint:disable-next-line:directive-selector
 @Directive({selector: '[columnKey]'})
@@ -34,6 +38,11 @@ export class ColumnKeyDirective {
 	@Input() fixedWidthOnContents: boolean;
 	@Input() fixedWidthInREM: number;
 	@Input() widthAsRatio: number = 1;
+}
+
+// tslint:disable-next-line:directive-selector
+@Directive({selector: '[filterForm]'})
+export class FilterFormDirective {
 }
 
 @Component({
@@ -48,10 +57,11 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	@ContentChildren(ColumnKeyDirective, {read: TemplateRef}) templates: QueryList<TemplateRef<any>>;
 	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) columnKeyDirectives: QueryList<ColumnKeyDirective>;
+	@ContentChild(FilterFormDirective, {read: TemplateRef}) filterFormTpl: TemplateRef<any>;
 
 	@Input() horizontalScroll = false;
 	@Input() searchParams;
-	@Input() fetchItemsFn: (start: number, searchQuery: string, itemsPerPage: number, sortField: string, sortOrder: 'ASC' | 'DESC') => Promise<{
+	@Input() fetchItemsFn: (start: number, searchQuery: string, itemsPerPage: number, sortField: string, sortOrder: 'ASC' | 'DESC', filters: Record<string, any>) => Promise<{
 		totalAmount: number,
 		data: Array<Record<string, any>>
 	}>;
@@ -93,6 +103,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	public multipleRowsActionsShown: boolean = false;
 	public definedColumns: Array<{ key: string, active: boolean }>;
 	public showConfig: boolean = false;
+	public showFilters: boolean = false;
 	private backdropDiv: HTMLDivElement;
 	public selectedState: Map<Record<string, any>, boolean> = new Map();
 
@@ -100,19 +111,24 @@ export class DataTableComponent implements OnChanges, OnInit {
 	public configBtnRef: TemplateRef<any>;
 	public actionMenuBtnRef: TemplateRef<any>;
 	public searchInputRef: TemplateRef<any>;
+	public filterBtnRef: TemplateRef<any>;
 	public actionMenuOffset: { x: number, y: number };
 	public loading = true;
 	private initiated = false;
+	private activeFilters: Record<string, any>;
+	private translations: Record<string, string>;
 
 	constructor(private injector: Injector, private elRef: ElementRef) {
 	}
 
 	async ngOnInit(): Promise<void> {
 		await awaitableForNextCycle();
+		this.translations = this.injector.get<Record<string, string>>(TranslationsToken);
 		this.checkboxRef = this.injector.get<TemplateRef<any>>(CheckBoxRefToken);
 		this.configBtnRef = this.injector.get<TemplateRef<any>>(ConfigBtnRefToken);
 		this.actionMenuBtnRef = this.injector.get<TemplateRef<any>>(ActionMenuBtnRefToken);
 		this.searchInputRef = this.injector.get<TemplateRef<any>>(SearchInputRefToken);
+		this.filterBtnRef = this.injector.get<TemplateRef<any>>(FilterBtnRefToken);
 		this.initiated = true;
 		await this.getData();
 		if (!this.horizontalScroll) {
@@ -151,6 +167,10 @@ export class DataTableComponent implements OnChanges, OnInit {
 		}
 	}
 
+	public translate = (key: string): string => {
+		return this.translations[key] ?? key;
+	}
+
 	private prevSearchParams = {};
 	private async getData(): Promise<void> {
 		this.loading = true;
@@ -180,7 +200,8 @@ export class DataTableComponent implements OnChanges, OnInit {
 			params.searchQuery,
 			params.itemsPerPage,
 			sortFieldToUse,
-			params.sortOrder
+			params.sortOrder,
+			this.activeFilters,
 		);
 		this.pageData.data.forEach(e => this.selectedState.set(e, false));
 		await this.extractHeaders();
@@ -326,10 +347,16 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.getData();
 	}
 
-	openConfig = (): void => {
+	public openConfig = (): void => {
 		this.showConfig = true;
 		this.createBackdrop(() => this.showConfig = false, true);
 	}
+
+
+	public openFilters = () => {
+		this.showFilters = true;
+		this.createBackdrop(() => this.showFilters = false, true);
+	};
 
 
 	private createBackdrop(clickHandler: () => void, blackBackground: boolean): void {
@@ -353,6 +380,11 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	closeConfig(): void {
 		this.showConfig = false;
+		document.body.removeChild(this.backdropDiv);
+	}
+
+	closeFilters(): void {
+		this.showFilters = false;
 		document.body.removeChild(this.backdropDiv);
 	}
 
@@ -438,7 +470,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 		await this.calculateColumnWidths();
 	}
 
-	closeActionMenu(): void {
+	public closeActionMenu(): void {
 		this.actionMenuForRow = null;
 		this.actions = null;
 		this.multipleRowsActionsShown = false;
@@ -453,4 +485,14 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.getData();
 	}
 
+	public async _ext_setFilters(filters: Record<string, any>): Promise<void> {
+		this.activeFilters = filters;
+		await awaitableForNextCycle();
+		this.closeFilters();
+		this.getData();
+	}
+
+	public _ext_getFilters(): Record<string, any> {
+		return this.activeFilters;
+	}
 }

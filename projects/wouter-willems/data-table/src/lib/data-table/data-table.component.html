@@ -21,6 +21,7 @@
 	</div>
 	<div class="searchAndMultiSelect">
 		<ng-container [ngTemplateOutlet]="searchInputRef" [ngTemplateOutletContext]="{changeHandler: searchQueryChanged, searchQuery: searchQuery}"></ng-container>
+		<ng-container [ngTemplateOutlet]="filterBtnRef" [ngTemplateOutletContext]="{clickHandler: openFilters}"></ng-container>
 		<div class="multiSelectActionMenu" *ngIf="getSelectedRows().length > 0">
 			Selected {{getSelectedRows().length}} items
 			<div class="actionMenuContainer" *ngIf="getActionsForMultipleRowsFn?.(getSelectedRows())?.length > 0">
@@ -103,22 +104,30 @@
 		Showing {{(page -1) * itemsPerPage + 1}} to {{(page -1) * itemsPerPage + pageData.data.length}} of {{pageData.totalAmount}} results
 	</div>
 	<div class="pageNumbers" *ngIf="pageData">
-		<button (click)="toPage(1)" [disabled]="page === 1">First</button>
-		<button (click)="toPage(page-1)" [disabled]="page === 1">Previous</button>
+		<button (click)="toPage(1)" [disabled]="page === 1">{{translate('First')}}</button>
+		<button (click)="toPage(page-1)" [disabled]="page === 1">{{translate('Previous')}}</button>
 		<div class="pageNrButtons">
 			<button class="pageNrButton" *ngFor="let pageNr of getPageNumbers()" (click)="toPage(pageNr)" [ngClass]="{selected: page === pageNr}">
 				<span>{{pageNr}}</span>
 			</button>
 		</div>
-		<button (click)="toPage(page+1)" [disabled]="page === this.getLastPage()">Next</button>
-		<button (click)="toPage(this.getLastPage())" [disabled]="page === this.getLastPage()">Last</button>
+		<button (click)="toPage(page+1)" [disabled]="page === this.getLastPage()">{{translate('Next')}}</button>
+		<button (click)="toPage(this.getLastPage())" [disabled]="page === this.getLastPage()">{{translate('Last')}}</button>
 	</div>
 </footer>
 
 <div class="columnRearranger" *ngIf="showConfig">
 	<header>
-		<div>Configure your table</div>
+		<div>{{translate('Configure your table')}}</div>
 		<button class="closeButton" (click)="closeConfig()">×</button>
 	</header>
 	<wutu-column-rearranger [(ngModel)]="definedColumns" [headerCaptionByKey]="headerCaptionByKey" (onCloseRequest)="closeConfig()" (onColumnsSaved)="onColumnsSaved()"></wutu-column-rearranger>
+</div>
+
+<div class="filters" *ngIf="showFilters">
+	<header>
+		<div>{{translate('Filters')}}</div>
+		<button class="closeButton" (click)="closeFilters()">×</button>
+	</header>
+	<ng-container [ngTemplateOutlet]="filterFormTpl"></ng-container>
 </div>

@@ -2,13 +2,14 @@ import {Component, inject, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {
 	ActionMenuBtnRefToken,
 	CheckBoxRefToken,
-	ConfigBtnRefToken,
+	ConfigBtnRefToken, DataTableComponent, FilterBtnRefToken,
 	SearchInputRefToken, ToggleRefToken
 } from 'projects/wouter-willems/data-table/src/public-api';
 import {
 	SaveBtnRefToken
 } from "../../../wouter-willems/data-table/src/lib/column-rearranger/column-rearranger.component";
 import {ActivatedRoute, Router} from "@angular/router";
+import {FormControl, FormGroup, Validators } from '@angular/forms';
 
 const data  = [
 	{
@@ -66,6 +67,9 @@ const data  = [
 		}, {
 			provide: SearchInputRefToken,
 			useFactory: () => inject(AppComponent, {self: true}).searchInput,
+		}, {
+			provide: FilterBtnRefToken,
+			useFactory: () => inject(AppComponent, {self: true}).filterButton,
 		}
 	]
 })
@@ -77,10 +81,18 @@ export class AppComponent implements OnInit {
 	@ViewChild('saveBtn') saveBtn: TemplateRef<any>;
 	@ViewChild('actionMenuBtn') actionMenuBtn: TemplateRef<any>;
 	@ViewChild('searchInput') searchInput: TemplateRef<any>;
+	@ViewChild('filterButton') filterButton: TemplateRef<any>;
+	@ViewChild('filterForm') filterForm: TemplateRef<any>;
+	@ViewChild(DataTableComponent) dataTableComponent: DataTableComponent;
 
 	public searchQuery: string;
+	public myFilterForm: FormGroup;
 
 	constructor(private router: Router, private activatedRoute: ActivatedRoute) {
+		this.myFilterForm = new FormGroup({
+			name: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]),
+			email: new FormControl('', [Validators.required, Validators.email])
+		});
 	}
 
 	getActionsForRowFn = (row: any): Array<{
@@ -117,11 +129,11 @@ export class AppComponent implements OnInit {
 		}];
 	};
 
-	fetchItemsFn = async (start: number, searchQuery: string, itemsPerPage: number, sortField: string, sortOrder: 'ASC' | 'DESC'): Promise<{
+	fetchItemsFn = async (start: number, searchQuery: string, itemsPerPage: number, sortField: string, sortOrder: 'ASC' | 'DESC', filters: Record<string, any>): Promise<{
 		totalAmount: number,
 		data: Array<Record<string, any>>
 	}> => {
-		console.log(start, searchQuery, itemsPerPage, sortField, sortOrder);
+		console.log(start, searchQuery, itemsPerPage, sortField, sortOrder, filters);
 		if (searchQuery === 'empty') {
 			return {
 				totalAmount: 0,
@@ -158,6 +170,10 @@ export class AppComponent implements OnInit {
 		localStorage.setItem('cols', JSON.stringify(r));
 	}
 
+	getFilterObject = () => {
+		// return this.myFilterForm.
+	};
+
 
 	ngOnInit(): void {
 
@@ -180,7 +196,11 @@ export class AppComponent implements OnInit {
 		return this.activatedRoute.snapshot.queryParams;
 	}
 
-	setQuery(searchQuery2: any) {
+	public setQuery(searchQuery2: any): void {
 		this.searchQuery = searchQuery2;
+	}
+
+	public setFilters(): void {
+		this.dataTableComponent._ext_setFilters(this.myFilterForm.value);
 	}
 }

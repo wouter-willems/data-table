@@ -5,7 +5,8 @@ import {AppComponent} from './app.component';
 import {WutuDataTableModule} from "../../../wouter-willems/data-table/src/lib/wutu-data-table.module";
 import {RouterModule} from "@angular/router";
 import {MyToggleComponent} from "../my-toggle/my-toggle.component";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {TranslationsToken} from "../../../wouter-willems/data-table/src/lib/data-table/data-table.component";
 
 @NgModule({
 	declarations: [
@@ -17,9 +18,17 @@ import {FormsModule} from "@angular/forms";
 		RouterModule,
 		WutuDataTableModule,
 		FormsModule,
+		ReactiveFormsModule,
 		RouterModule.forRoot([]),
 	],
-	providers: [],
+	providers: [
+		{
+			provide: TranslationsToken, useValue: {
+				'First': 'Eerste',
+				'Configure your table': 'Configureer je tabel',
+			}
+		},
+	],
 	bootstrap: [AppComponent]
 })
 export class AppModule {
