@@ -61,6 +61,8 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	@Input() horizontalScroll = false;
 	@Input() searchParams;
+	@Input() showSearchField = true;
+	@Input() showFiltersBtn = true;
 	@Input() fetchItemsFn: (start: number, searchQuery: string, itemsPerPage: number, sortField: string, sortOrder: 'ASC' | 'DESC', filters: Record<string, any>) => Promise<{
 		totalAmount: number,
 		data: Array<Record<string, any>>

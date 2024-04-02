@@ -20,8 +20,8 @@
 		</div>
 	</div>
 	<div class="searchAndMultiSelect">
-		<ng-container [ngTemplateOutlet]="searchInputRef" [ngTemplateOutletContext]="{changeHandler: searchQueryChanged, searchQuery: searchQuery}"></ng-container>
-		<ng-container [ngTemplateOutlet]="filterBtnRef" [ngTemplateOutletContext]="{clickHandler: openFilters}"></ng-container>
+		<ng-container *ngIf="showSearchField" [ngTemplateOutlet]="searchInputRef" [ngTemplateOutletContext]="{changeHandler: searchQueryChanged, searchQuery: searchQuery}"></ng-container>
+		<ng-container *ngIf="showFiltersBtn" [ngTemplateOutlet]="filterBtnRef" [ngTemplateOutletContext]="{clickHandler: openFilters}"></ng-container>
 		<div class="multiSelectActionMenu" *ngIf="getSelectedRows().length > 0">
 			{{translate('Selected %length% item(s)', {length: getSelectedRows().length})}}
 			<div class="actionMenuContainer" *ngIf="getActionsForMultipleRowsFn?.(getSelectedRows())?.length > 0">

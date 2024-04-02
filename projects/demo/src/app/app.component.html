@@ -37,6 +37,8 @@
 		(onParamsChanged)="updateRoute($event)"
 		(onRowClicked)="onRowClicked($event)"
 		[emptyTpl]="empty"
+		[showFiltersBtn]="true"
+		[showSearchField]="true"
 	>
 		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [fixedWidthInREM]="6">
 			{{value}}
