@@ -9,21 +9,21 @@
 <div class="topButtons">
 	<div class="amountAndMultiSelect">
 		<div class="amountPicker">
-			Show
+			{{translate('Show')}}
 			<select [(ngModel)]="itemsPerPage" (ngModelChange)="itemsPerPageChanged()">
 				<option value="10">10</option>
 				<option value="25">25</option>
 				<option value="50">50</option>
 				<option value="100">100</option>
 			</select>
-			results
+			{{translate('results')}}
 		</div>
 	</div>
 	<div class="searchAndMultiSelect">
 		<ng-container [ngTemplateOutlet]="searchInputRef" [ngTemplateOutletContext]="{changeHandler: searchQueryChanged, searchQuery: searchQuery}"></ng-container>
 		<ng-container [ngTemplateOutlet]="filterBtnRef" [ngTemplateOutletContext]="{clickHandler: openFilters}"></ng-container>
 		<div class="multiSelectActionMenu" *ngIf="getSelectedRows().length > 0">
-			Selected {{getSelectedRows().length}} items
+			{{translate('Selected %length% item(s)', {length: getSelectedRows().length})}}
 			<div class="actionMenuContainer" *ngIf="getActionsForMultipleRowsFn?.(getSelectedRows())?.length > 0">
 				<ng-container [ngTemplateOutlet]="actionMenuBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsMultipleFn(getSelectedRows())}"></ng-container>
 				<div
@@ -101,7 +101,7 @@
 
 <footer *ngIf="hasAtLeastOneResult()">
 	<div>
-		Showing {{(page -1) * itemsPerPage + 1}} to {{(page -1) * itemsPerPage + pageData.data.length}} of {{pageData.totalAmount}} results
+		{{translate('Showing %from% to %to% of %total% results', {from: (page -1) * itemsPerPage + 1, to: (page -1) * itemsPerPage + pageData.data.length, total: pageData.totalAmount})}}
 	</div>
 	<div class="pageNumbers" *ngIf="pageData">
 		<button (click)="toPage(1)" [disabled]="page === 1">{{translate('First')}}</button>

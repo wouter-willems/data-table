@@ -24,8 +24,10 @@ import {TranslationsToken} from "../../../wouter-willems/data-table/src/lib/data
 	providers: [
 		{
 			provide: TranslationsToken, useValue: {
+				'Show': 'Toon',
 				'First': 'Eerste',
 				'Configure your table': 'Configureer je tabel',
+				'Showing %from% to %to% of %total% results': 'Toont %from% tot %to% van %total% resultaten',
 			}
 		},
 	],

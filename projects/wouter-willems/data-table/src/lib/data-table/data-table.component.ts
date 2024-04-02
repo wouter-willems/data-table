@@ -167,8 +167,15 @@ export class DataTableComponent implements OnChanges, OnInit {
 		}
 	}
 
-	public translate = (key: string): string => {
-		return this.translations[key] ?? key;
+	public translate = (key: string, params?: Record<string, any>): string => {
+		const translated = this.translations?.[key] ?? key;
+		if (!isValueSet(params)) {
+			return translated;
+		} else {
+			return Object.keys(params).reduce((acc, cur) => {
+				return acc.replace(`%${cur}%`, params[cur]);
+			}, translated);
+		}
 	}
 
 	private prevSearchParams = {};
