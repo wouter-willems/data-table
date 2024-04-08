@@ -39,6 +39,8 @@
 		[emptyTpl]="empty"
 		[showFiltersBtn]="true"
 		[showSearchField]="true"
+		[persistColumnsFn]="persistColumns"
+		[retrieveColumnsFn]="retrieveColumns"
 	>
 		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [fixedWidthInREM]="6">
 			{{value}}

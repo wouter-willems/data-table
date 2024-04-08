@@ -248,7 +248,8 @@ export class DataTableComponent implements OnChanges, OnInit {
 		.sort((a, b) => {
 			return this.definedColumns.findIndex(e => e.key === a) > this.definedColumns.findIndex(e => e.key === b) ? 1 : -1;
 		});
-		this.headerKeys.forEach(key => {
+
+		keys.filter(key => this.columnKeyDirectives.some(e => e.columnKey === key)).forEach(key => {
 			this.headerCaptionByKey.set(key, this.columnKeyDirectives.find(e => e.columnKey === key)?.columnCaption);
 		});
 		await awaitableForNextCycle();
