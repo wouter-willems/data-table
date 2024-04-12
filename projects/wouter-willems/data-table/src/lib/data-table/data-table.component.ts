@@ -16,7 +16,7 @@ import {
 	TemplateRef,
 	ViewChild
 } from '@angular/core';
-import {arrayIsSetAndFilled, removeDuplicatesFromArray} from '../util/arrays';
+import {arrayIsSetAndFilled, removeDuplicatesFromArray, removeDuplicatesFromArraysWithComparator} from '../util/arrays';
 import {isValueSet, stringIsSetAndFilled, useIfStringIsSet} from '../util/values';
 import {awaitableForNextCycle} from "../util/angular";
 import {debounce, isEqual} from 'lodash';
@@ -45,6 +45,8 @@ export class ColumnKeyDirective {
 export class FilterFormDirective {
 }
 
+export type WDTRow = {id: number} & Record<string, any>;
+
 @Component({
 	selector: 'wutu-data-table',
 	templateUrl: './data-table.component.html',
@@ -65,7 +67,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	@Input() showFiltersBtn = true;
 	@Input() fetchItemsFn: (start: number, searchQuery: string, itemsPerPage: number, sortField: string, sortOrder: 'ASC' | 'DESC', filters: Record<string, any>) => Promise<{
 		totalAmount: number,
-		data: Array<Record<string, any>>
+		data: Array<WDTRow>
 	}>;
 	@Input() getActionsForRowFn: (r: any) => Array<{
 		caption: string,
@@ -96,7 +98,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	public sortOrder: 'ASC' | 'DESC';
 	public headerKeys: Array<string> = [];
 	public headerCaptionByKey: Map<string, string> = new Map();
-	public pageData: { totalAmount: number; data: Array<Record<string, any>> };
+	public pageData: { totalAmount: number; data: Array<WDTRow> };
 	public actions: Array<{
 		caption: string,
 		action: () => void,
@@ -107,7 +109,8 @@ export class DataTableComponent implements OnChanges, OnInit {
 	public showConfig: boolean = false;
 	public showFilters: boolean = false;
 	private backdropDiv: HTMLDivElement;
-	public selectedState: Map<Record<string, any>, boolean> = new Map();
+	public selectedState: Map<number, boolean> = new Map();
+	public idByRow: Map<number, WDTRow> = new Map();
 
 	public checkboxRef: TemplateRef<any>;
 	public configBtnRef: TemplateRef<any>;
@@ -119,6 +122,8 @@ export class DataTableComponent implements OnChanges, OnInit {
 	private initiated = false;
 	private activeFilters: Record<string, any>;
 	private translations: Record<string, string>;
+	public selectAllAcrossPagesActive: boolean = false;
+	public selectAllAcrossPagesLoading: boolean = false;
 
 	constructor(private injector: Injector, private elRef: ElementRef) {
 	}
@@ -212,12 +217,54 @@ export class DataTableComponent implements OnChanges, OnInit {
 			params.sortOrder,
 			this.activeFilters,
 		);
-		this.pageData.data.forEach(e => this.selectedState.set(e, false));
+		this.pageData.data.forEach(e => {
+			this.idByRow.set(e.id, e);
+			if (!this.selectAllAcrossPagesActive) {
+				this.selectedState.set(e.id, false);
+			}
+		});
 		await this.extractHeaders();
 		if (resultsBefore === 0) {
 			await this.calculateColumnWidths();
 		}
 		this.loading = false;
+	}
+
+	public async selectAllAcrossPages(): Promise<void> {
+		this.selectAllAcrossPagesLoading = true;
+		this.selectAllAcrossPagesActive = true;
+		this.selectedState = new Map();
+		const batchSize = 999;
+		let currentBatch = 0;
+		let haveAllItemsBeenFetched = false;
+		let allItems: Array<WDTRow> = [];
+		while (!haveAllItemsBeenFetched) {
+			const batch = await this.fetchItemsFn(
+				batchSize * currentBatch,
+				useIfStringIsSet(this.searchQuery),
+				batchSize,
+				null,
+				null,
+				this.activeFilters,
+			);
+			batch.data.forEach(e => {
+				this.idByRow.set(e.id, e);
+			});
+			allItems = [...allItems, ...batch.data];
+			currentBatch++;
+			if (batch.data.length < batchSize) {
+				haveAllItemsBeenFetched = true;
+			}
+		}
+		const allUniques: Array<WDTRow> = removeDuplicatesFromArraysWithComparator((e1, e2) => e1.id === e2.id, allItems);
+		allUniques.forEach(e => this.selectedState.set(e.id, true));
+		this.selectAllAcrossPagesLoading = false;
+	}
+
+
+	public stopSelectingAcrossPages(): void {
+		this.selectAllAcrossPagesActive = false;
+		this.selectedState = new Map();
 	}
 
 	private getParams(): { itemsPerPage: number; searchQuery: string; sortOrder: 'ASC' | 'DESC'; start: number; sortField: string } {
@@ -398,15 +445,18 @@ export class DataTableComponent implements OnChanges, OnInit {
 		document.body.removeChild(this.backdropDiv);
 	}
 
-	rowSelectClicked(row: Record<string, any>): void {
-		this.setRowSelect(row, !this.selectedState.get(row));
+	rowSelectClicked(row: WDTRow): void {
+		this.setRowSelect(row, !this.isSelected(row));
 	}
 
-	private setRowSelect(row: Record<string, any>, newState: boolean): void {
-		this.selectedState.set(row, newState);
+	private setRowSelect(row: WDTRow, newState: boolean): void {
+		this.selectedState.set(row.id, newState);
 	}
 
 	public getHeaderSelectState(): boolean | undefined {
+		if (this.selectedState.size === 0) {
+			return false;
+		}
 		if ([...this.selectedState.values()].every(e => e === true)) {
 			return true;
 		} else if ([...this.selectedState.values()].every(e => e === false)) {
@@ -416,24 +466,31 @@ export class DataTableComponent implements OnChanges, OnInit {
 		}
 	}
 
-	public isSelected(row: Record<string, any>): boolean {
-		return this.selectedState.get(row);
+	public isSelected(row: WDTRow): boolean {
+		return this.selectedState.get(row.id) ?? false;
 	}
 
-	public getSelectedRows(): Array<Record<string, any>> {
-		return [...this.selectedState.entries()]
+	public getSelectedRows(): Array<WDTRow> {
+		const selectedIds = [...this.selectedState.entries()]
 			.filter(e => e[1] === true)
 			.map(e => e[0]);
+		return selectedIds.map(e => this.idByRow.get(e));
 	}
 
 	headerSelectClicked(): void {
-		if ([...this.selectedState.values()].every(e => e === true)) {
+		const isSelected = this.getHeaderSelectState();
+
+		if (isSelected === true) {
 			this.pageData.data.forEach((row, i) => this.setRowSelect(row, false));
-		} else if ([...this.selectedState.values()].every(e => e === false)) {
+			return;
+		} else if (isSelected === false) {
 			this.pageData.data.forEach((row, i) => this.setRowSelect(row, true));
-		} else {
+			return;
+		} else if (isSelected === undefined) {
 			this.pageData.data.forEach((row, i) => this.setRowSelect(row, true));
+			return;
 		}
+		throw new Error(`invalid header select state ${isSelected}`);
 	}
 
 	itemsPerPageChanged(): void {

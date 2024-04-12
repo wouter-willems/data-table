@@ -2,7 +2,7 @@ import {Component, inject, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {
 	ActionMenuBtnRefToken,
 	CheckBoxRefToken,
-	ConfigBtnRefToken, DataTableComponent, FilterBtnRefToken,
+	ConfigBtnRefToken, DataTableComponent, WDTRow, FilterBtnRefToken,
 	SearchInputRefToken, ToggleRefToken
 } from 'projects/wouter-willems/data-table/src/public-api';
 import {
@@ -10,38 +10,8 @@ import {
 } from "../../../wouter-willems/data-table/src/lib/column-rearranger/column-rearranger.component";
 import {ActivatedRoute, Router} from "@angular/router";
 import {FormControl, FormGroup, Validators } from '@angular/forms';
+import {getDummyData} from "./dummy";
 
-const data  = [
-	{
-		id: 1,
-		name: 'Wutu',
-		age: 36,
-		address: {
-			street: 'Streetname',
-			number: 22,
-		},
-		occupation: 'Software Architect',
-	}, {
-		id: 2,
-		name: 'John',
-		age: 22,
-		address: {
-			street: 'Some street',
-			number: 123,
-		},
-		occupation: 'Lawyer',
-	},
-	{
-		id: 3,
-		name: 'Lance',
-		age: 47,
-		address: {
-			street: 'Sim City',
-			number: 88,
-		},
-		occupation: 'Astronaut',
-	}
-];
 
 @Component({
 	selector: 'app-root',
@@ -131,7 +101,7 @@ export class AppComponent implements OnInit {
 
 	fetchItemsFn = async (start: number, searchQuery: string, itemsPerPage: number, sortField: string, sortOrder: 'ASC' | 'DESC', filters: Record<string, any>): Promise<{
 		totalAmount: number,
-		data: Array<Record<string, any>>
+		data: Array<WDTRow>
 	}> => {
 		console.log(start, searchQuery, itemsPerPage, sortField, sortOrder, filters);
 		if (searchQuery === 'empty') {
@@ -140,16 +110,9 @@ export class AppComponent implements OnInit {
 				data: [],
 			};
 		}
-		if (start === 96) {
-			return {
-				totalAmount: 98,
-				data: [data[0], data[2]],
-			};
-		}
-		return {
-			totalAmount: 98,
-			data: data.map(e => ({...e, name: e.name + '#' + start})),
-		};
+		await new Promise(resolve => setTimeout(resolve, 1000));
+		const data = getDummyData(start, searchQuery, itemsPerPage, sortField, sortOrder, filters);
+		return data;
 	};
 
 	retrieveColumns = async (): Promise<Array<{
