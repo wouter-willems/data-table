@@ -65,6 +65,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	@Input() searchParams;
 	@Input() showSearchField = true;
 	@Input() showFiltersBtn = true;
+	@Input() allowSelectingAcrossMultiplePages = false;
 	@Input() fetchItemsFn: (start: number, searchQuery: string, itemsPerPage: number, sortField: string, sortOrder: 'ASC' | 'DESC', filters: Record<string, any>) => Promise<{
 		totalAmount: number,
 		data: Array<WDTRow>
@@ -188,6 +189,9 @@ export class DataTableComponent implements OnChanges, OnInit {
 	private prevSearchParams = {};
 	private async getData(): Promise<void> {
 		this.loading = true;
+		if (!this.selectAllAcrossPagesActive) {
+			this.selectedState = new Map();
+		}
 		const resultsBefore = this.pageData?.totalAmount ?? 0;
 		const defaultSortField = this.columnKeyDirectives.find(e => stringIsSetAndFilled(e.defaultSort));
 		if (!stringIsSetAndFilled(this.sortField)) {
@@ -219,9 +223,6 @@ export class DataTableComponent implements OnChanges, OnInit {
 		);
 		this.pageData.data.forEach(e => {
 			this.idByRow.set(e.id, e);
-			if (!this.selectAllAcrossPagesActive) {
-				this.selectedState.set(e.id, false);
-			}
 		});
 		await this.extractHeaders();
 		if (resultsBefore === 0) {
@@ -284,8 +285,26 @@ export class DataTableComponent implements OnChanges, OnInit {
 			return [...acc, ...cur];
 		}, []));
 		if (!arrayIsSetAndFilled(this.definedColumns)) {
-			this.definedColumns = (await this.retrieveColumnsFn?.()) ?? [];
-			if (!arrayIsSetAndFilled(this.definedColumns)) {
+			const retrievedColumns = (await this.retrieveColumnsFn?.()) ?? [];
+			if (arrayIsSetAndFilled(retrievedColumns)) {
+				this.definedColumns = this.columnKeyDirectives.map(e => e.columnKey).map(e => {
+					const persisted = retrievedColumns.find(col => col.key === e);
+					if (isValueSet(persisted)) {
+						return {key: e, active: persisted.active};
+					}
+					return ({key: e, active: true});
+				}).sort((a, b) => {
+					let indexOfA = retrievedColumns.findIndex(e => e.key === a.key);
+					if (indexOfA === -1) {
+						indexOfA = [...this.columnKeyDirectives].findIndex(e => e.columnKey === a.key);
+					}
+					let indexOfB = retrievedColumns.findIndex(e => e.key === b.key);
+					if (indexOfB === -1) {
+						indexOfB = [...this.columnKeyDirectives].findIndex(e => e.columnKey === b.key);
+					}
+					return indexOfA > indexOfB ? 1 : -1;
+				});
+			} else {
 				this.definedColumns = this.columnKeyDirectives.map(e => e.columnKey).map(e => ({key: e, active: true}));
 			}
 		}

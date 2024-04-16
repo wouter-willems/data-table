@@ -110,7 +110,7 @@ export class AppComponent implements OnInit {
 				data: [],
 			};
 		}
-		await new Promise(resolve => setTimeout(resolve, 1000));
+		await new Promise(resolve => setTimeout(resolve, 100));
 		const data = getDummyData(start, searchQuery, itemsPerPage, sortField, sortOrder, filters);
 		return data;
 	};

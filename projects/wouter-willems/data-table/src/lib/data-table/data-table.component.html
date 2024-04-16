@@ -45,22 +45,24 @@
 	[ngClass]="{horizontalScroll: horizontalScroll || columnWidthsToBeCalculated}"
 >
 	<ng-container *ngIf="!loading && !hasAtLeastOneResult()" [ngTemplateOutlet]="emptyTpl"></ng-container>
-	<div class="selectAcrossPagesTooltip" *ngIf="selectAllAcrossPagesActive || getHeaderSelectState() === true">
-		<div *ngIf="selectAllAcrossPagesLoading">
-			{{translate('Please wait while we are collecting the data...')}}
+	<ng-container *ngIf="allowSelectingAcrossMultiplePages">
+		<div class="selectAcrossPagesTooltip" *ngIf="selectAllAcrossPagesActive || getHeaderSelectState() === true">
+			<div *ngIf="selectAllAcrossPagesLoading">
+				{{translate('Please wait while we are collecting the data...')}}
+			</div>
+			<ng-container *ngIf="!selectAllAcrossPagesLoading">
+				<div *ngIf="getHeaderSelectState() === true && selectAllAcrossPagesActive === false">
+					{{translate('You can')}}
+					<button class="textButton" (click)="selectAllAcrossPages()">
+						{{translate('select all %total% items across all pages', {total: pageData.totalAmount})}}
+					</button>
+				</div>
+				<div *ngIf="selectAllAcrossPagesActive">
+					{{translate('You are selecting across pages.')}} <button class="textButton" (click)="stopSelectingAcrossPages()">{{translate('Deselect everything')}}</button>
+				</div>
+			</ng-container>
 		</div>
-		<ng-container *ngIf="!selectAllAcrossPagesLoading">
-			<div *ngIf="getHeaderSelectState() === true && selectAllAcrossPagesActive === false">
-				{{translate('You can')}}
-				<button class="textButton" (click)="selectAllAcrossPages()">
-					{{translate('select all %total% items across all pages', {total: pageData.totalAmount})}}
-				</button>
-			</div>
-			<div *ngIf="selectAllAcrossPagesActive">
-				{{translate('You are selecting across pages.')}} <button class="textButton" (click)="stopSelectingAcrossPages()">{{translate('Deselect everything')}}</button>
-			</div>
-		</ng-container>
-	</div>
+	</ng-container>
 	<table *ngIf="hasAtLeastOneResult()" [ngClass]="{actionMenuOpen: hasActionMenuOpen(), fullWidth: horizontalScroll || !columnWidthsToBeCalculated}">
 		<thead>
 		<tr>
