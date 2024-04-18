@@ -114,7 +114,7 @@
 					</div>
 				</td>
 			</tr>
-			<tr *ngIf="getExpandedTplFn()?.index === i">
+			<tr *ngIf="getExpandedTplFn?.()?.index === i">
 				<td colspan="999">
 					<ng-container [ngTemplateOutlet]="getExpandedTplFn()?.tpl" [ngTemplateOutletContext]="{row: row}"></ng-container>
 				</td>
