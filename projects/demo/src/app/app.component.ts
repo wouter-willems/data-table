@@ -53,10 +53,12 @@ export class AppComponent implements OnInit {
 	@ViewChild('searchInput') searchInput: TemplateRef<any>;
 	@ViewChild('filterButton') filterButton: TemplateRef<any>;
 	@ViewChild('filterForm') filterForm: TemplateRef<any>;
+	@ViewChild('expandedTpl') expandedTpl: TemplateRef<any>;
 	@ViewChild(DataTableComponent) dataTableComponent: DataTableComponent;
 
 	public searchQuery: string;
 	public myFilterForm: FormGroup;
+	private expandedInfo: { name: string; index: number };
 
 	constructor(private router: Router, private activatedRoute: ActivatedRoute) {
 		this.myFilterForm = new FormGroup({
@@ -137,6 +139,15 @@ export class AppComponent implements OnInit {
 		// return this.myFilterForm.
 	};
 
+	getExpandedTplFn = (): {index: number, tpl: TemplateRef<any>} => {
+		if (!Number.isFinite(this.expandedInfo?.index)) {
+			return;
+		}
+		return {
+			index: this.expandedInfo.index, tpl: this.expandedTpl
+		};
+	};
+
 
 	ngOnInit(): void {
 
@@ -145,6 +156,14 @@ export class AppComponent implements OnInit {
 	onRowClicked($event: any) {
 		console.log('$event');
 		console.log($event);
+		if ($event.index === this.expandedInfo?.index) {
+			this.expandedInfo = null;
+			return;
+		}
+		this.expandedInfo = {
+			index: $event.index,
+			name: 'John Doe',
+		};
 	}
 
 	public async updateRoute(queryParams) {

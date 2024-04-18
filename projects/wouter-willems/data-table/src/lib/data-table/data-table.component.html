@@ -86,33 +86,40 @@
 		</tr>
 		</thead>
 		<tbody>
-		<tr *ngFor="let row of pageData?.data">
-			<td (click)="rowSelectClicked(row)" class="selectBoxContainer" *ngIf="getActionsForMultipleRowsFn">
-				<div class="selectBox">
-					<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: isSelected(row)}"></ng-container>
-				</div>
-			</td>
-			<td *ngFor="let header of headerKeys" (click)="rowClicked(row)" [klpWithTooltip]="true">
-				<ng-container
-					[ngTemplateOutlet]="getTemplate(header, row[header])"
-					[ngTemplateOutletContext]="{ value: row[header] }"
-				></ng-container>
-			</td>
-			<td>
-				<div class="actionMenuContainer" *ngIf="getActionsForRowFn?.(row)?.length > 0">
-					<ng-container [ngTemplateOutlet]="actionMenuBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsFn(row)}"></ng-container>
-					<div
-						class="actionMenu"
-						*ngIf="actionMenuForRow === row"
-						[ngStyle]="{transform: 'translate('+actionMenuOffset.x+ 'px,'+ actionMenuOffset.y + 'px)'}"
-					>
-						<button *ngFor="let action of actions" (click)="closeActionMenu(); action.action()">
-							{{action.caption}}
-						</button>
+		<ng-container *ngFor="let row of pageData?.data; let i = index">
+			<tr>
+				<td (click)="rowSelectClicked(row)" class="selectBoxContainer" *ngIf="getActionsForMultipleRowsFn">
+					<div class="selectBox">
+						<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: isSelected(row)}"></ng-container>
 					</div>
-				</div>
-			</td>
-		</tr>
+				</td>
+				<td *ngFor="let header of headerKeys" (click)="rowClicked(row, i)" [klpWithTooltip]="true">
+					<ng-container
+						[ngTemplateOutlet]="getTemplate(header, row[header])"
+						[ngTemplateOutletContext]="{ value: row[header] }"
+					></ng-container>
+				</td>
+				<td>
+					<div class="actionMenuContainer" *ngIf="getActionsForRowFn?.(row)?.length > 0">
+						<ng-container [ngTemplateOutlet]="actionMenuBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsFn(row)}"></ng-container>
+						<div
+							class="actionMenu"
+							*ngIf="actionMenuForRow === row"
+							[ngStyle]="{transform: 'translate('+actionMenuOffset.x+ 'px,'+ actionMenuOffset.y + 'px)'}"
+						>
+							<button *ngFor="let action of actions" (click)="closeActionMenu(); action.action()">
+								{{action.caption}}
+							</button>
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr *ngIf="getExpandedTplFn()?.index === i">
+				<td colspan="999">
+					<ng-container [ngTemplateOutlet]="getExpandedTplFn()?.tpl" [ngTemplateOutletContext]="{row: row}"></ng-container>
+				</td>
+			</tr>
+		</ng-container>
 		</tbody>
 	</table>
 </div>

@@ -42,6 +42,7 @@
 		[allowSelectingAcrossMultiplePages]="true"
 		[persistColumnsFn]="persistColumns"
 		[retrieveColumnsFn]="retrieveColumns"
+		[getExpandedTplFn]="getExpandedTplFn"
 	>
 		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [fixedWidthInREM]="6">
 			{{value}}
@@ -68,4 +69,8 @@
 
 <ng-template #empty>
  Empty state
+</ng-template>
+
+<ng-template #expandedTpl>
+	{{expandedInfo.name}}
 </ng-template>

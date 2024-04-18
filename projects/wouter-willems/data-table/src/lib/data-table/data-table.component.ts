@@ -45,7 +45,7 @@ export class ColumnKeyDirective {
 export class FilterFormDirective {
 }
 
-export type WDTRow = {id: number} & Record<string, any>;
+export type WDTRow = {id: any} & Record<string, any>;
 
 @Component({
 	selector: 'wutu-data-table',
@@ -86,8 +86,9 @@ export class DataTableComponent implements OnChanges, OnInit {
 		key: string,
 		active: boolean,
 	}>) => Promise<void>;
+	@Input() getExpandedTplFn: () => {index: number, tpl: TemplateRef<any>};
 	@Input() emptyTpl: TemplateRef<any>;
-	@Output() onRowClicked = new EventEmitter<any>();
+	@Output() onRowClicked = new EventEmitter<{row: any, index: number}>();
 	@Output() onParamsChanged = new EventEmitter<any>();
 
 	public columnWidthsToBeCalculated = true;
@@ -372,8 +373,8 @@ export class DataTableComponent implements OnChanges, OnInit {
 		return null;
 	}
 
-	public rowClicked(row: any): void {
-		this.onRowClicked.emit(row);
+	public rowClicked(row: any, index: number): void {
+		this.onRowClicked.emit({row, index});
 	}
 
 	showActions(row: any, target: EventTarget): void {
