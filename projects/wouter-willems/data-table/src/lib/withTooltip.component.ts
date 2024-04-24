@@ -72,7 +72,7 @@ export class WithTooltipDirective {
 			this.triangleWhite.style.pointerEvents = 'none';
 			el.nativeElement.prepend(this.triangleWhite);
 		});
-		el.nativeElement.addEventListener('mouseout', () => {
+		el.nativeElement.addEventListener('mouseleave', () => {
 			try {
 				el.nativeElement.removeChild(this.div);
 			} catch (ex) {}
