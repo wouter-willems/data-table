@@ -56,6 +56,9 @@
 		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value">
 			{{value}}
 		</ng-template>
+		<ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [fixedWidthInREM]="6">
+			{{value}}
+		</ng-template>
 
 		<ng-template filterForm>
 			<form [formGroup]="myFilterForm" class="filterForm">

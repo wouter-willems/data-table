@@ -284,11 +284,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	}
 
 	private async extractHeaders(): Promise<void> {
-		const keys = removeDuplicatesFromArray(Object.values(this.pageData.data).map(e => {
-			return Object.keys(e);
-		}).reduce((acc, cur) => {
-			return [...acc, ...cur];
-		}, []));
+		const keys = removeDuplicatesFromArray(this.columnKeyDirectives.map(e => e.columnKey));
 		if (!arrayIsSetAndFilled(this.definedColumns)) {
 			const retrievedColumns = (await this.retrieveColumnsFn?.()) ?? [];
 			if (arrayIsSetAndFilled(retrievedColumns)) {
