@@ -126,6 +126,11 @@ $tdPadding: var(#{$p}td-padding);
       background: #eeeeee;
     }
   }
+
+  .filterFormContainer {
+    flex: 1 1 0px;
+    display: flex;
+  }
 }
 
 .selectBoxContainer {

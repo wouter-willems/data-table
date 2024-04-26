@@ -154,5 +154,7 @@
 		<div>{{translate('Filters')}}</div>
 		<button class="closeButton" (click)="closeFilters()">×</button>
 	</header>
-	<ng-container [ngTemplateOutlet]="filterFormTpl"></ng-container>
+	<div class="filterFormContainer">
+		<ng-container [ngTemplateOutlet]="filterFormTpl"></ng-container>
+	</div>
 </div>

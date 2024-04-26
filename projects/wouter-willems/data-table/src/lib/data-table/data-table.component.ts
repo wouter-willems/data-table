@@ -20,6 +20,7 @@ import {arrayIsSetAndFilled, removeDuplicatesFromArray, removeDuplicatesFromArra
 import {isValueSet, stringIsSetAndFilled, useIfStringIsSet} from '../util/values';
 import {awaitableForNextCycle} from "../util/angular";
 import {debounce, isEqual} from 'lodash';
+import {SaveBtnRefToken} from "../column-rearranger/column-rearranger.component";
 
 export const TranslationsToken = new InjectionToken('translations');
 export const CheckBoxRefToken = new InjectionToken('checkbox');
@@ -119,6 +120,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	public actionMenuBtnRef: TemplateRef<any>;
 	public searchInputRef: TemplateRef<any>;
 	public filterBtnRef: TemplateRef<any>;
+	public saveBtnRef: TemplateRef<any>;
 	public actionMenuOffset: { x: number, y: number };
 	public loading = true;
 	private initiated = false;
@@ -138,6 +140,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.actionMenuBtnRef = this.injector.get<TemplateRef<any>>(ActionMenuBtnRefToken);
 		this.searchInputRef = this.injector.get<TemplateRef<any>>(SearchInputRefToken);
 		this.filterBtnRef = this.injector.get<TemplateRef<any>>(FilterBtnRefToken);
+		this.saveBtnRef = this.injector.get<TemplateRef<any>>(SaveBtnRefToken);
 		this.initiated = true;
 		await this.getData();
 		if (!this.horizontalScroll) {

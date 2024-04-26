@@ -19,4 +19,13 @@ wutu-data-table {
 }
 .filterForm {
   flex: 1 1 0px;
+  display: flex;
+  flex-direction: column;
+  .fields {
+    flex: 1 1 0px;
+    overflow: auto;
+  }
+  .submitButton {
+    margin-top: 1rem;
+  }
 }

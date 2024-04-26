@@ -59,9 +59,33 @@
 
 		<ng-template filterForm>
 			<form [formGroup]="myFilterForm" class="filterForm">
-				<input type="text" formControlName="name" />
-				<input type="text" formControlName="email" />
-				<button (click)="setFilters()">Submit</button>
+				<div class="fields">
+					<div style="height: 50px;">
+						<input type="text" formControlName="name" />
+						<input type="text" formControlName="email" />
+					</div>
+					<div style="height: 50px;">
+						<input type="text" formControlName="name" />
+						<input type="text" formControlName="email" />
+					</div>
+					<div style="height: 50px;">
+						<input type="text" formControlName="name" />
+						<input type="text" formControlName="email" />
+					</div>
+					<div style="height: 50px;">
+						<input type="text" formControlName="name" />
+						<input type="text" formControlName="email" />
+					</div>
+					<div style="height: 50px;">
+						<input type="text" formControlName="name" />
+						<input type="text" formControlName="email" />
+					</div>
+					<div style="height: 50px;">
+						<input type="text" formControlName="name" />
+						<input type="text" formControlName="email" />
+					</div>
+				</div>
+				<button class="submitButton" (click)="setFilters()">Submit</button>
 			</form>
 		</ng-template>
 	</wutu-data-table>
