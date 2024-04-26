@@ -422,13 +422,13 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	public openConfig = (): void => {
 		this.showConfig = true;
-		this.createBackdrop(() => this.showConfig = false, true);
+		this.createBackdrop(() => this.closeConfig(), true);
 	}
 
 
 	public openFilters = () => {
 		this.showFilters = true;
-		this.createBackdrop(() => this.showFilters = false, true);
+		this.createBackdrop(() => this.closeFilters(), true);
 	};
 
 
@@ -596,5 +596,9 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	public _ext_getFilters(): Record<string, any> {
 		return this.activeFilters;
+	}
+
+	public _ext_resetSelection(): void {
+		this.selectedState = new Map();
 	}
 }

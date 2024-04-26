@@ -7,10 +7,12 @@
 }
 ol {
   list-style: none;
-  margin: 0;
+  margin: 0 0 1rem;
   padding-inline: unset;
   border-radius: 0.4rem;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: var(--wdt-border);
 }
 .filler {
   flex: 1 0 2rem;
@@ -18,25 +20,16 @@ ol {
 
 li {
   position: relative;
-  .visual {
-    border-top: none;
-  }
   &:first-child .visual {
-    border-top: var(--wdt-border);
-    border-top-left-radius: 0.4rem;
-    border-top-right-radius: 0.4rem;
-  }
-  &:last-child .visual {
-    border-bottom-left-radius: 0.4rem;
-    border-bottom-right-radius: 0.4rem;
+    border-top: none;
   }
 }
 
 .visual {
-  cursor: pointer;
+  cursor: grab;
   padding: 10px;
   background: white;
-  border: var(--wdt-border);
+  border-top: var(--wdt-border);
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -49,6 +42,9 @@ li {
   .hamburger {
     font-size: 1.5rem;
   }
+  .toggleContainer {
+    cursor: pointer;
+  }
   .toggleContainer .toggleContainerInner {
     pointer-events: none;
   }
@@ -58,12 +54,12 @@ li {
   transition: transform 0.1s linear;
 }
 .draggableItem {
-  cursor: pointer;
   &:hover .visual {
     background: #e6ecf5;
   }
   &.beingDragged {
     opacity: 0.7;
-    transform: translateX(0.8rem);
+    //transform: translateX(0.8rem);
+    cursor: copy;
   }
 }

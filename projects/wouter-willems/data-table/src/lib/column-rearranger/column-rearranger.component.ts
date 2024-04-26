@@ -4,7 +4,7 @@ import {
 	EventEmitter,
 	InjectionToken,
 	Injector,
-	Input,
+	Input, OnDestroy,
 	OnInit,
 	Output,
 	QueryList,
@@ -23,7 +23,7 @@ export const ToggleRefToken = new InjectionToken('toggle btn');
 	styleUrls: ['./column-rearranger.component.scss'],
 	providers: [{provide: NG_VALUE_ACCESSOR, useExisting: ColumnRearrangerComponent, multi: true}],
 })
-export class ColumnRearrangerComponent implements OnInit, ControlValueAccessor {
+export class ColumnRearrangerComponent implements OnInit, OnDestroy, ControlValueAccessor {
 
 	@Input() headerCaptionByKey: Map<string, string>;
 	@Output() onColumnsSaved = new EventEmitter();
@@ -39,6 +39,7 @@ export class ColumnRearrangerComponent implements OnInit, ControlValueAccessor {
 	private currentDragPosition: number;
 	public saveBtnRef: TemplateRef<any>;
 	public toggleBtnRef: TemplateRef<any>;
+	private escapeKeyListener: (ev) => void;
 
 	constructor(private injector: Injector) {}
 
@@ -47,6 +48,12 @@ export class ColumnRearrangerComponent implements OnInit, ControlValueAccessor {
 			this.saveBtnRef = this.injector.get<TemplateRef<any>>(SaveBtnRefToken);
 			this.toggleBtnRef = this.injector.get<TemplateRef<any>>(ToggleRefToken);
 		});
+		this.escapeKeyListener = (ev) => {
+			if (ev.key === 'Escape') {
+				this.onCloseRequest.emit();
+			}
+		};
+		window.document.addEventListener('keyup', this.escapeKeyListener);
 	}
 
 	registerOnChange(fn: any): void {
@@ -64,17 +71,19 @@ export class ColumnRearrangerComponent implements OnInit, ControlValueAccessor {
 		this.columns = obj?.map(e => ({...e})) ?? [];
 	}
 
-	notify() {
+	notify(): void {
 		const valueToSet = this.columns?.map(e => ({...e})) ?? [];
 		this.changed.forEach((fn) => fn(valueToSet));
 	}
 
-	dragStart($event: DragEvent) {
+	dragStart($event: DragEvent): void {
+		$event.dataTransfer.effectAllowed = 'move';
 		this.dragSourceIndex = this.dragItems.map(e => e.nativeElement).findIndex(e => e === $event.target);
 		this.currentDragPosition = this.dragSourceIndex;
 	}
 
-	dragEnter($event: DragEvent) {
+	dragEnter($event: DragEvent): void {
+		$event.dataTransfer.dropEffect = 'move';
 		const targetIndex = this.dragItems.map(e => e.nativeElement).findIndex(e => e === ($event.target as HTMLElement));
 		if (targetIndex === -1) {
 			return;
@@ -82,7 +91,7 @@ export class ColumnRearrangerComponent implements OnInit, ControlValueAccessor {
 		this.currentDragPosition = targetIndex;
 	}
 
-	dragEnd($event: DragEvent) {
+	dragEnd($event: DragEvent): void {
 		const movedElement = this.columns[this.dragSourceIndex];
 		const isMovedToLastPlace = this.currentDragPosition === this.columns.length - 1;
 		this.columns = this.columns
@@ -100,15 +109,15 @@ export class ColumnRearrangerComponent implements OnInit, ControlValueAccessor {
 		this.dragSourceIndex = -1;
 	}
 
-	shouldShoveDown(index: number) {
+	shouldShoveDown(index: number): boolean {
 		return this.dragSourceIndex > index && this.currentDragPosition <= index;
 	}
 
-	shouldShoveUp(index: number) {
+	shouldShoveUp(index: number): boolean {
 		return this.dragSourceIndex < index && this.currentDragPosition >= index;
 	}
 
-	getTransform(i) {
+	getTransform(i): number {
 		if (i !== this.dragSourceIndex) {
 			if (this.shouldShoveUp(i)) {
 				return -100;
@@ -126,5 +135,9 @@ export class ColumnRearrangerComponent implements OnInit, ControlValueAccessor {
 		this.notify();
 		this.onColumnsSaved.emit();
 		this.onCloseRequest.emit();
+	}
+
+	ngOnDestroy(): void {
+		window.document.removeEventListener('keyup', this.escapeKeyListener);
 	}
 }

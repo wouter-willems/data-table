@@ -143,9 +143,10 @@
 
 <div class="columnRearranger" *ngIf="showConfig">
 	<header>
-		<div>{{translate('Configure your table')}}</div>
+		<div>{{translate('Configure your dashboard')}}</div>
 		<button class="closeButton" (click)="closeConfig()">×</button>
 	</header>
+	<div class="subHeader">{{translate('Pick and order the columns to personalize your dashboard')}}</div>
 	<wutu-column-rearranger [(ngModel)]="definedColumns" [headerCaptionByKey]="headerCaptionByKey" (onCloseRequest)="closeConfig()" (onColumnsSaved)="onColumnsSaved()"></wutu-column-rearranger>
 </div>
 

@@ -9,6 +9,8 @@ $tdPadding: var(#{$p}td-padding);
   font-size: 14px;
   padding: 2rem 2rem 1rem;
   background: white;
+  border: var(#{$p}border);
+  border-radius: 5px;
 }
 .dummies {
   display: flex;
@@ -110,11 +112,15 @@ $tdPadding: var(#{$p}td-padding);
 
   header {
     margin-top: var(--wdt-column-rearrange-margin-top);
-    margin-bottom: var(--wdt-column-rearrange-margin-bottom);
+    margin-bottom: 0.8rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     font-size: 1.2rem;
+  }
+
+  .subHeader {
+    margin-bottom: var(--wdt-column-rearrange-margin-bottom);
   }
 
   .closeButton {
@@ -122,6 +128,7 @@ $tdPadding: var(#{$p}td-padding);
     background: none;
     border: none;
     font-size: 2rem;
+    color: inherit;
     &:hover {
       background: #eeeeee;
     }
