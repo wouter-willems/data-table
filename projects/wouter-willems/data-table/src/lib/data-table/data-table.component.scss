@@ -230,8 +230,6 @@ td {
 
 .actionMenu {
   position: absolute;
-  right: 0;
-  top: 0;
   z-index: var(--wdt-action-menu-zIndex);
   background: white;
   border: var(#{$p}border);

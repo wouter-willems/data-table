@@ -24,7 +24,7 @@
 		<ng-container *ngIf="showFiltersBtn" [ngTemplateOutlet]="filterBtnRef" [ngTemplateOutletContext]="{clickHandler: openFilters}"></ng-container>
 		<div class="multiSelectActionMenu" *ngIf="getSelectedRows().length > 0">
 			{{translate('Selected %length% item(s)', {length: getSelectedRows().length})}}
-			<div class="actionMenuContainer" *ngIf="getActionsForMultipleRowsFn?.(getSelectedRows())?.length > 0">
+			<div class="actionMenuContainer" *ngIf="getActionsForMultipleRowsFn?.(getSelectedRows())?.length > 0" #actionMenuContainer>
 				<ng-container [ngTemplateOutlet]="actionMenuBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsMultipleFn(getSelectedRows())}"></ng-container>
 				<div
 					*ngIf="multipleRowsActionsShown"

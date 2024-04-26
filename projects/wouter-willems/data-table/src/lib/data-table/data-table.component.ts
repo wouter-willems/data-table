@@ -57,6 +57,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	@ViewChild('selectBoxDummy') selectBoxDummy: ElementRef;
 	@ViewChild('actionMenuDummy') actionMenuDummy: ElementRef;
 	@ViewChild('configBtnDummy') configBtnDummy: ElementRef;
+	@ViewChild('actionMenuContainer') actionMenuContainer: ElementRef;
 
 	@ContentChildren(ColumnKeyDirective, {read: TemplateRef}) templates: QueryList<TemplateRef<any>>;
 	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) columnKeyDirectives: QueryList<ColumnKeyDirective>;
@@ -380,32 +381,24 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.onRowClicked.emit({row, index});
 	}
 
-	showActions(row: any, target: EventTarget): void {
-		this.actionMenuOffset = {
-			x: (target as HTMLElement).getBoundingClientRect().right - this.elRef.nativeElement.getBoundingClientRect().right,
-			y: (target as HTMLElement).getBoundingClientRect().top - this.elRef.nativeElement.getBoundingClientRect().top,
-		};
+	showActions(row: any): void {
+		if (this.multipleRowsActionsShown) {
+			this.closeActionMenu();
+		}
+		this.actionMenuOffset = {x: 0, y: 30};
 		const actions = this.getActionsForRowFn?.(row) ?? [];
 		this.actionMenuForRow = row;
 		this.actions = actions;
 		this.createBackdrop(() => {
-			this.actionMenuForRow = null;
-			this.actions = null;
+			this.closeActionMenu();
 		}, false);
 	}
 
-	showActionsMultipleRows(rows: Array<any>, target: EventTarget): void {
+	showActionsMultipleRows(rows: Array<any>): void {
 		this.multipleRowsActionsShown = true;
-		this.actionMenuOffset = {
-			x: (target as HTMLElement).getBoundingClientRect().right - this.elRef.nativeElement.getBoundingClientRect().right,
-			y: (target as HTMLElement).getBoundingClientRect().top - this.elRef.nativeElement.getBoundingClientRect().top,
-		};
+		this.actionMenuOffset = {x: 0, y: 30};
 		const actions = this.getActionsForMultipleRowsFn(rows) ?? [];
 		this.actions = actions;
-		this.createBackdrop(() => {
-			this.multipleRowsActionsShown = false;
-			this.actions = null;
-		}, false);
 	}
 
 	hasActionMenuOpen(): boolean {
@@ -453,7 +446,6 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.backdropDiv.style.zIndex = 'var(--wdt-column-rearrange-backdrop-zIndex)';
 		this.backdropDiv.addEventListener('click', () => {
 			setTimeout(clickHandler);
-			document.body.removeChild(this.backdropDiv);
 		});
 		document.body.appendChild(this.backdropDiv);
 	}
@@ -470,6 +462,15 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	rowSelectClicked(row: WDTRow): void {
 		this.setRowSelect(row, !this.isSelected(row));
+		this.openMultipleActionsMenuIfMultipleRowsAreSelected();
+	}
+
+	private openMultipleActionsMenuIfMultipleRowsAreSelected(): void {
+		if (this.getSelectedRows().length >= 2) {
+			this.showActionsMultipleRows(this.getSelectedRows());
+		} else {
+			this.closeActionMenu();
+		}
 	}
 
 	private setRowSelect(row: WDTRow, newState: boolean): void {
@@ -508,9 +509,11 @@ export class DataTableComponent implements OnChanges, OnInit {
 			return;
 		} else if (isSelected === false) {
 			this.pageData.data.forEach((row, i) => this.setRowSelect(row, true));
+			this.openMultipleActionsMenuIfMultipleRowsAreSelected();
 			return;
 		} else if (isSelected === undefined) {
 			this.pageData.data.forEach((row, i) => this.setRowSelect(row, true));
+			this.openMultipleActionsMenuIfMultipleRowsAreSelected();
 			return;
 		}
 		throw new Error(`invalid header select state ${isSelected}`);
@@ -522,10 +525,16 @@ export class DataTableComponent implements OnChanges, OnInit {
 	}
 
 	getShowActionsFn(row: Record<string, any>): (target) => void {
-		return (target) => this.showActions(row, target);
+		return () => this.showActions(row);
 	}
 	getShowActionsMultipleFn(rows: Array<Record<string, any>>): (target) => void {
-		return (target) => this.showActionsMultipleRows(rows, target);
+		return () => {
+			if (this.multipleRowsActionsShown) {
+				this.closeActionMenu();
+				return;
+			}
+			this.showActionsMultipleRows(rows);
+		};
 	}
 
 	public searchQueryChanged = debounce((searchQuery: string) => {
@@ -564,7 +573,10 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.actionMenuForRow = null;
 		this.actions = null;
 		this.multipleRowsActionsShown = false;
-		document.body.removeChild(this.backdropDiv);
+		if (isValueSet(this.backdropDiv)) {
+			document.body.removeChild(this.backdropDiv);
+			this.backdropDiv = null;
+		}
 	}
 
 	public hasAtLeastOneResult(): boolean {

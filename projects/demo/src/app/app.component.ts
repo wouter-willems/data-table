@@ -81,7 +81,13 @@ export class AppComponent implements OnInit {
 			action: () => {
 				console.log('chosen Delete');
 			}
-		}];
+		}, {
+			caption: 'Something else',
+			action: () => {
+				console.log('chosen else');
+			}
+		}
+		];
 	};
 
 	getActionsForMultipleRowsFn = (rows: Array<any>): Array<{
