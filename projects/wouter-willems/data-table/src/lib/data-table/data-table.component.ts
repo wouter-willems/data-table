@@ -95,6 +95,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	public columnWidthsToBeCalculated = true;
 
+	private maxBatchSize = 999;
 	public page = 1;
 	public itemsPerPage = 25;
 	public searchQuery: string = '';
@@ -240,7 +241,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.selectAllAcrossPagesLoading = true;
 		this.selectAllAcrossPagesActive = true;
 		this.selectedState = new Map();
-		const batchSize = 999;
+		const batchSize = this.maxBatchSize;
 		let currentBatch = 0;
 		let haveAllItemsBeenFetched = false;
 		let allItems: Array<WDTRow> = [];
@@ -596,5 +597,9 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	public _ext_resetSelection(): void {
 		this.selectedState = new Map();
+	}
+
+	public _ext_setMaxBatchSize(size: number): void {
+		this.maxBatchSize = size;
 	}
 }
