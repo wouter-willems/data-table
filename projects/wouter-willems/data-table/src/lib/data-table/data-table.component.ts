@@ -67,7 +67,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	@Input() searchParams;
 	@Input() showSearchField = true;
 	@Input() showFiltersBtn = true;
-	@Input() allowSelectingAcrossMultiplePages = false;
+	@Input() allowSelectingAcrossMultiplePages = true;
 	@Input() fetchItemsFn: (start: number, searchQuery: string, itemsPerPage: number, sortField: string, sortOrder: 'ASC' | 'DESC', filters: Record<string, any>) => Promise<{
 		totalAmount: number,
 		data: Array<WDTRow>
