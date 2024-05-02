@@ -45,7 +45,7 @@
 >
 	<ng-container *ngIf="!loading && !hasAtLeastOneResult()" [ngTemplateOutlet]="emptyTpl"></ng-container>
 	<ng-container *ngIf="allowSelectingAcrossMultiplePages">
-		<div class="selectAcrossPagesTooltip" *ngIf="selectAllAcrossPagesActive || getHeaderSelectState() === true">
+		<div class="selectAcrossPagesTooltip" *ngIf="shouldShowSelectAcrossAllPagesTooltip()">
 			<div *ngIf="selectAllAcrossPagesLoading">
 				{{translate('Please wait while we are collecting the data...')}}
 			</div>

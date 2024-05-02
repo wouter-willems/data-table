@@ -602,4 +602,14 @@ export class DataTableComponent implements OnChanges, OnInit {
 	public _ext_setMaxBatchSize(size: number): void {
 		this.maxBatchSize = size;
 	}
+
+	public shouldShowSelectAcrossAllPagesTooltip(): boolean {
+		if (this.selectAllAcrossPagesActive) {
+			return true;
+		}
+		if (this.getSelectedRows()?.length === this.pageData?.totalAmount) {
+			return false;
+		}
+		return this.getHeaderSelectState() === true;
+	}
 }
