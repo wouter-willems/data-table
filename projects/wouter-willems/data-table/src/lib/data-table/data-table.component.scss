@@ -106,7 +106,7 @@ $tdPadding: var(#{$p}td-padding);
   display: flex;
   flex-direction: column;
   background: white;
-  padding: 1rem;
+  padding: 1rem 0 1rem 1rem;
   box-shadow: -3px 0px 25px gray;
   z-index: var(--wdt-column-rearrange-zIndex);
 
