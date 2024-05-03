@@ -266,6 +266,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 		const allUniques: Array<WDTRow> = removeDuplicatesFromArraysWithComparator((e1, e2) => e1.id === e2.id, allItems);
 		allUniques.forEach(e => this.selectedState.set(e.id, true));
 		this.selectAllAcrossPagesLoading = false;
+		this.showActionsMultipleRows();
 	}
 
 
@@ -391,10 +392,10 @@ export class DataTableComponent implements OnChanges, OnInit {
 		}, false);
 	}
 
-	showActionsMultipleRows(rows: Array<any>): void {
+	showActionsMultipleRows(): void {
 		this.multipleRowsActionsShown = true;
 		this.actionMenuOffset = {x: 0, y: 30};
-		const actions = this.getActionsForMultipleRowsFn(rows) ?? [];
+		const actions = this.getActionsForMultipleRowsFn(this.getSelectedRows()) ?? [];
 		this.actions = actions;
 	}
 
@@ -464,7 +465,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	private openMultipleActionsMenuIfMultipleRowsAreSelected(): void {
 		if (this.getSelectedRows().length >= 2) {
-			this.showActionsMultipleRows(this.getSelectedRows());
+			this.showActionsMultipleRows();
 		} else {
 			this.closeActionMenu();
 		}
@@ -495,7 +496,8 @@ export class DataTableComponent implements OnChanges, OnInit {
 		const selectedIds = [...this.selectedState.entries()]
 			.filter(e => e[1] === true)
 			.map(e => e[0]);
-		return selectedIds.map(e => this.idByRow.get(e));
+		const result = selectedIds.map(e => this.idByRow.get(e));
+		return result;
 	}
 
 	headerSelectClicked(): void {
@@ -524,13 +526,14 @@ export class DataTableComponent implements OnChanges, OnInit {
 	getShowActionsFn(row: Record<string, any>): (target) => void {
 		return () => this.showActions(row);
 	}
-	getShowActionsMultipleFn(rows: Array<Record<string, any>>): (target) => void {
+
+	getShowActionsMultipleFn(): (target) => void {
 		return () => {
 			if (this.multipleRowsActionsShown) {
 				this.closeActionMenu();
 				return;
 			}
-			this.showActionsMultipleRows(rows);
+			this.showActionsMultipleRows();
 		};
 	}
 
