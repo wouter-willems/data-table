@@ -478,7 +478,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 		if (this.selectedState.size === 0) {
 			return false;
 		}
-		if ([...this.selectedState.values()].every(e => e === true)) {
+		if (this.getSelectedRows().length > 0 && this.getSelectedRows().length === this.pageData?.data?.length) {
 			return true;
 		} else if ([...this.selectedState.values()].every(e => e === false)) {
 			return false;

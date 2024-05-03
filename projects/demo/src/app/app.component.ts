@@ -97,6 +97,7 @@ export class AppComponent implements OnInit {
 		return [{
 			caption: 'Export ALL',
 			action: () => {
+				console.log(rows);
 				console.log('chosen Export ALL');
 			}
 		}, {
