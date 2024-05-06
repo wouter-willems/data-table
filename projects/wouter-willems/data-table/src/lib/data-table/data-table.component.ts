@@ -450,12 +450,19 @@ export class DataTableComponent implements OnChanges, OnInit {
 
 	closeConfig(): void {
 		this.showConfig = false;
-		document.body.removeChild(this.backdropDiv);
+		this.removeBackdropDiv();
 	}
 
 	closeFilters(): void {
 		this.showFilters = false;
-		document.body.removeChild(this.backdropDiv);
+		this.removeBackdropDiv();
+	}
+
+	private removeBackdropDiv(): void {
+		if (isValueSet(this.backdropDiv)) {
+			document.body.removeChild(this.backdropDiv);
+			this.backdropDiv = null;
+		}
 	}
 
 	rowSelectClicked(row: WDTRow): void {
@@ -573,10 +580,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 		this.actionMenuForRow = null;
 		this.actions = null;
 		this.multipleRowsActionsShown = false;
-		if (isValueSet(this.backdropDiv)) {
-			document.body.removeChild(this.backdropDiv);
-			this.backdropDiv = null;
-		}
+		this.removeBackdropDiv();
 	}
 
 	public hasAtLeastOneResult(): boolean {
