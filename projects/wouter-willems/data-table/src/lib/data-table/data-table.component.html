@@ -95,7 +95,7 @@
 				<td *ngFor="let header of headerKeys" (click)="rowClicked(row, i)" [klpWithTooltip]="true">
 					<ng-container
 						[ngTemplateOutlet]="getTemplate(header, row[header])"
-						[ngTemplateOutletContext]="{ value: row[header] }"
+						[ngTemplateOutletContext]="{ value: row[header], row: row }"
 					></ng-container>
 				</td>
 				<td>

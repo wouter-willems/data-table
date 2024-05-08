@@ -47,7 +47,7 @@
 		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [fixedWidthInREM]="6">
 			{{value}}
 		</ng-template>
-		<ng-template columnKey="age" columnCaption="Age" let-value="value" [fixedWidthOnContents]="true">
+		<ng-template columnKey="age" columnCaption="Age" let-value="value" let-row="row" [fixedWidthOnContents]="true">
 			{{value}} years old
 		</ng-template>
 		<ng-template columnKey="address" columnCaption="Address" [sortKey]="null" let-value="value">
