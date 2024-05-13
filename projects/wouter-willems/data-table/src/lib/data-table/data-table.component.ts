@@ -8,7 +8,7 @@ import {
 	InjectionToken,
 	Injector,
 	Input,
-	OnChanges,
+	OnChanges, OnDestroy,
 	OnInit,
 	Output,
 	QueryList,
@@ -53,7 +53,7 @@ export type WDTRow = {id: any} & Record<string, any>;
 	templateUrl: './data-table.component.html',
 	styleUrls: ['./data-table.component.scss'],
 })
-export class DataTableComponent implements OnChanges, OnInit {
+export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	@ViewChild('selectBoxDummy') selectBoxDummy: ElementRef;
 	@ViewChild('actionMenuDummy') actionMenuDummy: ElementRef;
 	@ViewChild('configBtnDummy') configBtnDummy: ElementRef;
@@ -130,6 +130,7 @@ export class DataTableComponent implements OnChanges, OnInit {
 	private translations: Record<string, string>;
 	public selectAllAcrossPagesActive: boolean = false;
 	public selectAllAcrossPagesLoading: boolean = false;
+	private escapeKeyListener: (ev) => void;
 
 	constructor(private injector: Injector, private elRef: ElementRef) {
 	}
@@ -148,6 +149,13 @@ export class DataTableComponent implements OnChanges, OnInit {
 		if (!this.horizontalScroll) {
 			await this.calculateColumnWidths();
 		}
+
+		this.escapeKeyListener = (ev) => {
+			if (ev.key === 'Escape' && this.showFilters) {
+				this.closeFilters();
+			}
+		};
+		window.document.addEventListener('keyup', this.escapeKeyListener);
 	}
 
 
@@ -618,5 +626,9 @@ export class DataTableComponent implements OnChanges, OnInit {
 			return false;
 		}
 		return this.getHeaderSelectState() === true;
+	}
+
+	ngOnDestroy(): void {
+		window.document.removeEventListener('keyup', this.escapeKeyListener);
 	}
 }

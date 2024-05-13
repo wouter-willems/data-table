@@ -117,10 +117,16 @@ $tdPadding: var(#{$p}td-padding);
     align-items: center;
     justify-content: space-between;
     font-size: 1.2rem;
+    padding-right: 1rem;
   }
 
   .subHeader {
     margin-bottom: var(--wdt-column-rearrange-margin-bottom);
+    padding-right: 1rem;
+  }
+
+  wutu-column-rearranger {
+    padding-right: 1rem;
   }
 
   .closeButton {
