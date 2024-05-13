@@ -606,6 +606,10 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		this.getData();
 	}
 
+	public getNrOfActiveFilters(): number {
+		return Object.keys(this.activeFilters ?? {}).length;
+	}
+
 	public _ext_getFilters(): Record<string, any> {
 		return this.activeFilters;
 	}

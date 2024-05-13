@@ -21,9 +21,9 @@
 	<span>{{setQuery(searchQuery2)}}</span>
 	<input type="text" [(ngModel)]="searchQuery" (ngModelChange)="changeHandler($event)" />
 </ng-template>
-<ng-template #filterButton let-clickHandler="clickHandler">
+<ng-template #filterButton let-clickHandler="clickHandler" let-nrOfActiveFilters="nrOfActiveFilters">
 	<button (click)="clickHandler($event.target)">
-		Filter
+		Filter {{nrOfActiveFilters}}
 	</button>
 </ng-template>
 
