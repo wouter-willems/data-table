@@ -39,6 +39,7 @@ export class ColumnKeyDirective {
 	@Input() fixedWidthOnContents: boolean;
 	@Input() fixedWidthInREM: number;
 	@Input() widthAsRatio: number = 1;
+	@Input() enabledByDefault: boolean = true;
 }
 
 // tslint:disable-next-line:directive-selector
@@ -316,7 +317,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 					return indexOfA > indexOfB ? 1 : -1;
 				});
 			} else {
-				this.definedColumns = this.columnKeyDirectives.map(e => e.columnKey).map(e => ({key: e, active: true}));
+				this.definedColumns = this.columnKeyDirectives.map(e => ({key: e.columnKey, active: e.enabledByDefault}));
 			}
 		}
 		this.headerKeys = keys

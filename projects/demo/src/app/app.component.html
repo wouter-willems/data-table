@@ -50,7 +50,7 @@
 		<ng-template columnKey="age" columnCaption="Age" let-value="value" let-row="row" [fixedWidthOnContents]="true">
 			{{value}} years old
 		</ng-template>
-		<ng-template columnKey="address" columnCaption="Address" [sortKey]="null" let-value="value">
+		<ng-template columnKey="address" columnCaption="Address" [sortKey]="null" let-value="value" [enabledByDefault]="false">
 			{{value.street}} at number {{value.number}}
 		</ng-template>
 		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value">
