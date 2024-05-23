@@ -15,6 +15,7 @@ export function getDummyData(start: number, searchQuery: string, itemsPerPage: n
 				number: 22 + i,
 			},
 			occupation: 'Software Architect #' + i,
+			newlyAdded: 'abc',
 		});
 	}
 	const filteredData = allData.filter((e) => e.name.includes(searchQuery ?? ''));

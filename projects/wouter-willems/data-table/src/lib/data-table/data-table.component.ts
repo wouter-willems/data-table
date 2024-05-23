@@ -299,12 +299,13 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		if (!arrayIsSetAndFilled(this.definedColumns)) {
 			const retrievedColumns = (await this.retrieveColumnsFn?.()) ?? [];
 			if (arrayIsSetAndFilled(retrievedColumns)) {
-				this.definedColumns = this.columnKeyDirectives.map(e => e.columnKey).map(e => {
-					const persisted = retrievedColumns.find(col => col.key === e);
+				this.definedColumns = this.columnKeyDirectives.map(e => {
+					const persisted = retrievedColumns.find(col => col.key === e.columnKey);
 					if (isValueSet(persisted)) {
-						return {key: e, active: persisted.active};
+						return {key: e.columnKey, active: persisted.active};
 					}
-					return ({key: e, active: true});
+					console.log(e);
+					return ({key: e.columnKey, active: e.enabledByDefault});
 				}).sort((a, b) => {
 					let indexOfA = retrievedColumns.findIndex(e => e.key === a.key);
 					if (indexOfA === -1) {
