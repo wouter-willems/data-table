@@ -10,7 +10,7 @@ import {
 } from "../../../wouter-willems/data-table/src/lib/column-rearranger/column-rearranger.component";
 import {ActivatedRoute, Router} from "@angular/router";
 import {FormControl, FormGroup, Validators } from '@angular/forms';
-import {getDummyData} from "./dummy";
+import {getDummyData, getSingleDummyItem} from "./dummy";
 
 
 @Component({
@@ -65,6 +65,10 @@ export class AppComponent implements OnInit {
 			name: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]),
 			email: new FormControl('', [Validators.required, Validators.email])
 		});
+
+		setTimeout(() => {
+			this.dataTableComponent._ext_refetchItem(7);
+		}, 2000);
 	}
 
 	getActionsForRowFn = (row: any): Array<{
@@ -122,6 +126,11 @@ export class AppComponent implements OnInit {
 		await new Promise(resolve => setTimeout(resolve, 100));
 		const data = getDummyData(start, searchQuery, itemsPerPage, sortField, sortOrder, filters);
 		return data;
+	};
+
+	updateSingleItemFn = async (id: any): Promise<WDTRow> => {
+		console.log('zoekeuh', id);
+		return getSingleDummyItem(id, true);
 	};
 
 	retrieveColumns = async (): Promise<Array<{

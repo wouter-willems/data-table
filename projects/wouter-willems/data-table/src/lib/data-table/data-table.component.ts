@@ -73,6 +73,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		totalAmount: number,
 		data: Array<WDTRow>
 	}>;
+	@Input() fetchSingleItemFn: (id: any) => Promise<WDTRow>;
 	@Input() getActionsForRowFn: (r: any) => Array<{
 		caption: string,
 		action: () => void,
@@ -606,6 +607,14 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		await awaitableForNextCycle();
 		this.closeFilters();
 		this.getData();
+	}
+
+	public async _ext_refetchItem(id: any): Promise<void> {
+		const item = await this.fetchSingleItemFn(id);
+		this.pageData = {
+			...this.pageData,
+			data: this.pageData.data.map(e => e.id === id ? item : e),
+		};
 	}
 
 	public getNrOfActiveFilters(): number {

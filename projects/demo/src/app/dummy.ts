@@ -6,22 +6,26 @@ export function getDummyData(start: number, searchQuery: string, itemsPerPage: n
 } {
 	const allData: Array<WDTRow> = [];
 	for (let i = 0; i < 107; i++) {
-		allData.push({
-			id: i,
-			name: 'Person ' + i,
-			age: 10 + i,
-			address: {
-				street: 'Streetname',
-				number: 22 + i,
-			},
-			occupation: 'Software Architect #' + i,
-			newlyAdded: 'abc',
-		});
+		allData.push(getSingleDummyItem(i));
 	}
 	const filteredData = allData.filter((e) => e.name.includes(searchQuery ?? ''));
 	const paged = filteredData.slice(start, start + itemsPerPage);
 	return {
 		totalAmount: filteredData.length,
 		data: paged,
+	};
+}
+
+export function getSingleDummyItem(id: any, updatedName = false): WDTRow {
+	return {
+		id,
+		name: 'Person ' + id + (updatedName ? ' (updated)' : '(nooo)'),
+		age: 10 + id,
+		address: {
+			street: 'Streetname',
+			number: 22 + id,
+		},
+		occupation: 'Software Architect #' + id,
+		newlyAdded: 'abc',
 	};
 }
