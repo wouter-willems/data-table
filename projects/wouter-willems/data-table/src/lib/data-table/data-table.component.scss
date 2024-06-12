@@ -37,14 +37,15 @@ $tdPadding: var(#{$p}td-padding);
   }
 }
 .tableContainer {
-  background: yellow;
   position: relative;
   &.horizontalScroll {
     overflow: auto;
   }
   table {
     table-layout: fixed;
-    width: 100%;
+    &.fullWidth {
+      width: 100%;
+    }
     td {
       overflow: hidden;
       text-overflow: ellipsis;

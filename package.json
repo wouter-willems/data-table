@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --no-live-reload",
     "build": "ng build",
     "build:prod": "ng build wouter-willems/data-table -c production",
     "test": "ng test",
