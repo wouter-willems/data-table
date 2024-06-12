@@ -27,7 +27,7 @@
 	</button>
 </ng-template>
 
-<div class="tableContainer">
+<div class="tableContainer" *ngIf="false">
 	<wutu-data-table
 		[horizontalScroll]="true"
 		[fetchItemsFn]="fetchItemsFn"
@@ -45,10 +45,10 @@
 		[retrieveColumnsFn]="retrieveColumns"
 		[getExpandedTplFn]="getExpandedTplFn"
 	>
-		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [minWidthInREM]="22" [maxWidthInREM]="80" [widthAsRatio]="2">
+		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [minWidthInREM]="22" [maxWidthInREM]="80" [growRatio]="2">
 			{{value}}
 		</ng-template>
-		<ng-template columnKey="age" columnCaption="Age" let-value="value" let-row="row" [minWidthInREM]="10" [maxWidthInREM]="10">
+		<ng-template columnKey="age" columnCaption="Age" let-value="value" let-row="row" [fixedWidthOnContents]="true">
 			{{value}} years old
 		</ng-template>
 		<ng-template columnKey="address" columnCaption="Address" [sortKey]="null" let-value="value" [enabledByDefault]="false" [minWidthInREM]="12" [maxWidthInREM]="12">
@@ -57,7 +57,7 @@
 		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value" [minWidthInREM]="10" [maxWidthInREM]="10">
 			{{value}}
 		</ng-template>
-		<ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [minWidthInREM]="2" [maxWidthInREM]="4">
+		<ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [minWidthInREM]="2" [maxWidthInREM]="999">
 			{{value}}
 		</ng-template>
 		<ng-template columnKey="newlyAdded" columnCaption="newlyAdded" let-value="value" [enabledByDefault]="false" [minWidthInREM]="8">
@@ -66,7 +66,7 @@
 	</wutu-data-table>
 </div>
 
-<div class="tableContainer" *ngIf="false">
+<div class="tableContainer" *ngIf="true">
 	<wutu-data-table
 		[fetchItemsFn]="fetchItemsFn"
 		[fetchSingleItemFn]="updateSingleItemFn"
@@ -83,7 +83,7 @@
 		[retrieveColumnsFn]="retrieveColumns"
 		[getExpandedTplFn]="getExpandedTplFn"
 	>
-		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [fixedWidthInREM]="6">
+		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [minWidthInREM]="6" [maxWidthInREM]="6">
 			{{value}}
 		</ng-template>
 		<ng-template columnKey="age" columnCaption="Age" let-value="value" let-row="row" [fixedWidthOnContents]="true">
@@ -95,7 +95,7 @@
 		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value">
 			{{value}}
 		</ng-template>
-		<ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [fixedWidthInREM]="6">
+		<ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [minWidthInREM]="6" [maxWidthInREM]="6">
 			{{value}}
 		</ng-template>
 		<ng-template columnKey="newlyAdded" columnCaption="newlyAdded" let-value="value" [enabledByDefault]="false">

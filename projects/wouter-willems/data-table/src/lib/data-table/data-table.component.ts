@@ -37,8 +37,7 @@ export class ColumnKeyDirective {
 	@Input() sortKey;
 	@Input() defaultSort: 'ASC' | 'DESC';
 	@Input() fixedWidthOnContents: boolean;
-	@Input() fixedWidthInREM: number;
-	@Input() widthAsRatio: number = 1;
+	@Input() growRatio: number = 1;
 	@Input() minWidthInREM: number = null;
 	@Input() maxWidthInREM: number = null;
 	@Input() enabledByDefault: boolean = true;
@@ -346,6 +345,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		console.log('calcu');
 		this.columnWidthsToBeCalculated = true;
 		await awaitableForNextCycle();
+		const remInPx = Number(getComputedStyle(document.documentElement).fontSize.split('px')[0]);
 		const selectBoxWidth = Math.ceil(this.selectBoxDummy.nativeElement.getBoundingClientRect().width);
 		const lastColWidth = Math.ceil(Math.max(this.actionMenuDummy.nativeElement.getBoundingClientRect().width, this.configBtnDummy.nativeElement.getBoundingClientRect().width));
 		const selectBoxContainerRef = this.elRef.nativeElement.querySelector('thead td.selectBoxContainer');
@@ -357,20 +357,14 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			configBtnContainerRef.style.width = `${lastColWidth}px`;
 		}
 		const dynamicCols = [...this.elRef.nativeElement.querySelectorAll('thead td:not(.selectBoxContainer):not(.configButtonContainer)')];
-		const ratiosCumulative = this.columnKeyDirectives.filter(e => {
-			if (!this.headerKeys.includes(e.columnKey)) {
-				return false;
+		dynamicCols.forEach((e, i) => {
+			const colDirective = this.columnKeyDirectives.find(col => col.columnKey === this.headerKeys[i]);
+			if (colDirective.fixedWidthOnContents) {
+				colDirective.minWidthInREM = Math.ceil(e.getBoundingClientRect().width) / remInPx;
+				colDirective.maxWidthInREM = Math.ceil(e.getBoundingClientRect().width) / remInPx;
 			}
-			if (e.fixedWidthOnContents) {
-				return false;
-			}
-			if (e.fixedWidthInREM) {
-				return false;
-			}
-			return true;
-		}).reduce((acc, cur) => cur.widthAsRatio + acc, 0);
+		});
 
-		const remInPx = Number(getComputedStyle(document.documentElement).fontSize.split('px')[0]);
 		const minWidthsCumulative = this.columnKeyDirectives.filter(e => {
 			if (!this.headerKeys.includes(e.columnKey)) {
 				return false;
@@ -379,33 +373,20 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		}).reduce((acc, cur) => (cur.minWidthInREM * remInPx) + acc, 0);
 
 		const spaceLeftForDistribution = this.tableContainer.nativeElement.getBoundingClientRect().width - selectBoxWidth - lastColWidth;
-		const hasAtLeastOneMinWidthRequirement = this.columnKeyDirectives.find(col => Number.isFinite(col.minWidthInREM));
 		const bonusSpaceLeftInREM = (spaceLeftForDistribution - minWidthsCumulative) / remInPx;
 		const spacings = this.distributeSpaceAfterMinWidths(bonusSpaceLeftInREM);
 		dynamicCols.forEach((e, i) => {
 			const colDirective = this.columnKeyDirectives.find(col => col.columnKey === this.headerKeys[i]);
 			const colSpacings = spacings.find(sp => sp.col.columnKey === colDirective.columnKey);
-			if (colDirective.fixedWidthOnContents) {
-				return e.style.width = `${Math.ceil(e.getBoundingClientRect().width)}px`;
-			}
-			if (Number.isFinite(colDirective.fixedWidthInREM)) {
-				e.style.width = `${colDirective.fixedWidthInREM}rem`;
-				e.style.boxSizing = 'content-box';
-				return;
-			}
 
-			if (hasAtLeastOneMinWidthRequirement) {
-				if (spaceLeftForDistribution < minWidthsCumulative) {
-					if (Number.isFinite(colDirective.minWidthInREM)) {
-						e.style.width = colDirective.minWidthInREM + 'rem';
-					} else {
-						e.style.width = '1rem';
-					}
+			if (spaceLeftForDistribution < minWidthsCumulative) {
+				if (Number.isFinite(colDirective.minWidthInREM)) {
+					e.style.width = colDirective.minWidthInREM + 'rem';
 				} else {
-					e.style.width = colDirective.minWidthInREM + colSpacings.bonusSpaceItTakes + 'rem';
+					e.style.width = '1rem';
 				}
 			} else {
-				e.style.width = `${colDirective.widthAsRatio / ratiosCumulative * 100}%`;
+				e.style.width = colDirective.minWidthInREM + colSpacings.bonusSpaceItTakes + 'rem';
 			}
 		});
 		this.columnWidthsToBeCalculated = false;
@@ -428,13 +409,13 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 				if (cur.maximumBonus <= cur.bonusSpaceItTakes) {
 					return acc;
 				}
-				return cur.col.widthAsRatio + acc;
+				return cur.col.growRatio + acc;
 			}, 0);
 
 			cols = cols.map(e => {
 				return {
 					...e,
-					bonusSpaceItTakes: Math.min(e.maximumBonus, e.bonusSpaceItTakes + (toStillDistribute * (e.col.widthAsRatio / ratiosCumulative))),
+					bonusSpaceItTakes: Math.min(e.maximumBonus, e.bonusSpaceItTakes + (toStillDistribute * (e.col.growRatio / ratiosCumulative))),
 				};
 			});
 		}

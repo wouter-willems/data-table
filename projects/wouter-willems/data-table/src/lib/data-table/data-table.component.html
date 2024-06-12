@@ -63,7 +63,7 @@
 			</ng-container>
 		</div>
 	</ng-container>
-	<table *ngIf="hasAtLeastOneResult()" [ngClass]="{actionMenuOpen: hasActionMenuOpen(), fullWidth: !horizontalScroll}">
+	<table *ngIf="hasAtLeastOneResult()" [ngClass]="{actionMenuOpen: hasActionMenuOpen(), fullWidth: !columnWidthsToBeCalculated}">
 		<thead>
 		<tr>
 			<td (click)="headerSelectClicked()" class="selectBoxContainer" *ngIf="getActionsForMultipleRowsFn">
