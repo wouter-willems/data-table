@@ -41,6 +41,7 @@
 
 <div
 	class="tableContainer"
+	#tableContainer
 	[ngClass]="{horizontalScroll: horizontalScroll || columnWidthsToBeCalculated}"
 >
 	<ng-container *ngIf="!loading && !hasAtLeastOneResult()" [ngTemplateOutlet]="emptyTpl"></ng-container>
@@ -62,7 +63,7 @@
 			</ng-container>
 		</div>
 	</ng-container>
-	<table *ngIf="hasAtLeastOneResult()" [ngClass]="{actionMenuOpen: hasActionMenuOpen(), fullWidth: horizontalScroll || !columnWidthsToBeCalculated}">
+	<table *ngIf="hasAtLeastOneResult()" [ngClass]="{actionMenuOpen: hasActionMenuOpen(), fullWidth: !horizontalScroll}">
 		<thead>
 		<tr>
 			<td (click)="headerSelectClicked()" class="selectBoxContainer" *ngIf="getActionsForMultipleRowsFn">

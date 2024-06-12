@@ -39,6 +39,8 @@ export class ColumnKeyDirective {
 	@Input() fixedWidthOnContents: boolean;
 	@Input() fixedWidthInREM: number;
 	@Input() widthAsRatio: number = 1;
+	@Input() minWidthInREM: number = null;
+	@Input() maxWidthInREM: number = null;
 	@Input() enabledByDefault: boolean = true;
 }
 
@@ -59,6 +61,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	@ViewChild('actionMenuDummy') actionMenuDummy: ElementRef;
 	@ViewChild('configBtnDummy') configBtnDummy: ElementRef;
 	@ViewChild('actionMenuContainer') actionMenuContainer: ElementRef;
+	@ViewChild('tableContainer') tableContainer: ElementRef;
 
 	@ContentChildren(ColumnKeyDirective, {read: TemplateRef}) templates: QueryList<TemplateRef<any>>;
 	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) columnKeyDirectives: QueryList<ColumnKeyDirective>;
@@ -133,6 +136,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	public selectAllAcrossPagesActive: boolean = false;
 	public selectAllAcrossPagesLoading: boolean = false;
 	private escapeKeyListener: (ev) => void;
+	private resizeListener: (ev) => void;
 
 	constructor(private injector: Injector, private elRef: ElementRef) {
 	}
@@ -148,9 +152,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		this.saveBtnRef = this.injector.get<TemplateRef<any>>(SaveBtnRefToken);
 		this.initiated = true;
 		await this.getData();
-		if (!this.horizontalScroll) {
-			await this.calculateColumnWidths();
-		}
+		await this.calculateColumnWidths();
 
 		this.escapeKeyListener = (ev) => {
 			if (ev.key === 'Escape' && this.showFilters) {
@@ -158,6 +160,11 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			}
 		};
 		window.document.addEventListener('keyup', this.escapeKeyListener);
+
+		this.resizeListener = debounce(() => {
+			this.calculateColumnWidths();
+		}, 300);
+		window.addEventListener('resize', this.resizeListener);
 	}
 
 
@@ -336,6 +343,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}
 
 	private async calculateColumnWidths(): Promise<void> {
+		console.log('calcu');
 		this.columnWidthsToBeCalculated = true;
 		await awaitableForNextCycle();
 		const selectBoxWidth = Math.ceil(this.selectBoxDummy.nativeElement.getBoundingClientRect().width);
@@ -361,8 +369,22 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			}
 			return true;
 		}).reduce((acc, cur) => cur.widthAsRatio + acc, 0);
+
+		const remInPx = Number(getComputedStyle(document.documentElement).fontSize.split('px')[0]);
+		const minWidthsCumulative = this.columnKeyDirectives.filter(e => {
+			if (!this.headerKeys.includes(e.columnKey)) {
+				return false;
+			}
+			return Number.isFinite(e.minWidthInREM);
+		}).reduce((acc, cur) => (cur.minWidthInREM * remInPx) + acc, 0);
+
+		const spaceLeftForDistribution = this.tableContainer.nativeElement.getBoundingClientRect().width - selectBoxWidth - lastColWidth;
+		const hasAtLeastOneMinWidthRequirement = this.columnKeyDirectives.find(col => Number.isFinite(col.minWidthInREM));
+		const bonusSpaceLeftInREM = (spaceLeftForDistribution - minWidthsCumulative) / remInPx;
+		const spacings = this.distributeSpaceAfterMinWidths(bonusSpaceLeftInREM);
 		dynamicCols.forEach((e, i) => {
 			const colDirective = this.columnKeyDirectives.find(col => col.columnKey === this.headerKeys[i]);
+			const colSpacings = spacings.find(sp => sp.col.columnKey === colDirective.columnKey);
 			if (colDirective.fixedWidthOnContents) {
 				return e.style.width = `${Math.ceil(e.getBoundingClientRect().width)}px`;
 			}
@@ -371,9 +393,60 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 				e.style.boxSizing = 'content-box';
 				return;
 			}
-			return e.style.width = `${colDirective.widthAsRatio / ratiosCumulative * 100}%`;
+
+			if (hasAtLeastOneMinWidthRequirement) {
+				if (spaceLeftForDistribution < minWidthsCumulative) {
+					if (Number.isFinite(colDirective.minWidthInREM)) {
+						e.style.width = colDirective.minWidthInREM + 'rem';
+					} else {
+						e.style.width = '1rem';
+					}
+				} else {
+					e.style.width = colDirective.minWidthInREM + colSpacings.bonusSpaceItTakes + 'rem';
+				}
+			} else {
+				e.style.width = `${colDirective.widthAsRatio / ratiosCumulative * 100}%`;
+			}
 		});
 		this.columnWidthsToBeCalculated = false;
+	}
+
+	private distributeSpaceAfterMinWidths(bonusSpaceLeftInREM: number): Array<{col: ColumnKeyDirective, maximumBonus: number, bonusSpaceItTakes: number}> {
+		let cols = this.columnKeyDirectives.filter(e => {
+			return this.headerKeys.includes(e.columnKey);
+		}).map(e => {
+			return {
+				col: e,
+				maximumBonus: Number.isFinite(e.maxWidthInREM) ? e.maxWidthInREM - e.minWidthInREM : Number.MAX_VALUE,
+				bonusSpaceItTakes: 0,
+			};
+		});
+
+		while (this.getSpaceToDistribute(bonusSpaceLeftInREM, cols) > 0) {
+			const toStillDistribute = this.getSpaceToDistribute(bonusSpaceLeftInREM, cols);
+			const ratiosCumulative = cols.reduce((acc, cur) => {
+				if (cur.maximumBonus <= cur.bonusSpaceItTakes) {
+					return acc;
+				}
+				return cur.col.widthAsRatio + acc;
+			}, 0);
+
+			cols = cols.map(e => {
+				return {
+					...e,
+					bonusSpaceItTakes: Math.min(e.maximumBonus, e.bonusSpaceItTakes + (toStillDistribute * (e.col.widthAsRatio / ratiosCumulative))),
+				};
+			});
+		}
+		return cols;
+	}
+
+	private getSpaceToDistribute(bonusSpaceLeftInREM: number, cols: Array<{ col: ColumnKeyDirective; maximumBonus: number; bonusSpaceItTakes: number }>): number {
+		const allMaximumsReached = cols.every(e => e.maximumBonus - e.bonusSpaceItTakes < 0.01); // 0.01 because of floating point precision
+		if (allMaximumsReached) {
+			return 0;
+		}
+		return bonusSpaceLeftInREM - cols.reduce((acc, cur) => cur.bonusSpaceItTakes + acc, 0);
 	}
 
 	public getTemplate(header: string, value: any): TemplateRef<any> {
@@ -645,5 +718,6 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 
 	ngOnDestroy(): void {
 		window.document.removeEventListener('keyup', this.escapeKeyListener);
+		window.document.removeEventListener('resize', this.resizeListener);
 	}
 }

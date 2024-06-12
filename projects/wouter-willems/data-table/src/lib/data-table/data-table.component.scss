@@ -37,12 +37,14 @@ $tdPadding: var(#{$p}td-padding);
   }
 }
 .tableContainer {
+  background: yellow;
   position: relative;
   &.horizontalScroll {
     overflow: auto;
   }
-  &:not(&.horizontalScroll) table {
+  table {
     table-layout: fixed;
+    width: 100%;
     td {
       overflow: hidden;
       text-overflow: ellipsis;
@@ -148,6 +150,9 @@ $tdPadding: var(#{$p}td-padding);
 
 .selectBoxContainer {
   cursor: pointer;
+}
+.configButtonContainer {
+  text-align: right;
 }
 .selectAcrossPagesTooltip {
   position: absolute;
