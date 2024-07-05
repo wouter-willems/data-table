@@ -1,6 +1,6 @@
 {
   "name": "wutu-data-table",
-  "version": "7.0.0",
+  "version": "8.0.0",
   "publishConfig": {
     "access": "public"
   },
