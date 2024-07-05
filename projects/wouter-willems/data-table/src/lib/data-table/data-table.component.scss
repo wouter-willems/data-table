@@ -2,6 +2,8 @@
 
 $color: #60626c;
 $tdPaddingSelectBox: var(#{$p}td-padding-select-box);
+$tdHeaderTopPadding: var(#{$p}td-top-header-padding);
+$tdHeaderBottomPadding: var(#{$p}td-bottom-header-padding);
 $tdPadding: var(#{$p}td-padding);
 
 :host {
@@ -227,9 +229,15 @@ table {
     border-top: var(#{$p}border);
     border-bottom: var(#{$p}border);
     background: #f3f3f3;
-
+    &:not(:last-of-type) {
+      padding: $tdPadding;
+      padding-top: $tdHeaderTopPadding;
+      padding-bottom: $tdHeaderBottomPadding;
+    }
     &:last-of-type {
       padding: $tdPadding;
+      padding-top: $tdHeaderTopPadding;
+      padding-bottom: $tdHeaderBottomPadding;
       padding-right: 1rem;;
     }
   }
