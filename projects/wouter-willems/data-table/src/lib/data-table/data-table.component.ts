@@ -191,7 +191,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 				this.sortField = stateExternal.sortField ?? stateInternal.sortField;
 				this.sortOrder = stateExternal.sortOrder ?? stateInternal.sortOrder;
 				if (this.initiated) {
-					this.getData();
+					this.getData().then(() => this.calculateColumnWidths());
 				}
 			}
 		}
@@ -342,7 +342,6 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}
 
 	private async calculateColumnWidths(): Promise<void> {
-		console.log('calcu');
 		this.columnWidthsToBeCalculated = true;
 		await awaitableForNextCycle();
 		const remInPx = Number(getComputedStyle(document.documentElement).fontSize.split('px')[0]);

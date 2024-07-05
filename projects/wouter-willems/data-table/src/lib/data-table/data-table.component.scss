@@ -7,7 +7,6 @@ $tdPadding: var(#{$p}td-padding);
   display: block;
   position: relative;
   font-size: 14px;
-  padding: 2rem 2rem 1rem;
   background: white;
   border: var(#{$p}border);
   border-radius: 5px;
@@ -16,15 +15,19 @@ $tdPadding: var(#{$p}td-padding);
   display: flex;
   height: 0;
   overflow: hidden;
-  .includePadding {
+  .selectBox {
     padding: $tdPadding;
+  }
+  .configButton {
+    padding: $tdPadding;
+    padding-right: 1rem;
   }
 }
 .topButtons {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 3rem;
+  padding: 1rem;
   .searchAndMultiSelect {
     display: flex;
     justify-content: space-between;
@@ -54,6 +57,9 @@ $tdPadding: var(#{$p}td-padding);
   }
   td:not(:last-child) {
     padding: $tdPadding;
+  }
+  td:last-child {
+    padding-right: 1rem;
   }
 }
 
@@ -151,9 +157,11 @@ $tdPadding: var(#{$p}td-padding);
 
 .selectBoxContainer {
   cursor: pointer;
+  padding-left: 1rem;
 }
 .configButtonContainer {
   text-align: right;
+  padding-right: 1rem;
 }
 .selectAcrossPagesTooltip {
   position: absolute;
@@ -204,9 +212,11 @@ table {
     color: #515365;
     border-top: var(#{$p}border);
     border-bottom: var(#{$p}border);
+    background: #f3f3f3;
 
     &:last-of-type {
-      padding: 1rem 0;
+      padding: $tdPadding;
+      padding-right: 1rem;;
     }
 
     font-weight: bold;
@@ -220,9 +230,6 @@ table {
     }
   }
   tbody tr {
-    &:nth-child(odd) td {
-      background: #fbfcfd;
-    }
     td {
       border-bottom: var(#{$p}border);
       &:not(.selectBoxContainer) {
@@ -274,9 +281,7 @@ footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 2.5rem;
-  margin-top: 1.5rem;
-  margin-bottom: 1rem;
+  padding: 1rem;
   color: $color;
 }
 
