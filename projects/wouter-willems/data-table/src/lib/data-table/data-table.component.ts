@@ -470,7 +470,20 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	getPageNumbers(): Array<number> {
 		const totalPages = this.getLastPage();
 		const allPageNumbers = [...Array(totalPages).keys()].map(i => i + 1);
-		return allPageNumbers.filter(i => Math.abs(i - this.page) < 4);
+		const filtered = allPageNumbers.filter(i => Math.abs(i - this.page) < 5);
+		if (!filtered.includes(1)) {
+			filtered[0] = 1;
+			if (filtered[1] !== 2) {
+				filtered[1] = null;
+			}
+		}
+		if (!filtered.includes(allPageNumbers[allPageNumbers.length - 1])) {
+			filtered[filtered.length - 1] = allPageNumbers[allPageNumbers.length - 1];
+			if (filtered[filtered.length - 2] !== allPageNumbers[allPageNumbers.length - 2]) {
+				filtered[filtered.length - 2] = null;
+			}
+		}
+		return filtered;
 	}
 
 	public getLastPage(): number {

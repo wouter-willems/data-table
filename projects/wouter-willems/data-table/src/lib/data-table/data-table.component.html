@@ -1,5 +1,5 @@
 <wutu-lib-style></wutu-lib-style>
-<div class="dummies" *ngIf="columnWidthsToBeCalculated">
+<div class="dummies" *ngIf="true">
 	<div class="selectBox" #selectBoxDummy><ng-container [ngTemplateOutlet]="checkboxRef"></ng-container></div>
 	<div #actionMenuDummy><ng-container [ngTemplateOutlet]="actionMenuBtnRef"></ng-container></div>
 	<div class="configButton" #configBtnDummy><ng-container [ngTemplateOutlet]="configBtnRef"></ng-container></div>
@@ -7,7 +7,7 @@
 
 <div class="topButtons">
 	<div>
-		<span *ngIf="hasAtLeastOneResult()">{{translate('Showing %from% to %to% of %total% results', {from: (page -1) * itemsPerPage + 1, to: (page -1) * itemsPerPage + pageData.data.length, total: pageData.totalAmount})}}</span>
+		<span *ngIf="hasAtLeastOneResult()">{{translate('Showing %from%-%to% of %total% results', {from: (page -1) * itemsPerPage + 1, to: (page -1) * itemsPerPage + pageData.data.length, total: pageData.totalAmount})}}</span>
 	</div>
 	<div class="searchAndMultiSelect">
 		<ng-container *ngIf="showSearchField" [ngTemplateOutlet]="searchInputRef" [ngTemplateOutletContext]="{changeHandler: searchQueryChanged, searchQuery: searchQuery}"></ng-container>
@@ -127,15 +127,30 @@
 		{{translate('results')}}
 	</div>
 	<div class="pageNumbers" *ngIf="pageData">
-		<button (click)="toPage(1)" [disabled]="page === 1">{{translate('First')}}</button>
-		<button (click)="toPage(page-1)" [disabled]="page === 1">{{translate('Previous')}}</button>
+		<button *ngIf="false" (click)="toPage(1)" [disabled]="page === 1">{{translate('First')}}</button>
+		<button (click)="toPage(page-1)" [disabled]="page === 1" class="withIcon">
+			<svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M12.8333 7.00002H1.16663M1.16663 7.00002L6.99996 12.8334M1.16663 7.00002L6.99996 1.16669" stroke="#475467" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+			</svg>
+			<div>{{translate('Previous')}}</div>
+		</button>
 		<div class="pageNrButtons">
-			<button class="pageNrButton" *ngFor="let pageNr of getPageNumbers()" (click)="toPage(pageNr)" [ngClass]="{selected: page === pageNr}">
-				<span>{{pageNr}}</span>
-			</button>
+			<ng-container *ngFor="let pageNr of getPageNumbers()">
+				<button class="pageNrButton" *ngIf="pageNr !== null" (click)="toPage(pageNr)" [ngClass]="{selected: page === pageNr}">
+					<span>{{pageNr}}</span>
+				</button>
+				<button class="pageNrButton separator" *ngIf="pageNr == null">
+					<span>...</span>
+				</button>
+			</ng-container>
 		</div>
-		<button (click)="toPage(page+1)" [disabled]="page === this.getLastPage()">{{translate('Next')}}</button>
-		<button (click)="toPage(this.getLastPage())" [disabled]="page === this.getLastPage()">{{translate('Last')}}</button>
+		<button (click)="toPage(page+1)" [disabled]="page === this.getLastPage()" class="withIcon">
+			<div>{{translate('Next')}}</div>
+			<svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M1.16675 7.00002H12.8334M12.8334 7.00002L7.00008 1.16669M12.8334 7.00002L7.00008 12.8334" stroke="#475467" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+			</svg>
+		</button>
+		<button *ngIf="false" (click)="toPage(this.getLastPage())" [disabled]="page === this.getLastPage()">{{translate('Last')}}</button>
 	</div>
 </footer>
 
