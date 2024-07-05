@@ -114,12 +114,6 @@ $tdPadding: var(#{$p}td-padding);
     flex-direction: column;
     gap: 0.12rem;
     padding: 0;
-    svg {
-      opacity: 0;
-      &.visible {
-        opacity: 1;
-      }
-    }
   }
 }
 
