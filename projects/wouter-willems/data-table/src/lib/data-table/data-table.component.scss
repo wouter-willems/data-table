@@ -1,6 +1,8 @@
 @import "../_variables.scss";
 
 $color: #60626c;
+$topButtonsPadding: var(#{$p}top-buttons-padding);
+$footerButtonsPadding: var(#{$p}footer-buttons-padding);
 $tdPaddingSelectBox: var(#{$p}td-padding-select-box);
 $tdHeaderTopPadding: var(#{$p}td-top-header-padding);
 $tdHeaderBottomPadding: var(#{$p}td-bottom-header-padding);
@@ -30,7 +32,7 @@ $tdPadding: var(#{$p}td-padding);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
+  padding: $topButtonsPadding;
   .searchAndMultiSelect {
     display: flex;
     justify-content: space-between;
@@ -295,7 +297,7 @@ footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
+  padding: $footerButtonsPadding;
   color: $color;
 }
 
