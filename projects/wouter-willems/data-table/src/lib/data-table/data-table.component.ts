@@ -26,6 +26,7 @@ export const TranslationsToken = new InjectionToken('translations');
 export const CheckBoxRefToken = new InjectionToken('checkbox');
 export const ConfigBtnRefToken = new InjectionToken('config btn');
 export const ActionMenuBtnRefToken = new InjectionToken('actionMenu');
+export const ActionMenuMultipleBtnRefToken = new InjectionToken('actionMenu');
 export const SearchInputRefToken = new InjectionToken('searchInput');
 export const FilterBtnRefToken = new InjectionToken('filter btn');
 
@@ -124,6 +125,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	public checkboxRef: TemplateRef<any>;
 	public configBtnRef: TemplateRef<any>;
 	public actionMenuBtnRef: TemplateRef<any>;
+	public actionMenuMultipleBtnRef: TemplateRef<any>;
 	public searchInputRef: TemplateRef<any>;
 	public filterBtnRef: TemplateRef<any>;
 	public saveBtnRef: TemplateRef<any>;
@@ -146,6 +148,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		this.checkboxRef = this.injector.get<TemplateRef<any>>(CheckBoxRefToken);
 		this.configBtnRef = this.injector.get<TemplateRef<any>>(ConfigBtnRefToken);
 		this.actionMenuBtnRef = this.injector.get<TemplateRef<any>>(ActionMenuBtnRefToken);
+		this.actionMenuMultipleBtnRef = this.injector.get<TemplateRef<any>>(ActionMenuMultipleBtnRefToken);
 		this.searchInputRef = this.injector.get<TemplateRef<any>>(SearchInputRefToken);
 		this.filterBtnRef = this.injector.get<TemplateRef<any>>(FilterBtnRefToken);
 		this.saveBtnRef = this.injector.get<TemplateRef<any>>(SaveBtnRefToken);
@@ -458,7 +461,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 
 	showActionsMultipleRows(): void {
 		this.multipleRowsActionsShown = true;
-		this.actionMenuOffset = {x: 0, y: 30};
+		this.actionMenuOffset = {x: 0, y: 40};
 		const actions = this.getActionsForMultipleRowsFn(this.getSelectedRows()) ?? [];
 		this.actions = actions;
 	}

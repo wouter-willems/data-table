@@ -11,6 +11,11 @@
 		.
 	</button>
 </ng-template>
+<ng-template #actionMenuMultipleBtn let-clickHandler="clickHandler">
+	<button (click)="clickHandler($event.target)">
+		actions
+	</button>
+</ng-template>
 <ng-template #toggleBtnRef let-isSelected="isSelected">
 	<app-my-toggle [ngModel]="isSelected"></app-my-toggle>
 </ng-template>

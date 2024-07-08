@@ -3,7 +3,7 @@ import {
 	ActionMenuBtnRefToken,
 	CheckBoxRefToken,
 	ConfigBtnRefToken, DataTableComponent, WDTRow, FilterBtnRefToken,
-	SearchInputRefToken, ToggleRefToken
+	SearchInputRefToken, ToggleRefToken, ActionMenuMultipleBtnRefToken
 } from 'projects/wouter-willems/data-table/src/public-api';
 import {
 	SaveBtnRefToken
@@ -35,6 +35,9 @@ import {getDummyData, getSingleDummyItem} from "./dummy";
 			provide: ActionMenuBtnRefToken,
 			useFactory: () => inject(AppComponent, {self: true}).actionMenuBtn,
 		}, {
+			provide: ActionMenuMultipleBtnRefToken,
+			useFactory: () => inject(AppComponent, {self: true}).actionMenuMultipleBtn,
+		}, {
 			provide: SearchInputRefToken,
 			useFactory: () => inject(AppComponent, {self: true}).searchInput,
 		}, {
@@ -50,6 +53,7 @@ export class AppComponent implements OnInit {
 	@ViewChild('toggleBtnRef') toggleBtn: TemplateRef<any>;
 	@ViewChild('saveBtn') saveBtn: TemplateRef<any>;
 	@ViewChild('actionMenuBtn') actionMenuBtn: TemplateRef<any>;
+	@ViewChild('actionMenuMultipleBtn') actionMenuMultipleBtn: TemplateRef<any>;
 	@ViewChild('searchInput') searchInput: TemplateRef<any>;
 	@ViewChild('filterButton') filterButton: TemplateRef<any>;
 	@ViewChild('filterForm') filterForm: TemplateRef<any>;

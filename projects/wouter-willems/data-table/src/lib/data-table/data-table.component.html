@@ -39,7 +39,7 @@
 		</ng-container>
 		<div class="multiSelectActionMenu" *ngIf="getSelectedRows().length > 0">
 			<div class="actionMenuContainer" *ngIf="getActionsForMultipleRowsFn?.(getSelectedRows())?.length > 0" #actionMenuContainer>
-				<ng-container [ngTemplateOutlet]="actionMenuBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsMultipleFn()}"></ng-container>
+				<ng-container [ngTemplateOutlet]="actionMenuMultipleBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsMultipleFn()}"></ng-container>
 				<div
 					*ngIf="multipleRowsActionsShown"
 					class="actionMenu"
