@@ -21,7 +21,6 @@ import {isValueSet, stringIsSetAndFilled, useIfStringIsSet} from '../util/values
 import {awaitableForNextCycle} from "../util/angular";
 import {debounce, isEqual} from 'lodash';
 import {SaveBtnRefToken} from "../column-rearranger/column-rearranger.component";
-import {PresetValue} from "../../../../../demo/src/app/presets";
 
 export const TranslationsToken = new InjectionToken('translations');
 export const CheckBoxRefToken = new InjectionToken('checkbox');
@@ -30,6 +29,13 @@ export const ActionMenuBtnRefToken = new InjectionToken('actionMenu');
 export const ActionMenuMultipleBtnRefToken = new InjectionToken('actionMenu');
 export const SearchInputRefToken = new InjectionToken('searchInput');
 export const FilterBtnRefToken = new InjectionToken('filter btn');
+
+export type PresetValue = {
+	fixedWidthOnContents?: boolean,
+	growRatio?: number,
+	minWidthInREM?: number,
+	maxWidthInREM?: number,
+};
 
 // tslint:disable-next-line:directive-selector
 @Directive({selector: '[columnKey]'})
