@@ -11,6 +11,7 @@ import {
 import {ActivatedRoute, Router} from "@angular/router";
 import {FormControl, FormGroup, Validators } from '@angular/forms';
 import {getDummyData, getSingleDummyItem} from "./dummy";
+import {wdtColumnPresets} from "./presets";
 
 
 @Component({
@@ -62,6 +63,7 @@ export class AppComponent implements OnInit {
 
 	public searchQuery: string;
 	public myFilterForm: FormGroup;
+	public presets = wdtColumnPresets;
 	private expandedInfo: { name: string; index: number };
 
 	constructor(private router: Router, private activatedRoute: ActivatedRoute) {

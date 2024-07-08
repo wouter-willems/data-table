@@ -21,6 +21,7 @@ import {isValueSet, stringIsSetAndFilled, useIfStringIsSet} from '../util/values
 import {awaitableForNextCycle} from "../util/angular";
 import {debounce, isEqual} from 'lodash';
 import {SaveBtnRefToken} from "../column-rearranger/column-rearranger.component";
+import {PresetValue} from "../../../../../demo/src/app/presets";
 
 export const TranslationsToken = new InjectionToken('translations');
 export const CheckBoxRefToken = new InjectionToken('checkbox');
@@ -32,7 +33,7 @@ export const FilterBtnRefToken = new InjectionToken('filter btn');
 
 // tslint:disable-next-line:directive-selector
 @Directive({selector: '[columnKey]'})
-export class ColumnKeyDirective {
+export class ColumnKeyDirective implements OnChanges {
 	@Input() columnKey;
 	@Input() columnCaption;
 	@Input() sortKey;
@@ -42,6 +43,16 @@ export class ColumnKeyDirective {
 	@Input() minWidthInREM: number = null;
 	@Input() maxWidthInREM: number = null;
 	@Input() enabledByDefault: boolean = true;
+	@Input() preset: PresetValue;
+
+	public ngOnChanges(simpleChanges: SimpleChanges): void {
+		if (simpleChanges.preset) {
+			this.fixedWidthOnContents = this.fixedWidthOnContents ?? this.preset.fixedWidthOnContents;
+			this.growRatio =  this.growRatio ?? this.preset.growRatio;
+			this.minWidthInREM = this.minWidthInREM ?? this.preset.minWidthInREM;
+			this.maxWidthInREM = this.maxWidthInREM ?? this.preset.maxWidthInREM;
+		}
+	}
 }
 
 // tslint:disable-next-line:directive-selector
@@ -67,7 +78,6 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) columnKeyDirectives: QueryList<ColumnKeyDirective>;
 	@ContentChild(FilterFormDirective, {read: TemplateRef}) filterFormTpl: TemplateRef<any>;
 
-	@Input() horizontalScroll = false;
 	@Input() searchParams;
 	@Input() showSearchField = true;
 	@Input() showFiltersBtn = true;

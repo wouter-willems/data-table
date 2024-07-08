@@ -50,7 +50,7 @@
 		[retrieveColumnsFn]="retrieveColumns"
 		[getExpandedTplFn]="getExpandedTplFn"
 	>
-		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [minWidthInREM]="22" [maxWidthInREM]="80" [growRatio]="2">
+		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [preset]="presets.name" [minWidthInREM]="22" [maxWidthInREM]="80" [growRatio]="2">
 			{{value}}
 		</ng-template>
 		<ng-template columnKey="age" columnCaption="Age" let-value="value" let-row="row" [fixedWidthOnContents]="true">
@@ -88,7 +88,7 @@
 		[retrieveColumnsFn]="retrieveColumns"
 		[getExpandedTplFn]="getExpandedTplFn"
 	>
-		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [minWidthInREM]="6" [maxWidthInREM]="6">
+		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [preset]="presets.name" [minWidthInREM]="6">
 			{{value}}
 		</ng-template>
 		<ng-template columnKey="age" columnCaption="Age" let-value="value" let-row="row" [fixedWidthOnContents]="true">
@@ -97,7 +97,7 @@
 		<ng-template columnKey="address" columnCaption="Address" [sortKey]="null" let-value="value" [enabledByDefault]="false">
 			{{value.street}} at number {{value.number}}
 		</ng-template>
-		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value">
+		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value" [minWidthInREM]="20">
 			{{value}}
 		</ng-template>
 		<ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [minWidthInREM]="6" [maxWidthInREM]="6">

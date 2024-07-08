@@ -68,9 +68,7 @@ $tdPadding: var(#{$p}td-padding);
 }
 .tableContainer {
   position: relative;
-  &.horizontalScroll {
-    overflow: auto;
-  }
+  overflow: auto;
   table {
     table-layout: fixed;
     &.fullWidth {

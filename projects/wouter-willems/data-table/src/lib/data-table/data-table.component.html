@@ -57,7 +57,6 @@
 <div
 	class="tableContainer"
 	#tableContainer
-	[ngClass]="{horizontalScroll: horizontalScroll || columnWidthsToBeCalculated}"
 >
 	<ng-container *ngIf="!loading && !hasAtLeastOneResult()" [ngTemplateOutlet]="emptyTpl"></ng-container>
 	<table *ngIf="hasAtLeastOneResult()" [ngClass]="{actionMenuOpen: hasActionMenuOpen(), fullWidth: !columnWidthsToBeCalculated}">
@@ -144,7 +143,7 @@
 		</div>
 		{{translate('results')}}
 	</div>
-	<div class="pageNumbers" *ngIf="pageData">
+	<div class="pageNumbers" *ngIf="pageData && hasAtLeastOneResult()">
 		<button *ngIf="false" (click)="toPage(1)" [disabled]="page === 1">{{translate('First')}}</button>
 		<button (click)="toPage(page-1)" [disabled]="page === 1" class="withIcon">
 			<svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
