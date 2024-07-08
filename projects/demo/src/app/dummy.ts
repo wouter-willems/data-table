@@ -5,7 +5,7 @@ export function getDummyData(start: number, searchQuery: string, itemsPerPage: n
 	data: Array<WDTRow>
 } {
 	const allData: Array<WDTRow> = [];
-	for (let i = 0; i < 107; i++) {
+	for (let i = 0; i < 11; i++) {
 		allData.push(getSingleDummyItem(i));
 	}
 	const filteredData = allData.filter((e) => e.name.includes(searchQuery ?? ''));

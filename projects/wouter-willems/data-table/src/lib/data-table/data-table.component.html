@@ -22,22 +22,22 @@
 				</div>
 				{{translate('Selecting items on all pages...')}}
 			</div>
+			<ng-container *ngIf="!selectAllAcrossPagesLoading">
+				<div *ngIf="getHeaderSelectState() === true && selectAllAcrossPagesActive === false">
+					<button class="textButton" (click)="selectAllAcrossPages()">{{translate('Select items on all pages')}}</button>
+				</div>
+				<div *ngIf="selectAllAcrossPagesActive">
+					<button class="textButton" (click)="stopSelectingAcrossPages()">{{translate('Deselect items on all pages')}}</button>
+				</div>
+			</ng-container>
 		</ng-container>
-		<ng-container *ngIf="!selectAllAcrossPagesLoading">
-			<div *ngIf="getHeaderSelectState() === true && selectAllAcrossPagesActive === false">
-				<button class="textButton" (click)="selectAllAcrossPages()">{{translate('Select items on all pages')}}</button>
-			</div>
-			<div *ngIf="selectAllAcrossPagesActive">
-				<button class="textButton" (click)="stopSelectingAcrossPages()">{{translate('Deselect items on all pages')}}</button>
-			</div>
-		</ng-container>
-
 	</div>
 	<div class="searchAndMultiSelect">
-		<ng-container *ngIf="showSearchField" [ngTemplateOutlet]="searchInputRef" [ngTemplateOutletContext]="{changeHandler: searchQueryChanged, searchQuery: searchQuery}"></ng-container>
-		<ng-container *ngIf="showFiltersBtn" [ngTemplateOutlet]="filterBtnRef" [ngTemplateOutletContext]="{clickHandler: openFilters, nrOfActiveFilters: getNrOfActiveFilters()}"></ng-container>
+		<ng-container *ngIf="!selectAllAcrossPagesActive && !selectAllAcrossPagesLoading">
+			<ng-container *ngIf="showSearchField" [ngTemplateOutlet]="searchInputRef" [ngTemplateOutletContext]="{changeHandler: searchQueryChanged, searchQuery: searchQuery}"></ng-container>
+			<ng-container *ngIf="showFiltersBtn" [ngTemplateOutlet]="filterBtnRef" [ngTemplateOutletContext]="{clickHandler: openFilters, nrOfActiveFilters: getNrOfActiveFilters()}"></ng-container>
+		</ng-container>
 		<div class="multiSelectActionMenu" *ngIf="getSelectedRows().length > 0">
-			{{translate('Selected %length% item(s)', {length: getSelectedRows().length})}}
 			<div class="actionMenuContainer" *ngIf="getActionsForMultipleRowsFn?.(getSelectedRows())?.length > 0" #actionMenuContainer>
 				<ng-container [ngTemplateOutlet]="actionMenuBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsMultipleFn()}"></ng-container>
 				<div
