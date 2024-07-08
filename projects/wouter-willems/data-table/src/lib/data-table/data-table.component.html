@@ -6,8 +6,32 @@
 </div>
 
 <div class="topButtons">
-	<div>
+	<div *ngIf="getTopLeftInfoToShow() === 'pagination'">
 		<span *ngIf="hasAtLeastOneResult()">{{translate('Showing %from%-%to% of %total% results', {from: (page -1) * itemsPerPage + 1, to: (page -1) * itemsPerPage + pageData.data.length, total: pageData.totalAmount})}}</span>
+	</div>
+	<div *ngIf="getTopLeftInfoToShow() === 'selection'" class="selectionContainer">
+		<div>{{translate('%count% item(s) selected', {count: getSelectedRows().length})}}</div>
+		<ng-container *ngIf="shouldShowSelectAcrossAllPages()">
+			<div class="separator"></div>
+			<div *ngIf="selectAllAcrossPagesLoading" class="loadingIndicator" >
+				<div class="spinner">
+					<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path fill-rule="evenodd" clip-rule="evenodd" d="M10 20C15.5228 20 20 15.5228 20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20ZM10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C5.85786 2.5 2.5 5.85786 2.5 10C2.5 14.1421 5.85786 17.5 10 17.5Z" fill="#D8DADF"/>
+						<path d="M19.9229 8.75248C19.3598 4.22709 15.7729 0.640218 11.2475 0.077058C10.5624 -0.00819539 10 0.559644 10 1.25C10 1.94036 10.5638 2.48908 11.2448 2.60282C14.3896 3.12813 16.8719 5.61038 17.3972 8.75523C17.5109 9.43616 18.0596 10 18.75 10C19.4404 10 20.0082 9.43755 19.9229 8.75248Z" fill="#475467"/>
+					</svg>
+				</div>
+				{{translate('Selecting items on all pages...')}}
+			</div>
+		</ng-container>
+		<ng-container *ngIf="!selectAllAcrossPagesLoading">
+			<div *ngIf="getHeaderSelectState() === true && selectAllAcrossPagesActive === false">
+				<button class="textButton" (click)="selectAllAcrossPages()">{{translate('Select items on all pages')}}</button>
+			</div>
+			<div *ngIf="selectAllAcrossPagesActive">
+				<button class="textButton" (click)="stopSelectingAcrossPages()">{{translate('Deselect items on all pages')}}</button>
+			</div>
+		</ng-container>
+
 	</div>
 	<div class="searchAndMultiSelect">
 		<ng-container *ngIf="showSearchField" [ngTemplateOutlet]="searchInputRef" [ngTemplateOutletContext]="{changeHandler: searchQueryChanged, searchQuery: searchQuery}"></ng-container>
@@ -36,28 +60,10 @@
 	[ngClass]="{horizontalScroll: horizontalScroll || columnWidthsToBeCalculated}"
 >
 	<ng-container *ngIf="!loading && !hasAtLeastOneResult()" [ngTemplateOutlet]="emptyTpl"></ng-container>
-	<ng-container *ngIf="allowSelectingAcrossMultiplePages">
-		<div class="selectAcrossPagesTooltip" *ngIf="shouldShowSelectAcrossAllPagesTooltip()">
-			<div *ngIf="selectAllAcrossPagesLoading">
-				{{translate('Please wait while we are collecting the data...')}}
-			</div>
-			<ng-container *ngIf="!selectAllAcrossPagesLoading">
-				<div *ngIf="getHeaderSelectState() === true && selectAllAcrossPagesActive === false">
-					{{translate('You can')}}
-					<button class="textButton" (click)="selectAllAcrossPages()">
-						{{translate('select all %total% items across all pages', {total: pageData.totalAmount})}}
-					</button>
-				</div>
-				<div *ngIf="selectAllAcrossPagesActive">
-					{{translate('You are selecting across pages.')}} <button class="textButton" (click)="stopSelectingAcrossPages()">{{translate('Deselect everything')}}</button>
-				</div>
-			</ng-container>
-		</div>
-	</ng-container>
 	<table *ngIf="hasAtLeastOneResult()" [ngClass]="{actionMenuOpen: hasActionMenuOpen(), fullWidth: !columnWidthsToBeCalculated}">
 		<thead>
 		<tr>
-			<td (click)="headerSelectClicked()" class="selectBoxContainer" *ngIf="getActionsForMultipleRowsFn">
+			<td (click)="headerSelectClicked()" class="selectBoxContainer" *ngIf="getActionsForMultipleRowsFn" [ngClass]="{hidden: selectAllAcrossPagesActive}">
 				<div class="selectBox">
 					<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: getHeaderSelectState()}"></ng-container>
 				</div>

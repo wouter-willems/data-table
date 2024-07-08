@@ -33,6 +33,28 @@ $tdPadding: var(#{$p}td-padding);
   justify-content: space-between;
   align-items: center;
   padding: $topButtonsPadding;
+  .selectionContainer {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    .separator {
+      width: 2px;
+      height: 1rem;
+      background: #dddddd;
+    }
+    .loadingIndicator {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+    }
+    @keyframes spinner {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .spinner {
+      animation: spinner 2s linear infinite;
+    }
+  }
   .searchAndMultiSelect {
     display: flex;
     justify-content: space-between;
@@ -170,6 +192,12 @@ $tdPadding: var(#{$p}td-padding);
 
 .selectBoxContainer {
   cursor: pointer;
+  &.hidden {
+    pointer-events: none;
+    .selectBox {
+      opacity: 0;
+    }
+  }
 }
 .configButtonContainer {
   text-align: right;
@@ -195,8 +223,11 @@ $tdPadding: var(#{$p}td-padding);
   border: none;
   cursor: pointer;
   font-weight: bold;
-  text-decoration: underline;
   padding: 0;
+  color: #1570EF;
+  &:hover {
+    text-decoration: underline;
+  }
 }
 .selectBox {
   pointer-events: none;
@@ -224,7 +255,7 @@ table {
     color: #515365;
     border-top: var(#{$p}border);
     border-bottom: var(#{$p}border);
-    background: #f3f3f3;
+    background: #F9FAFB;
     &:not(:last-of-type) {
       padding: $tdPadding;
       padding-top: $tdHeaderTopPadding;
@@ -275,20 +306,23 @@ td {
   z-index: var(--wdt-action-menu-zIndex);
   background: white;
   border: var(#{$p}border);
-  border-radius: 0.2rem;
-  box-shadow: 0px 0px 10px gray;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0px 0px 10px #dddddd;
   min-width: 10rem;
+  padding: 0.3rem;
   button {
     width: 100%;
     display: block;
-    background: white;
+    background: transparent;
+    border-radius: 0.4rem;
     border: none;
     height: 3rem;
     cursor: pointer;
     text-align: left;
     padding-left: 1rem;
     &:hover {
-      background: #eeeeee;
+      background: #F2F4F7;
     }
   }
 }

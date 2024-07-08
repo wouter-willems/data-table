@@ -585,6 +585,9 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}
 
 	headerSelectClicked(): void {
+		if (this.selectAllAcrossPagesActive) {
+			return;
+		}
 		const isSelected = this.getHeaderSelectState();
 
 		if (isSelected === true) {
@@ -699,7 +702,10 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		this.maxBatchSize = size;
 	}
 
-	public shouldShowSelectAcrossAllPagesTooltip(): boolean {
+	public shouldShowSelectAcrossAllPages(): boolean {
+		if (!this.allowSelectingAcrossMultiplePages) {
+			return false;
+		}
 		if (this.selectAllAcrossPagesActive) {
 			return true;
 		}
@@ -709,8 +715,16 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		return this.getHeaderSelectState() === true;
 	}
 
+	public getTopLeftInfoToShow(): 'pagination' | 'selection' {
+		if (arrayIsSetAndFilled(this.getSelectedRows())) {
+			return 'selection';
+		}
+		return 'pagination';
+	}
+
 	ngOnDestroy(): void {
 		window.document.removeEventListener('keyup', this.escapeKeyListener);
 		window.document.removeEventListener('resize', this.resizeListener);
 	}
+
 }
