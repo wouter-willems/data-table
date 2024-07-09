@@ -62,7 +62,7 @@
 		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value" [minWidthInREM]="10" [maxWidthInREM]="10">
 			{{value}}
 		</ng-template>
-		<ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [minWidthInREM]="2" [maxWidthInREM]="999">
+		<ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [minWidthInREM]="20" [maxWidthInREM]="999">
 			{{value}}
 		</ng-template>
 		<ng-template columnKey="newlyAdded" columnCaption="newlyAdded" let-value="value" [enabledByDefault]="false" [minWidthInREM]="8">
@@ -88,7 +88,7 @@
 		[retrieveColumnsFn]="retrieveColumns"
 		[getExpandedTplFn]="getExpandedTplFn"
 	>
-		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [preset]="presets.name" [minWidthInREM]="6">
+		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [preset]="presets.name" [minWidthInREM]="16">
 			{{value}}
 		</ng-template>
 		<ng-template columnKey="age" columnCaption="Age" let-value="value" let-row="row" [fixedWidthOnContents]="true">
@@ -100,7 +100,7 @@
 		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value" [minWidthInREM]="20">
 			{{value}}
 		</ng-template>
-		<ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [minWidthInREM]="6" [maxWidthInREM]="6">
+		<ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [minWidthInREM]="36">
 			{{value}}
 		</ng-template>
 		<ng-template columnKey="newlyAdded" columnCaption="newlyAdded" let-value="value" [enabledByDefault]="false">

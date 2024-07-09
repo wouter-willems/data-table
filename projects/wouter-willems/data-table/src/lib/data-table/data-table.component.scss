@@ -78,6 +78,9 @@ $tdPadding: var(#{$p}td-padding);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      &.actionMenuContainerTd {
+        overflow: visible;
+      }
     }
   }
   td:not(:last-child) {
@@ -200,6 +203,12 @@ $tdPadding: var(#{$p}td-padding);
 .configButtonContainer {
   text-align: right;
   padding-right: 1rem;
+  &.sticky {
+    position: sticky;
+    right: 0;
+    box-shadow: inset 30px 0px 15px -25px #dddddd;
+    overflow: visible;
+  }
 }
 .selectAcrossPagesTooltip {
   position: absolute;
@@ -254,6 +263,7 @@ table {
     border-top: var(#{$p}border);
     border-bottom: var(#{$p}border);
     background: #F9FAFB;
+    font-weight: 600;
     &:not(:last-of-type) {
       padding: $tdPadding;
       padding-top: $tdHeaderTopPadding;
@@ -279,6 +289,11 @@ table {
       border-bottom: var(#{$p}border);
       &:not(.selectBoxContainer) {
         cursor: pointer;
+      }
+      &.sticky {
+        position: sticky;
+        right: 0;
+        box-shadow: inset 30px 0px 15px -25px #dddddd;
       }
     }
   }
@@ -309,6 +324,10 @@ td {
   box-shadow: 0px 0px 10px #dddddd;
   min-width: 10rem;
   padding: 0.3rem;
+  visibility: hidden; // turned on after moved to body node
+  &.forMultipleRows {
+    visibility: visible;
+  }
   button {
     width: 100%;
     display: block;

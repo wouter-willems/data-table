@@ -5,7 +5,7 @@ export function getDummyData(start: number, searchQuery: string, itemsPerPage: n
 	data: Array<WDTRow>
 } {
 	const allData: Array<WDTRow> = [];
-	for (let i = 0; i < 11; i++) {
+	for (let i = 0; i < 107; i++) {
 		allData.push(getSingleDummyItem(i));
 	}
 	const filteredData = allData.filter((e) => e.name.includes(searchQuery ?? ''));
@@ -19,7 +19,7 @@ export function getDummyData(start: number, searchQuery: string, itemsPerPage: n
 export function getSingleDummyItem(id: any, updatedName = false): WDTRow {
 	return {
 		id,
-		name: 'Person ' + id + (updatedName ? ' (updated)' : '(nooo)'),
+		name: 'Person ' + id + (updatedName ? ' (updatedupdatedu pdatedupdated updatedupdatedu pdatedupdated updatedupdate dupdatedupdated)' : '(nooo)'),
 		age: 10 + id,
 		address: {
 			street: 'Streetname',
@@ -27,5 +27,6 @@ export function getSingleDummyItem(id: any, updatedName = false): WDTRow {
 		},
 		occupation: 'Software Architect #' + id,
 		newlyAdded: 'abc',
+		shalala: 'shalalashalala shalalashalala shalalashalalashalalashalalashalala shalalashalalashalalashalalashalala',
 	};
 }

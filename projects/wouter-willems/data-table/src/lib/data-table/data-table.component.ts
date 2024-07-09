@@ -18,7 +18,7 @@ import {
 } from '@angular/core';
 import {arrayIsSetAndFilled, removeDuplicatesFromArray, removeDuplicatesFromArraysWithComparator} from '../util/arrays';
 import {isValueSet, stringIsSetAndFilled, useIfStringIsSet} from '../util/values';
-import {awaitableForNextCycle} from "../util/angular";
+import {awaitableForNextCycle, runNextRenderCycle} from "../util/angular";
 import {debounce, isEqual} from 'lodash';
 import {SaveBtnRefToken} from "../column-rearranger/column-rearranger.component";
 
@@ -79,6 +79,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	@ViewChild('configBtnDummy') configBtnDummy: ElementRef;
 	@ViewChild('actionMenuContainer') actionMenuContainer: ElementRef;
 	@ViewChild('tableContainer') tableContainer: ElementRef;
+	@ViewChild('actionMenu') actionMenu: ElementRef;
 
 	@ContentChildren(ColumnKeyDirective, {read: TemplateRef}) templates: QueryList<TemplateRef<any>>;
 	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) columnKeyDirectives: QueryList<ColumnKeyDirective>;
@@ -154,6 +155,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	public selectAllAcrossPagesLoading: boolean = false;
 	private escapeKeyListener: (ev) => void;
 	private resizeListener: (ev) => void;
+	private hasHorizontalScroll: boolean;
 
 	constructor(private injector: Injector, private elRef: ElementRef) {
 	}
@@ -330,7 +332,6 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 					if (isValueSet(persisted)) {
 						return {key: e.columnKey, active: persisted.active};
 					}
-					console.log(e);
 					return ({key: e.columnKey, active: e.enabledByDefault});
 				}).sort((a, b) => {
 					let indexOfA = retrievedColumns.findIndex(e => e.key === a.key);
@@ -392,6 +393,8 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 
 		const spaceLeftForDistribution = this.tableContainer.nativeElement.getBoundingClientRect().width - selectBoxWidth - lastColWidth;
 		const bonusSpaceLeftInREM = (spaceLeftForDistribution - minWidthsCumulative) / remInPx;
+		this.hasHorizontalScroll = bonusSpaceLeftInREM < 0;
+
 		const spacings = this.distributeSpaceAfterMinWidths(bonusSpaceLeftInREM);
 		dynamicCols.forEach((e, i) => {
 			const colDirective = this.columnKeyDirectives.find(col => col.columnKey === this.headerKeys[i]);
@@ -466,13 +469,22 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		if (this.multipleRowsActionsShown) {
 			this.closeActionMenu();
 		}
-		this.actionMenuOffset = {x: 0, y: 30};
+		this.actionMenuOffset = {x: 0, y: 15};
 		const actions = this.getActionsForRowFn?.(row) ?? [];
 		this.actionMenuForRow = row;
 		this.actions = actions;
 		this.createBackdrop(() => {
 			this.closeActionMenu();
 		}, false);
+		runNextRenderCycle(() => {
+			const x = this.actionMenu.nativeElement.getBoundingClientRect().left;
+			const y = this.actionMenu.nativeElement.getBoundingClientRect().top;
+			this.actionMenu.nativeElement.style.position = 'fixed';
+			this.actionMenu.nativeElement.style.left = `${x}px`;
+			this.actionMenu.nativeElement.style.top = `${y}px`;
+			this.actionMenu.nativeElement.style.visibility = 'visible';
+			document.body.appendChild(this.actionMenu.nativeElement);
+		});
 	}
 
 	showActionsMultipleRows(): void {
