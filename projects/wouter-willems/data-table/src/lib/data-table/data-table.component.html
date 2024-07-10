@@ -88,6 +88,7 @@
 			</td>
 			<td class="configButtonContainer" [ngClass]="{sticky: hasHorizontalScroll}">
 				<ng-container [ngTemplateOutlet]="configBtnRef" [ngTemplateOutletContext]="{clickHandler: openConfig}"></ng-container>
+				<div *ngIf="hasHorizontalScroll" class="shadow"></div>
 			</td>
 		</tr>
 		</thead>
@@ -119,6 +120,7 @@
 							</button>
 						</div>
 					</div>
+					<div *ngIf="hasHorizontalScroll" class="shadow"></div>
 				</td>
 			</tr>
 			<tr *ngIf="getExpandedTplFn?.()?.index === i">
