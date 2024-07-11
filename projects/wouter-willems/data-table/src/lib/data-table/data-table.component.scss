@@ -93,6 +93,12 @@ $tdPadding: var(#{$p}td-padding);
   td:last-child {
     padding-right: 1rem;
   }
+  .summary {
+    position: sticky;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
 }
 
 .amountPicker {
@@ -120,6 +126,9 @@ $tdPadding: var(#{$p}td-padding);
   display: flex;
   align-items: center;
   gap: 0.6rem;
+  &.rightAligned {
+    justify-content: flex-end;
+  }
   .caption {
     flex: 0 1 auto;
     overflow: hidden;
@@ -289,6 +298,9 @@ table {
       border-bottom: var(#{$p}border);
       &:not(.selectBoxContainer) {
         cursor: pointer;
+      }
+      &.rightAligned {
+        text-align: right;
       }
       &.sticky {
         position: sticky;

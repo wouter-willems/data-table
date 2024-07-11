@@ -87,6 +87,7 @@
 		[persistColumnsFn]="persistColumns"
 		[retrieveColumnsFn]="retrieveColumns"
 		[getExpandedTplFn]="getExpandedTplFn"
+		[summaryTpl]="summaryTpl"
 	>
 		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [preset]="presets.name" [minWidthInREM]="16">
 			{{value}}
@@ -100,7 +101,7 @@
 		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value" [minWidthInREM]="20">
 			{{value}}
 		</ng-template>
-		<ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [minWidthInREM]="36">
+		<ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [minWidthInREM]="36" [rightAligned]="true">
 			{{value}}
 		</ng-template>
 		<ng-template columnKey="newlyAdded" columnCaption="newlyAdded" let-value="value" [enabledByDefault]="false">
@@ -147,4 +148,8 @@
 
 <ng-template #expandedTpl>
 	{{expandedInfo.name}}
+</ng-template>
+
+<ng-template #summaryTpl>
+	I am a summary woeiiii
 </ng-template>

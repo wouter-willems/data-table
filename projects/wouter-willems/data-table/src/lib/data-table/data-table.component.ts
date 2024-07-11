@@ -49,6 +49,7 @@ export class ColumnKeyDirective implements OnChanges {
 	@Input() minWidthInREM: number = null;
 	@Input() maxWidthInREM: number = null;
 	@Input() enabledByDefault: boolean = true;
+	@Input() rightAligned: boolean = false;
 	@Input() preset: PresetValue;
 
 	public ngOnChanges(simpleChanges: SimpleChanges): void {
@@ -112,6 +113,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}>) => Promise<void>;
 	@Input() getExpandedTplFn: () => {index: number, tpl: TemplateRef<any>};
 	@Input() emptyTpl: TemplateRef<any>;
+	@Input() summaryTpl: TemplateRef<any>;
 	@Output() onRowClicked = new EventEmitter<{row: any, index: number}>();
 	@Output() onParamsChanged = new EventEmitter<any>();
 
@@ -461,6 +463,12 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		return null;
 	}
 
+	public isRightAligned(header: string): boolean {
+		return this.columnKeyDirectives.toArray().find(e => {
+			return e.columnKey === header;
+		})?.rightAligned ?? false;
+	}
+
 	public rowClicked(row: any, index: number): void {
 		this.onRowClicked.emit({row, index});
 	}
@@ -757,5 +765,4 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		window.document.removeEventListener('keyup', this.escapeKeyListener);
 		window.document.removeEventListener('resize', this.resizeListener);
 	}
-
 }

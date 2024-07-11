@@ -68,7 +68,7 @@
 				</div>
 			</td>
 			<td *ngFor="let headerKey of headerKeys">
-				<div class="colHeader">
+				<div class="colHeader" [ngClass]="{rightAligned: isRightAligned(headerKey)}">
 					<div class="caption" [klpWithTooltip]="true" (click)="setSortField(headerKey)">{{headerCaptionByKey.get(headerKey)}}</div>
 					<button class="sortButton" *ngIf="isSortable(headerKey)" (click)="setSortField(headerKey)">
 						<svg width="8" height="13" *ngIf="sortField !== headerKey || !sortOrder" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -100,7 +100,7 @@
 						<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: isSelected(row)}"></ng-container>
 					</div>
 				</td>
-				<td *ngFor="let header of headerKeys" (click)="rowClicked(row, i)" [klpWithTooltip]="true">
+				<td *ngFor="let header of headerKeys" (click)="rowClicked(row, i)" [klpWithTooltip]="true" [ngClass]="{rightAligned: isRightAligned(header)}">
 					<ng-container
 						[ngTemplateOutlet]="getTemplate(header, row[header])"
 						[ngTemplateOutletContext]="{ value: row[header], row: row }"
@@ -131,6 +131,7 @@
 		</ng-container>
 		</tbody>
 	</table>
+	<div class="summary"><ng-container [ngTemplateOutlet]="summaryTpl"></ng-container></div>
 </div>
 
 <footer>
