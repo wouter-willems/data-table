@@ -134,17 +134,16 @@
 </div>
 
 <footer>
-	<div class="amountPicker">
+	<div class="amountPicker" *ngIf="hasAtLeastOneResult()">
 		{{translate('Show')}}
 		<div class="selectContainer">
 			<select [(ngModel)]="itemsPerPage" (ngModelChange)="itemsPerPageChanged()">
-				<option value="10">10</option>
-				<option value="25">25</option>
-				<option value="50">50</option>
-				<option value="100">100</option>
+				<option value="10">10 {{translate('results')}}</option>
+				<option value="25">25 {{translate('results')}}</option>
+				<option value="50">50 {{translate('results')}}</option>
+				<option value="100">100 {{translate('results')}}</option>
 			</select>
 		</div>
-		{{translate('results')}}
 	</div>
 	<div class="pageNumbers" *ngIf="pageData && hasAtLeastOneResult()">
 		<button *ngIf="false" (click)="toPage(1)" [disabled]="page === 1">{{translate('First')}}</button>
