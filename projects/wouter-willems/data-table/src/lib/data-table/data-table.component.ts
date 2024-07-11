@@ -35,6 +35,7 @@ export type PresetValue = {
 	growRatio?: number,
 	minWidthInREM?: number,
 	maxWidthInREM?: number,
+	rightAligned?: boolean,
 };
 
 // tslint:disable-next-line:directive-selector
@@ -58,6 +59,7 @@ export class ColumnKeyDirective implements OnChanges {
 			this.growRatio =  this.growRatio ?? this.preset.growRatio;
 			this.minWidthInREM = this.minWidthInREM ?? this.preset.minWidthInREM;
 			this.maxWidthInREM = this.maxWidthInREM ?? this.preset.maxWidthInREM;
+			this.rightAligned = this.rightAligned ?? this.preset.rightAligned;
 		}
 	}
 }
