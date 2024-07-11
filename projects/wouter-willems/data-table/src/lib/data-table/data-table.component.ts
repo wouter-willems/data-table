@@ -54,13 +54,11 @@ export class ColumnKeyDirective implements OnChanges {
 	@Input() preset: PresetValue;
 
 	public ngOnChanges(simpleChanges: SimpleChanges): void {
-		if (simpleChanges.preset) {
-			this.fixedWidthOnContents = this.fixedWidthOnContents ?? this.preset.fixedWidthOnContents;
-			this.growRatio =  this.growRatio ?? this.preset.growRatio;
-			this.minWidthInREM = this.minWidthInREM ?? this.preset.minWidthInREM;
-			this.maxWidthInREM = this.maxWidthInREM ?? this.preset.maxWidthInREM;
-			this.rightAligned = this.rightAligned ?? this.preset.rightAligned;
-		}
+		this.fixedWidthOnContents = simpleChanges.fixedWidthOnContents?.currentValue ?? simpleChanges.preset?.currentValue?.fixedWidthOnContents ?? this.fixedWidthOnContents;
+		this.growRatio = simpleChanges.growRatio?.currentValue ?? simpleChanges.preset?.currentValue?.growRatio ?? this.growRatio;
+		this.minWidthInREM = simpleChanges.minWidthInREM?.currentValue ?? simpleChanges.preset?.currentValue?.minWidthInREM ?? this.minWidthInREM;
+		this.maxWidthInREM = simpleChanges.maxWidthInREM?.currentValue ?? simpleChanges.preset?.currentValue?.maxWidthInREM ?? this.maxWidthInREM;
+		this.rightAligned = simpleChanges.rightAligned?.currentValue ?? simpleChanges.preset?.currentValue?.rightAligned ?? this.rightAligned;
 	}
 }
 

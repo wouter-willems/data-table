@@ -1,5 +1,8 @@
 import { PresetValue } from "projects/wouter-willems/data-table/src/lib/data-table/data-table.component";
 
 export const wdtColumnPresets: Record<string, PresetValue> =
-	{name: {growRatio: 1, minWidthInREM: 10, maxWidthInREM: 11}};
+	{
+		name: {growRatio: 1, fixedWidthOnContents: true},
+		shalala: {rightAligned: true, fixedWidthOnContents: true}
+	};
 console.log(wdtColumnPresets);

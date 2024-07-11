@@ -89,7 +89,7 @@
 		[getExpandedTplFn]="getExpandedTplFn"
 		[summaryTpl]="summaryTpl"
 	>
-		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [preset]="presets.name" [minWidthInREM]="16">
+		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [preset]="presets.name" [fixedWidthOnContents]="true">
 			{{value}}
 		</ng-template>
 		<ng-template columnKey="age" columnCaption="Age" let-value="value" let-row="row" [fixedWidthOnContents]="true">
@@ -101,7 +101,7 @@
 		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value" [minWidthInREM]="20">
 			{{value}}
 		</ng-template>
-		<ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [minWidthInREM]="36" [rightAligned]="true">
+		<ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [minWidthInREM]="36" [preset]="presets.shalala">
 			{{value}}
 		</ng-template>
 		<ng-template columnKey="newlyAdded" columnCaption="newlyAdded" let-value="value" [enabledByDefault]="false">
