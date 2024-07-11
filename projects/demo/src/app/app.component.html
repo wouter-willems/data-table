@@ -34,7 +34,6 @@
 
 <div class="tableContainer" *ngIf="false">
 	<wutu-data-table
-		[horizontalScroll]="true"
 		[fetchItemsFn]="fetchItemsFn"
 		[fetchSingleItemFn]="updateSingleItemFn"
 		[getActionsForRowFn]="getActionsForRowFn"
@@ -43,7 +42,6 @@
 		(onParamsChanged)="updateRoute($event)"
 		(onRowClicked)="onRowClicked($event)"
 		[emptyTpl]="empty"
-		[showFiltersBtn]="true"
 		[showSearchField]="true"
 		[allowSelectingAcrossMultiplePages]="true"
 		[persistColumnsFn]="persistColumns"
@@ -81,7 +79,6 @@
 		(onParamsChanged)="updateRoute($event)"
 		(onRowClicked)="onRowClicked($event)"
 		[emptyTpl]="empty"
-		[showFiltersBtn]="true"
 		[showSearchField]="true"
 		[allowSelectingAcrossMultiplePages]="true"
 		[persistColumnsFn]="persistColumns"
