@@ -48,7 +48,7 @@
 		[retrieveColumnsFn]="retrieveColumns"
 		[getExpandedTplFn]="getExpandedTplFn"
 	>
-		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [preset]="presets.name" [minWidthInREM]="22" [maxWidthInREM]="80" [growRatio]="2">
+		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [preset]="presets.name">
 			{{value}}
 		</ng-template>
 		<ng-template columnKey="age" columnCaption="Age" let-value="value" let-row="row" [fixedWidthOnContents]="true">
@@ -71,7 +71,6 @@
 
 <div class="tableContainer" *ngIf="true">
 	<wutu-data-table
-		[manuallyTriggerColumnWidthCalculation]="false"
 		[fetchItemsFn]="fetchItemsFn"
 		[fetchSingleItemFn]="updateSingleItemFn"
 		[getActionsForRowFn]="getActionsForRowFn"

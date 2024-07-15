@@ -36,7 +36,7 @@ export type PresetValue = {
 	minWidthInREM?: number,
 	maxWidthInREM?: number,
 	rightAligned?: boolean,
-	emphasize?: boolean,
+	emphasize?: number,
 };
 
 // tslint:disable-next-line:directive-selector
@@ -46,22 +46,31 @@ export class ColumnKeyDirective implements OnChanges {
 	@Input() columnCaption;
 	@Input() sortKey;
 	@Input() defaultSort: 'ASC' | 'DESC';
+	@Input() enabledByDefault: boolean = true;
 	@Input() fixedWidthOnContents: boolean;
 	@Input() growRatio: number = 1;
 	@Input() minWidthInREM: number = null;
 	@Input() maxWidthInREM: number = null;
-	@Input() enabledByDefault: boolean = true;
 	@Input() rightAligned: boolean = false;
 	@Input() emphasize: number = 0;
 	@Input() preset: PresetValue;
 
+	// the fields that start with an underscore hold values that we can alter within our component, without losing
+	// what the user intended (which is stored in the non-underscored fields)
+	public _fixedWidthOnContents: boolean;
+	public _growRatio: number;
+	public _minWidthInREM: number;
+	public _maxWidthInREM: number;
+	public _rightAligned: boolean;
+	public _emphasize: number;
+
 	public ngOnChanges(simpleChanges: SimpleChanges): void {
-		this.fixedWidthOnContents = simpleChanges.fixedWidthOnContents?.currentValue ?? simpleChanges.preset?.currentValue?.fixedWidthOnContents ?? this.fixedWidthOnContents;
-		this.growRatio = simpleChanges.growRatio?.currentValue ?? simpleChanges.preset?.currentValue?.growRatio ?? this.growRatio;
-		this.minWidthInREM = simpleChanges.minWidthInREM?.currentValue ?? simpleChanges.preset?.currentValue?.minWidthInREM ?? this.minWidthInREM;
-		this.maxWidthInREM = simpleChanges.maxWidthInREM?.currentValue ?? simpleChanges.preset?.currentValue?.maxWidthInREM ?? this.maxWidthInREM;
-		this.rightAligned = simpleChanges.rightAligned?.currentValue ?? simpleChanges.preset?.currentValue?.rightAligned ?? this.rightAligned;
-		this.emphasize = simpleChanges.emphasize?.currentValue ?? simpleChanges.preset?.currentValue?.emphasize ?? this.emphasize;
+		this._fixedWidthOnContents = this.fixedWidthOnContents ?? this.preset?.fixedWidthOnContents;
+		this._growRatio = this.growRatio ?? this.preset?.growRatio;
+		this._minWidthInREM = this.minWidthInREM ?? this.preset?.minWidthInREM;
+		this._maxWidthInREM = this.maxWidthInREM ?? this.preset?.maxWidthInREM;
+		this._rightAligned = this.rightAligned ?? this.preset?.rightAligned;
+		this._emphasize = this.emphasize ?? this.preset?.emphasize;
 	}
 }
 
@@ -90,7 +99,6 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) columnKeyDirectives: QueryList<ColumnKeyDirective>;
 	@ContentChild(FilterFormDirective, {read: TemplateRef}) filterFormTpl: TemplateRef<any>;
 
-	@Input() manuallyTriggerColumnWidthCalculation = false;
 	@Input() searchParams;
 	@Input() showSearchField = true;
 	@Input() allowSelectingAcrossMultiplePages = true;
@@ -121,8 +129,6 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	@Output() onRowClicked = new EventEmitter<{row: any, index: number}>();
 	@Output() onParamsChanged = new EventEmitter<any>();
 
-	public waitForManualCalculationTrigger = false;
-	public manualTriggerHappenedAtLeastOnce = false;
 	public columnWidthsToBeCalculated = true;
 
 	private maxBatchSize = 999;
@@ -169,7 +175,6 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}
 
 	async ngOnInit(): Promise<void> {
-		this.waitForManualCalculationTrigger = this.manuallyTriggerColumnWidthCalculation;
 		await awaitableForNextCycle();
 		this.translations = this.injector.get<Record<string, string>>(TranslationsToken);
 		this.checkboxRef = this.injector.get<TemplateRef<any>>(CheckBoxRefToken);
@@ -245,7 +250,6 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		this.closeActionMenu();
 		this.closeFilters();
 
-		this.manualTriggerHappenedAtLeastOnce = false;
 		this.loading = true;
 		if (!this.selectAllAcrossPagesActive) {
 			this.selectedState = new Map();
@@ -377,9 +381,6 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}
 
 	private async calculateColumnWidths(): Promise<void> {
-		if (this.waitForManualCalculationTrigger) {
-			return;
-		}
 		this.columnWidthsToBeCalculated = true;
 		await awaitableForNextCycle();
 		const remInPx = Number(getComputedStyle(document.documentElement).fontSize.split('px')[0]);
@@ -396,20 +397,22 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			if (colDirective.fixedWidthOnContents) {
 				const actualWidth = Math.ceil(e.getBoundingClientRect().width) / remInPx;
 				if (colDirective.maxWidthInREM > 0 && colDirective.maxWidthInREM < actualWidth) {
-					colDirective.minWidthInREM = colDirective.maxWidthInREM;
+					colDirective._minWidthInREM = colDirective.maxWidthInREM;
 				} else {
-					colDirective.minWidthInREM = actualWidth;
-					colDirective.maxWidthInREM = actualWidth;
+					colDirective._minWidthInREM = actualWidth;
+					colDirective._maxWidthInREM = actualWidth;
 				}
 			}
 		});
+
+		console.log(this.columnKeyDirectives);
 
 		const minWidthsCumulative = this.columnKeyDirectives.filter(e => {
 			if (!this.headerKeys.includes(e.columnKey)) {
 				return false;
 			}
-			return Number.isFinite(e.minWidthInREM);
-		}).reduce((acc, cur) => (cur.minWidthInREM * remInPx) + acc, 0);
+			return Number.isFinite(e._minWidthInREM);
+		}).reduce((acc, cur) => (cur._minWidthInREM * remInPx) + acc, 0);
 
 		const spaceLeftForDistribution = this.tableContainer.nativeElement.getBoundingClientRect().width - selectBoxWidth - lastColWidth;
 		const bonusSpaceLeftInREM = (spaceLeftForDistribution - minWidthsCumulative) / remInPx;
@@ -429,13 +432,13 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			const colSpacings = spacings.find(sp => sp.col.columnKey === colDirective.columnKey);
 
 			if (spaceLeftForDistribution < minWidthsCumulative) {
-				if (Number.isFinite(colDirective.minWidthInREM)) {
-					e.style.width = colDirective.minWidthInREM + 'rem';
+				if (Number.isFinite(colDirective._minWidthInREM)) {
+					e.style.width = colDirective._minWidthInREM + 'rem';
 				} else {
 					e.style.width = '1rem';
 				}
 			} else {
-				e.style.width = colDirective.minWidthInREM + colSpacings.bonusSpaceItTakes + 'rem';
+				e.style.width = colDirective._minWidthInREM + colSpacings.bonusSpaceItTakes + 'rem';
 			}
 		});
 		this.columnWidthsToBeCalculated = false;
@@ -447,7 +450,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		}).map(e => {
 			return {
 				col: e,
-				maximumBonus: Number.isFinite(e.maxWidthInREM) ? e.maxWidthInREM - e.minWidthInREM : Number.MAX_VALUE,
+				maximumBonus: Number.isFinite(e._maxWidthInREM) ? e._maxWidthInREM - e._minWidthInREM : Number.MAX_VALUE,
 				bonusSpaceItTakes: 0,
 			};
 		});
@@ -458,13 +461,13 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 				if (cur.maximumBonus <= cur.bonusSpaceItTakes) {
 					return acc;
 				}
-				return cur.col.growRatio + acc;
+				return cur.col._growRatio + acc;
 			}, 0);
 
 			cols = cols.map(e => {
 				return {
 					...e,
-					bonusSpaceItTakes: Math.min(e.maximumBonus, e.bonusSpaceItTakes + (toStillDistribute * (e.col.growRatio / ratiosCumulative))),
+					bonusSpaceItTakes: Math.min(e.maximumBonus, e.bonusSpaceItTakes + (toStillDistribute * (e.col._growRatio / ratiosCumulative))),
 				};
 			});
 		}
@@ -743,16 +746,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}
 
 	public async _ext_triggerWidthCalculation(): Promise<void> {
-		if (!this.manuallyTriggerColumnWidthCalculation) {
-			return;
-		}
-		if (this.manualTriggerHappenedAtLeastOnce) {
-			return;
-		}
-		this.waitForManualCalculationTrigger = false;
 		await this.calculateColumnWidths();
-		this.waitForManualCalculationTrigger = true;
-		this.manualTriggerHappenedAtLeastOnce = true;
 	};
 
 	public async _ext_setFilters(filters: Record<string, any>): Promise<void> {

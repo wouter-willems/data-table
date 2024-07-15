@@ -16,10 +16,6 @@ $tdPadding: var(#{$p}td-padding);
   border: var(#{$p}border);
   border-radius: 5px;
 }
-.waitForManualTrigger {
-  opacity: 0;
-  pointer-events: none;
-}
 
 .dummies {
   display: flex;
