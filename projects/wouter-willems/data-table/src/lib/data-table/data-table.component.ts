@@ -48,11 +48,11 @@ export class ColumnKeyDirective {
 	@Input() defaultSort: 'ASC' | 'DESC';
 	@Input() enabledByDefault: boolean = true;
 	@Input() fixedWidthOnContents: boolean;
-	@Input() growRatio: number = 1;
+	@Input() growRatio: number;
 	@Input() minWidthInREM: number;
 	@Input() maxWidthInREM: number;
 	@Input() rightAligned: boolean;
-	@Input() emphasize: number = 0;
+	@Input() emphasize: number;
 	@Input() preset: PresetValue;
 
 	// the fields that start with an underscore hold values that we can alter within our component, without losing
@@ -65,7 +65,7 @@ export class ColumnKeyDirective {
 	}
 
 	public getGrowRatio(): number {
-		return this.growRatio ?? this.preset?.growRatio;
+		return this.growRatio ?? this.preset?.growRatio ?? 1;
 	}
 
 	public getMinWidthInREM(): number {
@@ -81,7 +81,7 @@ export class ColumnKeyDirective {
 	}
 
 	public getEmphasize(): number {
-		return this.emphasize ?? this.preset?.emphasize;
+		return this.emphasize ?? this.preset?.emphasize ?? 0;
 	}
 }
 
