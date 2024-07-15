@@ -73,8 +73,16 @@ export class AppComponent implements OnInit {
 		});
 
 		setTimeout(() => {
-			this.dataTableComponent._ext_refetchItem(7);
+			this.dataTableComponent._ext_triggerWidthCalculation();
 		}, 2000);
+
+		setTimeout(() => {
+			this.dataTableComponent._ext_triggerWidthCalculation();
+		}, 6000);
+
+		setTimeout(() => {
+			this.dataTableComponent._ext_refetchItem(7);
+		}, 20000);
 	}
 
 	getActionsForRowFn = (row: any): Array<{

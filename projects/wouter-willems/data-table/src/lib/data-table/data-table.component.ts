@@ -90,6 +90,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) columnKeyDirectives: QueryList<ColumnKeyDirective>;
 	@ContentChild(FilterFormDirective, {read: TemplateRef}) filterFormTpl: TemplateRef<any>;
 
+	@Input() manuallyTriggerColumnWidthCalculation = false;
 	@Input() searchParams;
 	@Input() showSearchField = true;
 	@Input() allowSelectingAcrossMultiplePages = true;
@@ -120,6 +121,8 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	@Output() onRowClicked = new EventEmitter<{row: any, index: number}>();
 	@Output() onParamsChanged = new EventEmitter<any>();
 
+	public waitForManualCalculationTrigger = false;
+	public manualTriggerHappenedAtLeastOnce = false;
 	public columnWidthsToBeCalculated = true;
 
 	private maxBatchSize = 999;
@@ -166,6 +169,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}
 
 	async ngOnInit(): Promise<void> {
+		this.waitForManualCalculationTrigger = this.manuallyTriggerColumnWidthCalculation;
 		await awaitableForNextCycle();
 		this.translations = this.injector.get<Record<string, string>>(TranslationsToken);
 		this.checkboxRef = this.injector.get<TemplateRef<any>>(CheckBoxRefToken);
@@ -236,6 +240,12 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 
 	private prevSearchParams = {};
 	private async getData(): Promise<void> {
+
+		this.closeConfig();
+		this.closeActionMenu();
+		this.closeFilters();
+
+		this.manualTriggerHappenedAtLeastOnce = false;
 		this.loading = true;
 		if (!this.selectAllAcrossPagesActive) {
 			this.selectedState = new Map();
@@ -367,6 +377,9 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}
 
 	private async calculateColumnWidths(): Promise<void> {
+		if (this.waitForManualCalculationTrigger) {
+			return;
+		}
 		this.columnWidthsToBeCalculated = true;
 		await awaitableForNextCycle();
 		const remInPx = Number(getComputedStyle(document.documentElement).fontSize.split('px')[0]);
@@ -548,7 +561,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		return Math.ceil(this.pageData.totalAmount / (this.itemsPerPage ?? 1));
 	}
 
-	toPage(pageNr: number): void {
+	public toPage(pageNr: number): void {
 		this.page = pageNr;
 		this.getData();
 	}
@@ -728,6 +741,19 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	public _ext_refreshTable(): void {
 		this.getData();
 	}
+
+	public async _ext_triggerWidthCalculation(): Promise<void> {
+		if (!this.manuallyTriggerColumnWidthCalculation) {
+			return;
+		}
+		if (this.manualTriggerHappenedAtLeastOnce) {
+			return;
+		}
+		this.waitForManualCalculationTrigger = false;
+		await this.calculateColumnWidths();
+		this.waitForManualCalculationTrigger = true;
+		this.manualTriggerHappenedAtLeastOnce = true;
+	};
 
 	public async _ext_setFilters(filters: Record<string, any>): Promise<void> {
 		this.activeFilters = filters;

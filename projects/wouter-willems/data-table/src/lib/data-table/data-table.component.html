@@ -1,196 +1,198 @@
 <wutu-lib-style></wutu-lib-style>
-<div class="dummies" *ngIf="true">
-	<div class="selectBox" #selectBoxDummy><ng-container [ngTemplateOutlet]="checkboxRef"></ng-container></div>
-	<div #actionMenuDummy><ng-container [ngTemplateOutlet]="actionMenuBtnRef"></ng-container></div>
-	<div class="configButton" #configBtnDummy>
-		<div #configButtonContainer><ng-container [ngTemplateOutlet]="configBtnRef"></ng-container></div>
+<div [ngClass]="{waitForManualTrigger: waitForManualCalculationTrigger && !manualTriggerHappenedAtLeastOnce}">
+	<div class="dummies" *ngIf="true">
+		<div class="selectBox" #selectBoxDummy><ng-container [ngTemplateOutlet]="checkboxRef"></ng-container></div>
+		<div #actionMenuDummy><ng-container [ngTemplateOutlet]="actionMenuBtnRef"></ng-container></div>
+		<div class="configButton" #configBtnDummy>
+			<div #configButtonContainer><ng-container [ngTemplateOutlet]="configBtnRef"></ng-container></div>
+		</div>
 	</div>
-</div>
 
-<div class="topButtons">
-	<div *ngIf="getTopLeftInfoToShow() === 'pagination'">
-		<span *ngIf="hasAtLeastOneResult()">{{translate('Showing %from%-%to% of %total% results', {from: (page -1) * itemsPerPage + 1, to: (page -1) * itemsPerPage + pageData.data.length, total: pageData.totalAmount})}}</span>
-	</div>
-	<div *ngIf="getTopLeftInfoToShow() === 'selection'" class="selectionContainer">
-		<div>{{translate('%count% item(s) selected', {count: getSelectedRows().length})}}</div>
-		<ng-container *ngIf="shouldShowSelectAcrossAllPages()">
-			<div class="separator"></div>
-			<div *ngIf="selectAllAcrossPagesLoading" class="loadingIndicator" >
-				<div class="spinner">
-					<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<path fill-rule="evenodd" clip-rule="evenodd" d="M10 20C15.5228 20 20 15.5228 20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20ZM10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C5.85786 2.5 2.5 5.85786 2.5 10C2.5 14.1421 5.85786 17.5 10 17.5Z" fill="#D8DADF"/>
-						<path d="M19.9229 8.75248C19.3598 4.22709 15.7729 0.640218 11.2475 0.077058C10.5624 -0.00819539 10 0.559644 10 1.25C10 1.94036 10.5638 2.48908 11.2448 2.60282C14.3896 3.12813 16.8719 5.61038 17.3972 8.75523C17.5109 9.43616 18.0596 10 18.75 10C19.4404 10 20.0082 9.43755 19.9229 8.75248Z" fill="#475467"/>
-					</svg>
+	<div class="topButtons">
+		<div *ngIf="getTopLeftInfoToShow() === 'pagination'">
+			<span *ngIf="hasAtLeastOneResult()">{{translate('Showing %from%-%to% of %total% results', {from: (page -1) * itemsPerPage + 1, to: (page -1) * itemsPerPage + pageData.data.length, total: pageData.totalAmount})}}</span>
+		</div>
+		<div *ngIf="getTopLeftInfoToShow() === 'selection'" class="selectionContainer">
+			<div>{{translate('%count% item(s) selected', {count: getSelectedRows().length})}}</div>
+			<ng-container *ngIf="shouldShowSelectAcrossAllPages()">
+				<div class="separator"></div>
+				<div *ngIf="selectAllAcrossPagesLoading" class="loadingIndicator" >
+					<div class="spinner">
+						<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path fill-rule="evenodd" clip-rule="evenodd" d="M10 20C15.5228 20 20 15.5228 20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20ZM10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C5.85786 2.5 2.5 5.85786 2.5 10C2.5 14.1421 5.85786 17.5 10 17.5Z" fill="#D8DADF"/>
+							<path d="M19.9229 8.75248C19.3598 4.22709 15.7729 0.640218 11.2475 0.077058C10.5624 -0.00819539 10 0.559644 10 1.25C10 1.94036 10.5638 2.48908 11.2448 2.60282C14.3896 3.12813 16.8719 5.61038 17.3972 8.75523C17.5109 9.43616 18.0596 10 18.75 10C19.4404 10 20.0082 9.43755 19.9229 8.75248Z" fill="#475467"/>
+						</svg>
+					</div>
+					{{translate('Selecting items on all pages...')}}
 				</div>
-				{{translate('Selecting items on all pages...')}}
-			</div>
-			<ng-container *ngIf="!selectAllAcrossPagesLoading">
-				<div *ngIf="getHeaderSelectState() === true && selectAllAcrossPagesActive === false">
-					<button class="textButton" (click)="selectAllAcrossPages()">{{translate('Select items on all pages')}}</button>
-				</div>
-				<div *ngIf="selectAllAcrossPagesActive">
-					<button class="textButton" (click)="stopSelectingAcrossPages()">{{translate('Deselect items on all pages')}}</button>
-				</div>
+				<ng-container *ngIf="!selectAllAcrossPagesLoading">
+					<div *ngIf="getHeaderSelectState() === true && selectAllAcrossPagesActive === false">
+						<button class="textButton" (click)="selectAllAcrossPages()">{{translate('Select items on all pages')}}</button>
+					</div>
+					<div *ngIf="selectAllAcrossPagesActive">
+						<button class="textButton" (click)="stopSelectingAcrossPages()">{{translate('Deselect items on all pages')}}</button>
+					</div>
+				</ng-container>
 			</ng-container>
-		</ng-container>
-	</div>
-	<div class="searchAndMultiSelect">
-		<ng-container *ngIf="!selectAllAcrossPagesActive && !selectAllAcrossPagesLoading">
-			<ng-container *ngIf="showSearchField" [ngTemplateOutlet]="searchInputRef" [ngTemplateOutletContext]="{changeHandler: searchQueryChanged, searchQuery: searchQuery}"></ng-container>
-			<ng-container *ngIf="filterFormTpl" [ngTemplateOutlet]="filterBtnRef" [ngTemplateOutletContext]="{clickHandler: openFilters, nrOfActiveFilters: getNrOfActiveFilters()}"></ng-container>
-		</ng-container>
-		<div class="multiSelectActionMenu" *ngIf="getSelectedRows().length > 0">
-			<div class="actionMenuContainer" *ngIf="getActionsForMultipleRowsFn?.(getSelectedRows())?.length > 0" #actionMenuContainer>
-				<ng-container [ngTemplateOutlet]="actionMenuMultipleBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsMultipleFn()}"></ng-container>
-				<div
-					*ngIf="multipleRowsActionsShown"
-					class="actionMenu forMultipleRows"
-					[ngStyle]="{transform: 'translate('+actionMenuOffset.x+ 'px,'+ actionMenuOffset.y + 'px)'}"
-				>
-					<button *ngFor="let action of actions" (click)="closeActionMenu(); action.action()">
-						{{action.caption}}
-					</button>
+		</div>
+		<div class="searchAndMultiSelect">
+			<ng-container *ngIf="!selectAllAcrossPagesActive && !selectAllAcrossPagesLoading">
+				<ng-container *ngIf="showSearchField" [ngTemplateOutlet]="searchInputRef" [ngTemplateOutletContext]="{changeHandler: searchQueryChanged, searchQuery: searchQuery}"></ng-container>
+				<ng-container *ngIf="filterFormTpl" [ngTemplateOutlet]="filterBtnRef" [ngTemplateOutletContext]="{clickHandler: openFilters, nrOfActiveFilters: getNrOfActiveFilters()}"></ng-container>
+			</ng-container>
+			<div class="multiSelectActionMenu" *ngIf="getSelectedRows().length > 0">
+				<div class="actionMenuContainer" *ngIf="getActionsForMultipleRowsFn?.(getSelectedRows())?.length > 0" #actionMenuContainer>
+					<ng-container [ngTemplateOutlet]="actionMenuMultipleBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsMultipleFn()}"></ng-container>
+					<div
+						*ngIf="multipleRowsActionsShown"
+						class="actionMenu forMultipleRows"
+						[ngStyle]="{transform: 'translate('+actionMenuOffset.x+ 'px,'+ actionMenuOffset.y + 'px)'}"
+					>
+						<button *ngFor="let action of actions" (click)="closeActionMenu(); action.action()">
+							{{action.caption}}
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
 
-<div
-	class="tableContainer"
-	#tableContainer
->
-	<ng-container *ngIf="!loading && !hasAtLeastOneResult()" [ngTemplateOutlet]="emptyTpl"></ng-container>
-	<table *ngIf="hasAtLeastOneResult()" [ngClass]="{actionMenuOpen: hasActionMenuOpen(), fullWidth: !columnWidthsToBeCalculated}">
-		<thead>
-		<tr>
-			<td (click)="headerSelectClicked()" class="selectBoxContainer" *ngIf="getActionsForMultipleRowsFn" [ngClass]="{hidden: selectAllAcrossPagesActive}">
-				<div class="selectBox">
-					<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: getHeaderSelectState()}"></ng-container>
-				</div>
-			</td>
-			<td *ngFor="let headerKey of headerKeys">
-				<div class="colHeader" [ngClass]="{rightAligned: isRightAligned(headerKey)}">
-					<div class="caption" [klpWithTooltip]="true" (click)="setSortField(headerKey)">{{headerCaptionByKey.get(headerKey)}}</div>
-					<button class="sortButton" *ngIf="isSortable(headerKey)" (click)="setSortField(headerKey)">
-						<svg width="8" height="13" *ngIf="sortField !== headerKey || !sortOrder" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M4.63388 0.366116C4.14573 -0.122039 3.35427 -0.122039 2.86612 0.366116L0.21967 3.01256C-0.0732233 3.30546 -0.0732233 3.78033 0.21967 4.07322C0.512563 4.36612 0.987437 4.36612 1.28033 4.07322L3.75 1.60355L6.21967 4.07322C6.51256 4.36612 6.98744 4.36612 7.28033 4.07322C7.57322 3.78033 7.57322 3.30546 7.28033 3.01256L4.63388 0.366116Z" fill="#CCCCCC"/>
-							<path d="M7.28033 9.07337L4.63388 11.7198C4.14573 12.208 3.35427 12.208 2.86612 11.7198L0.21967 9.07337C-0.0732233 8.78048 -0.0732233 8.30561 0.21967 8.01271C0.512563 7.71982 0.987437 7.71982 1.28033 8.01271L3.75 10.4824L6.21967 8.01271C6.51256 7.71982 6.98744 7.71982 7.28033 8.01271C7.57322 8.30561 7.57322 8.78048 7.28033 9.07337Z" fill="#CCCCCC"/>
-						</svg>
-						<svg width="8" height="13" *ngIf="sortField === headerKey && sortOrder === 'DESC'" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M4.63388 0.366116C4.14573 -0.122039 3.35427 -0.122039 2.86612 0.366116L0.21967 3.01256C-0.0732233 3.30546 -0.0732233 3.78033 0.21967 4.07322C0.512563 4.36612 0.987437 4.36612 1.28033 4.07322L3.75 1.60355L6.21967 4.07322C6.51256 4.36612 6.98744 4.36612 7.28033 4.07322C7.57322 3.78033 7.57322 3.30546 7.28033 3.01256L4.63388 0.366116Z" fill="#CCCCCC"/>
-							<path d="M7.28033 9.07337L4.63388 11.7198C4.14573 12.208 3.35427 12.208 2.86612 11.7198L0.21967 9.07337C-0.0732233 8.78048 -0.0732233 8.30561 0.21967 8.01271C0.512563 7.71982 0.987437 7.71982 1.28033 8.01271L3.75 10.4824L6.21967 8.01271C6.51256 7.71982 6.98744 7.71982 7.28033 8.01271C7.57322 8.30561 7.57322 8.78048 7.28033 9.07337Z" fill="#4A4A4A"/>
-						</svg>
-						<svg width="8" height="13" *ngIf="sortField === headerKey && sortOrder === 'ASC'" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M4.63388 0.366116C4.14573 -0.122039 3.35427 -0.122039 2.86612 0.366116L0.21967 3.01256C-0.0732233 3.30546 -0.0732233 3.78033 0.21967 4.07322C0.512563 4.36612 0.987437 4.36612 1.28033 4.07322L3.75 1.60355L6.21967 4.07322C6.51256 4.36612 6.98744 4.36612 7.28033 4.07322C7.57322 3.78033 7.57322 3.30546 7.28033 3.01256L4.63388 0.366116Z" fill="#4A4A4A"/>
-							<path d="M7.28033 9.07337L4.63388 11.7198C4.14573 12.208 3.35427 12.208 2.86612 11.7198L0.21967 9.07337C-0.0732233 8.78048 -0.0732233 8.30561 0.21967 8.01271C0.512563 7.71982 0.987437 7.71982 1.28033 8.01271L3.75 10.4824L6.21967 8.01271C6.51256 7.71982 6.98744 7.71982 7.28033 8.01271C7.57322 8.30561 7.57322 8.78048 7.28033 9.07337Z" fill="#CCCCCC"/>
-						</svg>
-					</button>
-				</div>
-			</td>
-			<td class="configButtonContainer" [ngClass]="{sticky: hasHorizontalScroll}">
-				<ng-container [ngTemplateOutlet]="configBtnRef" [ngTemplateOutletContext]="{clickHandler: openConfig}"></ng-container>
-				<div *ngIf="hasHorizontalScroll" class="stickyShadow"></div>
-			</td>
-		</tr>
-		</thead>
-		<tbody>
-		<ng-container *ngFor="let row of pageData?.data; let i = index">
+	<div
+		class="tableContainer"
+		#tableContainer
+	>
+		<ng-container *ngIf="!loading && !hasAtLeastOneResult()" [ngTemplateOutlet]="emptyTpl"></ng-container>
+		<table *ngIf="hasAtLeastOneResult()" [ngClass]="{actionMenuOpen: hasActionMenuOpen(), fullWidth: !columnWidthsToBeCalculated}">
+			<thead>
 			<tr>
-				<td (click)="rowSelectClicked(row)" class="selectBoxContainer" *ngIf="getActionsForMultipleRowsFn">
+				<td (click)="headerSelectClicked()" class="selectBoxContainer" *ngIf="getActionsForMultipleRowsFn" [ngClass]="{hidden: selectAllAcrossPagesActive}">
 					<div class="selectBox">
-						<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: isSelected(row)}"></ng-container>
+						<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: getHeaderSelectState()}"></ng-container>
 					</div>
 				</td>
-				<td *ngFor="let header of headerKeys" (click)="rowClicked(row, i)" [klpWithTooltip]="true" [ngClass]="[isRightAligned(header) ? 'rightAligned' : '', 'emphasize' + getEmphasizeValue(header)]">
-					<ng-container
-						[ngTemplateOutlet]="getTemplate(header, row[header])"
-						[ngTemplateOutletContext]="{ value: row[header], row: row }"
-					></ng-container>
-				</td>
-				<td class="actionMenuContainerTd" [ngClass]="{sticky: hasHorizontalScroll}">
-					<div class="actionMenuContainer" *ngIf="getActionsForRowFn?.(row)?.length > 0">
-						<ng-container [ngTemplateOutlet]="actionMenuBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsFn(row)}"></ng-container>
-						<div
-							#actionMenu
-							class="actionMenu"
-							*ngIf="actionMenuForRow === row"
-							[ngStyle]="{transform: 'translate('+actionMenuOffset.x+ 'px,'+ actionMenuOffset.y + 'px)'}"
-						>
-							<button *ngFor="let action of actions" (click)="closeActionMenu(); action.action()">
-								{{action.caption}}
-							</button>
-						</div>
+				<td *ngFor="let headerKey of headerKeys">
+					<div class="colHeader" [ngClass]="{rightAligned: isRightAligned(headerKey)}">
+						<div class="caption" [klpWithTooltip]="true" (click)="setSortField(headerKey)">{{headerCaptionByKey.get(headerKey)}}</div>
+						<button class="sortButton" *ngIf="isSortable(headerKey)" (click)="setSortField(headerKey)">
+							<svg width="8" height="13" *ngIf="sortField !== headerKey || !sortOrder" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M4.63388 0.366116C4.14573 -0.122039 3.35427 -0.122039 2.86612 0.366116L0.21967 3.01256C-0.0732233 3.30546 -0.0732233 3.78033 0.21967 4.07322C0.512563 4.36612 0.987437 4.36612 1.28033 4.07322L3.75 1.60355L6.21967 4.07322C6.51256 4.36612 6.98744 4.36612 7.28033 4.07322C7.57322 3.78033 7.57322 3.30546 7.28033 3.01256L4.63388 0.366116Z" fill="#CCCCCC"/>
+								<path d="M7.28033 9.07337L4.63388 11.7198C4.14573 12.208 3.35427 12.208 2.86612 11.7198L0.21967 9.07337C-0.0732233 8.78048 -0.0732233 8.30561 0.21967 8.01271C0.512563 7.71982 0.987437 7.71982 1.28033 8.01271L3.75 10.4824L6.21967 8.01271C6.51256 7.71982 6.98744 7.71982 7.28033 8.01271C7.57322 8.30561 7.57322 8.78048 7.28033 9.07337Z" fill="#CCCCCC"/>
+							</svg>
+							<svg width="8" height="13" *ngIf="sortField === headerKey && sortOrder === 'DESC'" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M4.63388 0.366116C4.14573 -0.122039 3.35427 -0.122039 2.86612 0.366116L0.21967 3.01256C-0.0732233 3.30546 -0.0732233 3.78033 0.21967 4.07322C0.512563 4.36612 0.987437 4.36612 1.28033 4.07322L3.75 1.60355L6.21967 4.07322C6.51256 4.36612 6.98744 4.36612 7.28033 4.07322C7.57322 3.78033 7.57322 3.30546 7.28033 3.01256L4.63388 0.366116Z" fill="#CCCCCC"/>
+								<path d="M7.28033 9.07337L4.63388 11.7198C4.14573 12.208 3.35427 12.208 2.86612 11.7198L0.21967 9.07337C-0.0732233 8.78048 -0.0732233 8.30561 0.21967 8.01271C0.512563 7.71982 0.987437 7.71982 1.28033 8.01271L3.75 10.4824L6.21967 8.01271C6.51256 7.71982 6.98744 7.71982 7.28033 8.01271C7.57322 8.30561 7.57322 8.78048 7.28033 9.07337Z" fill="#4A4A4A"/>
+							</svg>
+							<svg width="8" height="13" *ngIf="sortField === headerKey && sortOrder === 'ASC'" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M4.63388 0.366116C4.14573 -0.122039 3.35427 -0.122039 2.86612 0.366116L0.21967 3.01256C-0.0732233 3.30546 -0.0732233 3.78033 0.21967 4.07322C0.512563 4.36612 0.987437 4.36612 1.28033 4.07322L3.75 1.60355L6.21967 4.07322C6.51256 4.36612 6.98744 4.36612 7.28033 4.07322C7.57322 3.78033 7.57322 3.30546 7.28033 3.01256L4.63388 0.366116Z" fill="#4A4A4A"/>
+								<path d="M7.28033 9.07337L4.63388 11.7198C4.14573 12.208 3.35427 12.208 2.86612 11.7198L0.21967 9.07337C-0.0732233 8.78048 -0.0732233 8.30561 0.21967 8.01271C0.512563 7.71982 0.987437 7.71982 1.28033 8.01271L3.75 10.4824L6.21967 8.01271C6.51256 7.71982 6.98744 7.71982 7.28033 8.01271C7.57322 8.30561 7.57322 8.78048 7.28033 9.07337Z" fill="#CCCCCC"/>
+							</svg>
+						</button>
 					</div>
+				</td>
+				<td class="configButtonContainer" [ngClass]="{sticky: hasHorizontalScroll}">
+					<ng-container [ngTemplateOutlet]="configBtnRef" [ngTemplateOutletContext]="{clickHandler: openConfig}"></ng-container>
 					<div *ngIf="hasHorizontalScroll" class="stickyShadow"></div>
 				</td>
 			</tr>
-			<tr *ngIf="getExpandedTplFn?.()?.index === i">
-				<td colspan="999">
-					<ng-container [ngTemplateOutlet]="getExpandedTplFn()?.tpl" [ngTemplateOutletContext]="{row: row}"></ng-container>
-				</td>
-			</tr>
-		</ng-container>
-		</tbody>
-	</table>
-	<div class="summary"><ng-container [ngTemplateOutlet]="summaryTpl"></ng-container></div>
-</div>
-
-<footer>
-	<div class="amountPicker" *ngIf="hasAtLeastOneResult()">
-		{{translate('Show')}}
-		<div class="selectContainer">
-			<select [(ngModel)]="itemsPerPage" (ngModelChange)="itemsPerPageChanged()">
-				<option value="10">10 {{translate('results')}}</option>
-				<option value="25">25 {{translate('results')}}</option>
-				<option value="50">50 {{translate('results')}}</option>
-				<option value="100">100 {{translate('results')}}</option>
-			</select>
-		</div>
-	</div>
-	<div class="pageNumbers" *ngIf="pageData && hasAtLeastOneResult()">
-		<button *ngIf="false" (click)="toPage(1)" [disabled]="page === 1">{{translate('First')}}</button>
-		<button (click)="toPage(page-1)" [disabled]="page === 1" class="withIcon">
-			<svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M12.8333 7.00002H1.16663M1.16663 7.00002L6.99996 12.8334M1.16663 7.00002L6.99996 1.16669" stroke="#475467" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
-			</svg>
-			<div>{{translate('Previous')}}</div>
-		</button>
-		<div class="pageNrButtons">
-			<ng-container *ngFor="let pageNr of getPageNumbers()">
-				<button class="pageNrButton" *ngIf="pageNr !== null" (click)="toPage(pageNr)" [ngClass]="{selected: page === pageNr}">
-					<span>{{pageNr}}</span>
-				</button>
-				<button class="pageNrButton separator" *ngIf="pageNr == null">
-					<span>...</span>
-				</button>
+			</thead>
+			<tbody>
+			<ng-container *ngFor="let row of pageData?.data; let i = index">
+				<tr>
+					<td (click)="rowSelectClicked(row)" class="selectBoxContainer" *ngIf="getActionsForMultipleRowsFn">
+						<div class="selectBox">
+							<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: isSelected(row)}"></ng-container>
+						</div>
+					</td>
+					<td *ngFor="let header of headerKeys" (click)="rowClicked(row, i)" [klpWithTooltip]="true" [ngClass]="[isRightAligned(header) ? 'rightAligned' : '', 'emphasize' + getEmphasizeValue(header)]">
+						<ng-container
+							[ngTemplateOutlet]="getTemplate(header, row[header])"
+							[ngTemplateOutletContext]="{ value: row[header], row: row }"
+						></ng-container>
+					</td>
+					<td class="actionMenuContainerTd" [ngClass]="{sticky: hasHorizontalScroll}">
+						<div class="actionMenuContainer" *ngIf="getActionsForRowFn?.(row)?.length > 0">
+							<ng-container [ngTemplateOutlet]="actionMenuBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsFn(row)}"></ng-container>
+							<div
+								#actionMenu
+								class="actionMenu"
+								*ngIf="actionMenuForRow === row"
+								[ngStyle]="{transform: 'translate('+actionMenuOffset.x+ 'px,'+ actionMenuOffset.y + 'px)'}"
+							>
+								<button *ngFor="let action of actions" (click)="closeActionMenu(); action.action()">
+									{{action.caption}}
+								</button>
+							</div>
+						</div>
+						<div *ngIf="hasHorizontalScroll" class="stickyShadow"></div>
+					</td>
+				</tr>
+				<tr *ngIf="getExpandedTplFn?.()?.index === i">
+					<td colspan="999">
+						<ng-container [ngTemplateOutlet]="getExpandedTplFn()?.tpl" [ngTemplateOutletContext]="{row: row}"></ng-container>
+					</td>
+				</tr>
 			</ng-container>
-		</div>
-		<button (click)="toPage(page+1)" [disabled]="page === this.getLastPage()" class="withIcon">
-			<div>{{translate('Next')}}</div>
-			<svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M1.16675 7.00002H12.8334M12.8334 7.00002L7.00008 1.16669M12.8334 7.00002L7.00008 12.8334" stroke="#475467" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
-			</svg>
-		</button>
-		<button *ngIf="false" (click)="toPage(this.getLastPage())" [disabled]="page === this.getLastPage()">{{translate('Last')}}</button>
+			</tbody>
+		</table>
+		<div class="summary"><ng-container [ngTemplateOutlet]="summaryTpl"></ng-container></div>
 	</div>
-</footer>
 
-<div class="columnRearranger" *ngIf="showConfig">
-	<header>
-		<div>{{translate('Configure your dashboard')}}</div>
-		<button class="closeButton" (click)="closeConfig()">×</button>
-	</header>
-	<div class="subHeader">{{translate('Pick and order the columns to personalize your dashboard')}}</div>
-	<wutu-column-rearranger [(ngModel)]="definedColumns" [headerCaptionByKey]="headerCaptionByKey" (onCloseRequest)="closeConfig()" (onColumnsSaved)="onColumnsSaved()"></wutu-column-rearranger>
-</div>
+	<footer>
+		<div class="amountPicker" *ngIf="hasAtLeastOneResult()">
+			{{translate('Show')}}
+			<div class="selectContainer">
+				<select [(ngModel)]="itemsPerPage" (ngModelChange)="itemsPerPageChanged()">
+					<option value="10">10 {{translate('results')}}</option>
+					<option value="25">25 {{translate('results')}}</option>
+					<option value="50">50 {{translate('results')}}</option>
+					<option value="100">100 {{translate('results')}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="pageNumbers" *ngIf="pageData && hasAtLeastOneResult()">
+			<button *ngIf="false" (click)="toPage(1)" [disabled]="page === 1">{{translate('First')}}</button>
+			<button (click)="toPage(page-1)" [disabled]="page === 1" class="withIcon">
+				<svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M12.8333 7.00002H1.16663M1.16663 7.00002L6.99996 12.8334M1.16663 7.00002L6.99996 1.16669" stroke="#475467" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+				<div>{{translate('Previous')}}</div>
+			</button>
+			<div class="pageNrButtons">
+				<ng-container *ngFor="let pageNr of getPageNumbers()">
+					<button class="pageNrButton" *ngIf="pageNr !== null" (click)="toPage(pageNr)" [ngClass]="{selected: page === pageNr}">
+						<span>{{pageNr}}</span>
+					</button>
+					<button class="pageNrButton separator" *ngIf="pageNr == null">
+						<span>...</span>
+					</button>
+				</ng-container>
+			</div>
+			<button (click)="toPage(page+1)" [disabled]="page === this.getLastPage()" class="withIcon">
+				<div>{{translate('Next')}}</div>
+				<svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M1.16675 7.00002H12.8334M12.8334 7.00002L7.00008 1.16669M12.8334 7.00002L7.00008 12.8334" stroke="#475467" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+			</button>
+			<button *ngIf="false" (click)="toPage(this.getLastPage())" [disabled]="page === this.getLastPage()">{{translate('Last')}}</button>
+		</div>
+	</footer>
 
-<div class="filters" *ngIf="showFilters">
-	<header>
-		<div>{{translate('Filters')}}</div>
-		<button class="closeButton" (click)="closeFilters()">×</button>
-	</header>
-	<div class="filterFormContainer">
-		<ng-container [ngTemplateOutlet]="filterFormTpl"></ng-container>
+	<div class="columnRearranger" *ngIf="showConfig">
+		<header>
+			<div>{{translate('Configure your dashboard')}}</div>
+			<button class="closeButton" (click)="closeConfig()">×</button>
+		</header>
+		<div class="subHeader">{{translate('Pick and order the columns to personalize your dashboard')}}</div>
+		<wutu-column-rearranger [(ngModel)]="definedColumns" [headerCaptionByKey]="headerCaptionByKey" (onCloseRequest)="closeConfig()" (onColumnsSaved)="onColumnsSaved()"></wutu-column-rearranger>
+	</div>
+
+	<div class="filters" *ngIf="showFilters">
+		<header>
+			<div>{{translate('Filters')}}</div>
+			<button class="closeButton" (click)="closeFilters()">×</button>
+		</header>
+		<div class="filterFormContainer">
+			<ng-container [ngTemplateOutlet]="filterFormTpl"></ng-container>
+		</div>
 	</div>
 </div>

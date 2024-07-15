@@ -71,6 +71,7 @@
 
 <div class="tableContainer" *ngIf="true">
 	<wutu-data-table
+		[manuallyTriggerColumnWidthCalculation]="false"
 		[fetchItemsFn]="fetchItemsFn"
 		[fetchSingleItemFn]="updateSingleItemFn"
 		[getActionsForRowFn]="getActionsForRowFn"
