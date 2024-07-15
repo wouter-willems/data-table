@@ -41,7 +41,7 @@ export type PresetValue = {
 
 // tslint:disable-next-line:directive-selector
 @Directive({selector: '[columnKey]'})
-export class ColumnKeyDirective implements OnChanges {
+export class ColumnKeyDirective {
 	@Input() columnKey;
 	@Input() columnCaption;
 	@Input() sortKey;
@@ -57,20 +57,31 @@ export class ColumnKeyDirective implements OnChanges {
 
 	// the fields that start with an underscore hold values that we can alter within our component, without losing
 	// what the user intended (which is stored in the non-underscored fields)
-	public _fixedWidthOnContents: boolean;
-	public _growRatio: number;
 	public _minWidthInREM: number;
 	public _maxWidthInREM: number;
-	public _rightAligned: boolean;
-	public _emphasize: number;
 
-	public ngOnChanges(simpleChanges: SimpleChanges): void {
-		this._fixedWidthOnContents = this.fixedWidthOnContents ?? this.preset?.fixedWidthOnContents;
-		this._growRatio = this.growRatio ?? this.preset?.growRatio;
-		this._minWidthInREM = this.minWidthInREM ?? this.preset?.minWidthInREM;
-		this._maxWidthInREM = this.maxWidthInREM ?? this.preset?.maxWidthInREM;
-		this._rightAligned = this.rightAligned ?? this.preset?.rightAligned;
-		this._emphasize = this.emphasize ?? this.preset?.emphasize;
+	public getFixedWidthOnContents(): boolean {
+		return this.fixedWidthOnContents ?? this.preset?.fixedWidthOnContents;
+	}
+
+	public getGrowRatio(): number {
+		return this.growRatio ?? this.preset?.growRatio;
+	}
+
+	public getMinWidthInREM(): number {
+		return this.minWidthInREM ?? this.preset?.minWidthInREM;
+	}
+
+	public getMaxWidthInREM(): number {
+		return this.maxWidthInREM ?? this.preset?.maxWidthInREM;
+	}
+
+	public getRightAligned(): boolean {
+		return this.rightAligned ?? this.preset?.rightAligned;
+	}
+
+	public getEmphasize(): number {
+		return this.emphasize ?? this.preset?.emphasize;
 	}
 }
 
@@ -394,10 +405,13 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		const dynamicCols = [...this.elRef.nativeElement.querySelectorAll('thead td:not(.selectBoxContainer):not(.configButtonContainer)')];
 		dynamicCols.forEach((e, i) => {
 			const colDirective = this.columnKeyDirectives.find(col => col.columnKey === this.headerKeys[i]);
-			if (colDirective._fixedWidthOnContents) {
+			if (colDirective.getFixedWidthOnContents()) {
 				const actualWidth = Math.ceil(e.getBoundingClientRect().width) / remInPx;
-				colDirective._minWidthInREM = Math.min(actualWidth, (colDirective.minWidthInREM ?? Number.MAX_SAFE_INTEGER));
-				colDirective._maxWidthInREM = Math.min(actualWidth, (colDirective.maxWidthInREM ?? Number.MAX_SAFE_INTEGER));
+				colDirective._minWidthInREM = Math.min(actualWidth, (colDirective.getMinWidthInREM() ?? Number.MAX_SAFE_INTEGER));
+				colDirective._maxWidthInREM = Math.min(actualWidth, (colDirective.getMaxWidthInREM() ?? Number.MAX_SAFE_INTEGER));
+			} else {
+				colDirective._minWidthInREM = colDirective.getMinWidthInREM();
+				colDirective._maxWidthInREM = colDirective.getMaxWidthInREM();
 			}
 		});
 
@@ -455,13 +469,13 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 				if (cur.maximumBonus <= cur.bonusSpaceItTakes) {
 					return acc;
 				}
-				return cur.col._growRatio + acc;
+				return cur.col.getGrowRatio() + acc;
 			}, 0);
 
 			cols = cols.map(e => {
 				return {
 					...e,
-					bonusSpaceItTakes: Math.min(e.maximumBonus, e.bonusSpaceItTakes + (toStillDistribute * (e.col._growRatio / ratiosCumulative))),
+					bonusSpaceItTakes: Math.min(e.maximumBonus, e.bonusSpaceItTakes + (toStillDistribute * (e.col.getGrowRatio() / ratiosCumulative))),
 				};
 			});
 		}
@@ -489,13 +503,13 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	public isRightAligned(header: string): boolean {
 		return this.columnKeyDirectives.toArray().find(e => {
 			return e.columnKey === header;
-		})?.rightAligned ?? false;
+		})?.getRightAligned() ?? false;
 	}
 
 	public getEmphasizeValue(header: string): number {
 		return this.columnKeyDirectives.toArray().find(e => {
 			return e.columnKey === header;
-		})?.emphasize ?? 0;
+		})?.getEmphasize() ?? 0;
 	}
 
 	public rowClicked(row: any, index: number): void {
