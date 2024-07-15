@@ -49,9 +49,9 @@ export class ColumnKeyDirective {
 	@Input() enabledByDefault: boolean = true;
 	@Input() fixedWidthOnContents: boolean;
 	@Input() growRatio: number = 1;
-	@Input() minWidthInREM: number = null;
-	@Input() maxWidthInREM: number = null;
-	@Input() rightAligned: boolean = false;
+	@Input() minWidthInREM: number;
+	@Input() maxWidthInREM: number;
+	@Input() rightAligned: boolean;
 	@Input() emphasize: number = 0;
 	@Input() preset: PresetValue;
 
@@ -61,7 +61,7 @@ export class ColumnKeyDirective {
 	public _maxWidthInREM: number;
 
 	public getFixedWidthOnContents(): boolean {
-		return this.fixedWidthOnContents ?? this.preset?.fixedWidthOnContents;
+		return this.fixedWidthOnContents ?? this.preset?.fixedWidthOnContents ?? false;
 	}
 
 	public getGrowRatio(): number {
@@ -77,7 +77,7 @@ export class ColumnKeyDirective {
 	}
 
 	public getRightAligned(): boolean {
-		return this.rightAligned ?? this.preset?.rightAligned;
+		return this.rightAligned ?? this.preset?.rightAligned ?? false;
 	}
 
 	public getEmphasize(): number {
