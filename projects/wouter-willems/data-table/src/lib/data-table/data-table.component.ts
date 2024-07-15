@@ -36,6 +36,7 @@ export type PresetValue = {
 	minWidthInREM?: number,
 	maxWidthInREM?: number,
 	rightAligned?: boolean,
+	emphasize?: boolean,
 };
 
 // tslint:disable-next-line:directive-selector
@@ -60,6 +61,7 @@ export class ColumnKeyDirective implements OnChanges {
 		this.minWidthInREM = simpleChanges.minWidthInREM?.currentValue ?? simpleChanges.preset?.currentValue?.minWidthInREM ?? this.minWidthInREM;
 		this.maxWidthInREM = simpleChanges.maxWidthInREM?.currentValue ?? simpleChanges.preset?.currentValue?.maxWidthInREM ?? this.maxWidthInREM;
 		this.rightAligned = simpleChanges.rightAligned?.currentValue ?? simpleChanges.preset?.currentValue?.rightAligned ?? this.rightAligned;
+		this.emphasize = simpleChanges.emphasize?.currentValue ?? simpleChanges.preset?.currentValue?.emphasize ?? this.emphasize;
 	}
 }
 
