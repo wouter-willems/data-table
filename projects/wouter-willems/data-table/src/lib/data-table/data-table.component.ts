@@ -51,6 +51,7 @@ export class ColumnKeyDirective implements OnChanges {
 	@Input() maxWidthInREM: number = null;
 	@Input() enabledByDefault: boolean = true;
 	@Input() rightAligned: boolean = false;
+	@Input() emphasize: number = 0;
 	@Input() preset: PresetValue;
 
 	public ngOnChanges(simpleChanges: SimpleChanges): void {
@@ -78,6 +79,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	@ViewChild('selectBoxDummy') selectBoxDummy: ElementRef;
 	@ViewChild('actionMenuDummy') actionMenuDummy: ElementRef;
 	@ViewChild('configBtnDummy') configBtnDummy: ElementRef;
+	@ViewChild('configButtonContainer') configButtonContainer: ElementRef;
 	@ViewChild('actionMenuContainer') actionMenuContainer: ElementRef;
 	@ViewChild('tableContainer') tableContainer: ElementRef;
 	@ViewChild('actionMenu') actionMenu: ElementRef;
@@ -373,15 +375,17 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		if (selectBoxContainerRef) {
 			selectBoxContainerRef.style.width = `${selectBoxWidth}px`;
 		}
-		if (configBtnContainerRef) {
-			configBtnContainerRef.style.width = `${lastColWidth}px`;
-		}
 		const dynamicCols = [...this.elRef.nativeElement.querySelectorAll('thead td:not(.selectBoxContainer):not(.configButtonContainer)')];
 		dynamicCols.forEach((e, i) => {
 			const colDirective = this.columnKeyDirectives.find(col => col.columnKey === this.headerKeys[i]);
 			if (colDirective.fixedWidthOnContents) {
-				colDirective.minWidthInREM = Math.ceil(e.getBoundingClientRect().width) / remInPx;
-				colDirective.maxWidthInREM = Math.ceil(e.getBoundingClientRect().width) / remInPx;
+				const actualWidth = Math.ceil(e.getBoundingClientRect().width) / remInPx;
+				if (colDirective.maxWidthInREM > 0 && colDirective.maxWidthInREM < actualWidth) {
+					colDirective.minWidthInREM = colDirective.maxWidthInREM;
+				} else {
+					colDirective.minWidthInREM = actualWidth;
+					colDirective.maxWidthInREM = actualWidth;
+				}
 			}
 		});
 
@@ -395,6 +399,14 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		const spaceLeftForDistribution = this.tableContainer.nativeElement.getBoundingClientRect().width - selectBoxWidth - lastColWidth;
 		const bonusSpaceLeftInREM = (spaceLeftForDistribution - minWidthsCumulative) / remInPx;
 		this.hasHorizontalScroll = bonusSpaceLeftInREM < 0;
+		if (configBtnContainerRef) {
+			if (this.hasHorizontalScroll) {
+				// when sticky, dont take all the extra spacings that the `lastColWidth` has. Instead, make it is large as the config button itself
+				configBtnContainerRef.style.width = `${this.configButtonContainer.nativeElement.getBoundingClientRect().width}px`;
+			} else {
+				configBtnContainerRef.style.width = `${lastColWidth}px`;
+			}
+		}
 
 		const spacings = this.distributeSpaceAfterMinWidths(bonusSpaceLeftInREM);
 		dynamicCols.forEach((e, i) => {
@@ -466,6 +478,12 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		return this.columnKeyDirectives.toArray().find(e => {
 			return e.columnKey === header;
 		})?.rightAligned ?? false;
+	}
+
+	public getEmphasizeValue(header: string): number {
+		return this.columnKeyDirectives.toArray().find(e => {
+			return e.columnKey === header;
+		})?.emphasize ?? 0;
 	}
 
 	public rowClicked(row: any, index: number): void {
@@ -763,5 +781,8 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	ngOnDestroy(): void {
 		window.document.removeEventListener('keyup', this.escapeKeyListener);
 		window.document.removeEventListener('resize', this.resizeListener);
+		this.closeConfig();
+		this.closeActionMenu();
+		this.closeFilters();
 	}
 }

@@ -81,6 +81,10 @@ $tdPadding: var(#{$p}td-padding);
       &.actionMenuContainerTd {
         position: relative;
         overflow: visible;
+        &.sticky {
+          padding-left: 0;
+          padding-right: 0;
+        }
       }
     }
   }
@@ -282,6 +286,8 @@ table {
         position: sticky;
         right: 0;
         overflow: visible;
+        padding-left: 0;
+        padding-right: 0;
       }
     }
   }
@@ -301,6 +307,24 @@ table {
       }
       &.rightAligned {
         text-align: right;
+      }
+      &.emphasize-1 {
+        font-weight: var(--wdt-emphasize-1);
+      }
+      &.emphasize1 {
+        font-weight: var(--wdt-emphasize1);
+      }
+      &.emphasize-2 {
+        font-weight: var(--wdt-emphasize-2);
+      }
+      &.emphasize2 {
+        font-weight: var(--wdt-emphasize2);
+      }
+      &.emphasize-3 {
+        font-weight: var(--wdt-emphasize-3);
+      }
+      &.emphasize3 {
+        font-weight: var(--wdt-emphasize3);
       }
       &.sticky {
         position: sticky;
