@@ -2,6 +2,6 @@ import { PresetValue } from "projects/wouter-willems/data-table/src/lib/data-tab
 
 export const wdtColumnPresets: Record<string, PresetValue> =
 	{
-		name: {growRatio: 1, fixedWidthOnContents: true},
+		// name: {growRatio: 1, fixedWidthOnContents: true},
 	};
 console.log(wdtColumnPresets);

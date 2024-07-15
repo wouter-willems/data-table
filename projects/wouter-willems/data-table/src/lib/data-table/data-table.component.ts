@@ -394,7 +394,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		const dynamicCols = [...this.elRef.nativeElement.querySelectorAll('thead td:not(.selectBoxContainer):not(.configButtonContainer)')];
 		dynamicCols.forEach((e, i) => {
 			const colDirective = this.columnKeyDirectives.find(col => col.columnKey === this.headerKeys[i]);
-			if (colDirective.fixedWidthOnContents) {
+			if (colDirective._fixedWidthOnContents) {
 				const actualWidth = Math.ceil(e.getBoundingClientRect().width) / remInPx;
 				if (colDirective.maxWidthInREM > 0 && colDirective.maxWidthInREM < actualWidth) {
 					colDirective._minWidthInREM = colDirective.maxWidthInREM;
@@ -404,8 +404,6 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 				}
 			}
 		});
-
-		console.log(this.columnKeyDirectives);
 
 		const minWidthsCumulative = this.columnKeyDirectives.filter(e => {
 			if (!this.headerKeys.includes(e.columnKey)) {
@@ -734,6 +732,9 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		this.actionMenuForRow = null;
 		this.actions = null;
 		this.multipleRowsActionsShown = false;
+		if (this.actionMenu?.nativeElement && document.body.contains(this.actionMenu.nativeElement)) {
+			document.body.removeChild(this.actionMenu.nativeElement);
+		}
 		this.removeBackdropDiv();
 	}
 
