@@ -73,13 +73,6 @@ export class AppComponent implements OnInit {
 		});
 
 		setTimeout(() => {
-			this.dataTableComponent._ext_triggerWidthCalculation();
-		}, 2000);
-
-		setTimeout(() => {
-			this.dataTableComponent._ext_triggerWidthCalculation();
-		}, 4000);
-		setTimeout(() => {
 			this.dataTableComponent._ext_refetchItem(7);
 		}, 3000);
 

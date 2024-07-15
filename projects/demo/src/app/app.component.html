@@ -49,7 +49,7 @@
 		[getExpandedTplFn]="getExpandedTplFn"
 		[summaryTpl]="summaryTpl"
 	>
-		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [preset]="presets.name" [fixedWidthOnContents]="true" [emphasize]="1">
+		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [preset]="presets.name" [fixedWidthOnContents]="true" [minWidthInREM]="10" [maxWidthInREM]="15" [emphasize]="1">
 			{{value}}
 		</ng-template>
 		<ng-template columnKey="age" columnCaption="Age" let-value="value" let-row="row" [fixedWidthOnContents]="true" [emphasize]="-1">
@@ -58,8 +58,8 @@
 		<ng-template columnKey="address" columnCaption="Address" [sortKey]="null" let-value="value" [enabledByDefault]="false">
 			{{value.street}} at number {{value.number}}
 		</ng-template>
-		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value" [fixedWidthOnContents]="true" [maxWidthInREM]="30">
-			{{value}}
+		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value" [fixedWidthOnContents]="true" [minWidthInREM]="10" [maxWidthInREM]="24">
+			{{value}} occupation occupation occupation
 		</ng-template>
 		<ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [minWidthInREM]="36" [rightAligned]="true" [preset]="presets.shalala">
 			{{value}}

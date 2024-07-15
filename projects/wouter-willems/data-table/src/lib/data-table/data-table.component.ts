@@ -396,12 +396,8 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			const colDirective = this.columnKeyDirectives.find(col => col.columnKey === this.headerKeys[i]);
 			if (colDirective._fixedWidthOnContents) {
 				const actualWidth = Math.ceil(e.getBoundingClientRect().width) / remInPx;
-				if (colDirective.maxWidthInREM > 0 && colDirective.maxWidthInREM < actualWidth) {
-					colDirective._minWidthInREM = colDirective.maxWidthInREM;
-				} else {
-					colDirective._minWidthInREM = actualWidth;
-					colDirective._maxWidthInREM = actualWidth;
-				}
+				colDirective._minWidthInREM = Math.min(actualWidth, (colDirective.minWidthInREM ?? Number.MAX_SAFE_INTEGER));
+				colDirective._maxWidthInREM = Math.min(actualWidth, (colDirective.maxWidthInREM ?? Number.MAX_SAFE_INTEGER));
 			}
 		});
 
