@@ -35,7 +35,7 @@
 <div class="tableContainer" *ngIf="true">
 	<wutu-data-table
 		[fetchItemsFn]="fetchItemsFn"
-		[fetchSingleItemFn]="updateSingleItemFn"
+		[fetchItemByIds]="updateItemsById"
 		[getActionsForRowFn]="getActionsForRowFn"
 		[getActionsForMultipleRowsFn]="getActionsForMultipleRowsFn"
 		[searchParams]="getSearchParams()"

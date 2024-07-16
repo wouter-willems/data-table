@@ -73,7 +73,7 @@ export class AppComponent implements OnInit {
 		});
 
 		setTimeout(() => {
-			this.dataTableComponent._ext_refetchItem(7);
+			this.dataTableComponent._ext_refetchItems([7, 11]);
 		}, 3000);
 
 	}
@@ -135,9 +135,9 @@ export class AppComponent implements OnInit {
 		return data;
 	};
 
-	updateSingleItemFn = async (id: any): Promise<WDTRow> => {
-		console.log('zoekeuh', id);
-		return getSingleDummyItem(id, true);
+	updateItemsById = async (ids: Array<any>): Promise<Array<WDTRow>> => {
+		console.log('zoekeuh', ids);
+		return ids.map(e => getSingleDummyItem(e, true));
 	};
 
 	retrieveColumns = async (): Promise<Array<{

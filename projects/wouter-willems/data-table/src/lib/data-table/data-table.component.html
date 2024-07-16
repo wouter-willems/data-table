@@ -97,7 +97,7 @@
 		</thead>
 		<tbody>
 		<ng-container *ngFor="let row of pageData?.data; let i = index">
-			<tr>
+			<tr [ngClass]="[row.backgroundVariant > 0 ? 'backgroundVariant' + row.backgroundVariant : '']">
 				<td (click)="rowSelectClicked(row)" class="selectBoxContainer" *ngIf="getActionsForMultipleRowsFn">
 					<div class="selectBox">
 						<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: isSelected(row)}"></ng-container>

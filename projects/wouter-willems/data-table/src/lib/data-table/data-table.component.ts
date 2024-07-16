@@ -90,7 +90,7 @@ export class ColumnKeyDirective {
 export class FilterFormDirective {
 }
 
-export type WDTRow = {id: any} & Record<string, any>;
+export type WDTRow = {id: any, backgroundVariant?: 1 | 2 | 3} & Record<string, any>;
 
 @Component({
 	selector: 'wutu-data-table',
@@ -117,7 +117,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		totalAmount: number,
 		data: Array<WDTRow>
 	}>;
-	@Input() fetchSingleItemFn: (id: any) => Promise<WDTRow>;
+	@Input() fetchItemByIds: (ids: Array<any>) => Promise<Array<WDTRow>>;
 	@Input() getActionsForRowFn: (r: any) => Array<{
 		caption: string,
 		action: () => void,
@@ -767,12 +767,19 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		this.getData();
 	}
 
-	public async _ext_refetchItem(id: any): Promise<void> {
-		const item = await this.fetchSingleItemFn(id);
+	public async _ext_refetchItems(ids: Array<any>): Promise<void> {
+		const items = await this.fetchItemByIds(ids);
 		this.pageData = {
 			...this.pageData,
-			data: this.pageData.data.map(e => e.id === id ? item : e),
+			data: this.pageData.data.map(e => {
+				const foundItem = items.find(i => i.id === e.id);
+				return foundItem ?? e;
+			}),
 		};
+	}
+
+	public _ext_hasItemVisibleWithId(id: any): boolean {
+		return this.pageData?.data?.some(e => e.id === id) ?? false;
 	}
 
 	public getNrOfActiveFilters(): number {
@@ -789,6 +796,10 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 
 	public _ext_setMaxBatchSize(size: number): void {
 		this.maxBatchSize = size;
+	}
+
+	public _ext_isItemVisible(id: any): boolean {
+		return this.pageData?.data?.some(e => e.id === id);
 	}
 
 	public shouldShowSelectAcrossAllPages(): boolean {

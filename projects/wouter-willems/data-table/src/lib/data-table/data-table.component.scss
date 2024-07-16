@@ -301,6 +301,15 @@ table {
     }
   }
   tbody tr {
+    &.backgroundVariant1 td {
+      background-color: var(--wdt-background-variant1);
+    }
+    &.backgroundVariant2 td {
+      background-color: var(--wdt-background-variant2);
+    }
+    &.backgroundVariant3 td {
+      background-color: var(--wdt-background-variant3);
+    }
     td {
       border-bottom: var(#{$p}border);
       &:not(.selectBoxContainer) {
