@@ -224,18 +224,18 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			};
 			const c = simpleChanges.searchParams.currentValue;
 			const stateExternal = {
-				page: Number(c.page ?? stateInternal.page),
-				itemsPerPage: Number(c.itemsPerPage ?? stateInternal.itemsPerPage),
-				searchQuery: c.searchQuery ?? stateInternal.searchQuery,
-				sortField: c.sortField ?? stateInternal.sortField,
-				sortOrder: c.sortOrder ?? stateInternal.sortOrder
+				page: Number(c.page ?? 1),
+				itemsPerPage: Number(c.itemsPerPage ?? 25),
+				searchQuery: c.searchQuery,
+				sortField: c.sortField,
+				sortOrder: c.sortOrder
 			};
 			if (!isEqual(stateInternal, stateExternal)) {
-				this.page = stateExternal.page || stateInternal.page;
-				this.itemsPerPage = stateExternal.itemsPerPage || stateInternal.itemsPerPage;
-				this.searchQuery = stateExternal.searchQuery ?? stateInternal.searchQuery;
-				this.sortField = stateExternal.sortField ?? stateInternal.sortField;
-				this.sortOrder = stateExternal.sortOrder ?? stateInternal.sortOrder;
+				this.page = stateExternal.page;
+				this.itemsPerPage = stateExternal.itemsPerPage;
+				this.searchQuery = stateExternal.searchQuery;
+				this.sortField = stateExternal.sortField;
+				this.sortOrder = stateExternal.sortOrder;
 				if (this.initiated) {
 					this.getData().then(() => this.calculateColumnWidths());
 				}
