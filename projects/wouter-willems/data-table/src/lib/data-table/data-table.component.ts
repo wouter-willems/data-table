@@ -298,7 +298,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			params.sortOrder,
 			this.activeFilters,
 		);
-		this.aggregatedValues = await this.getColumnAggregatedValuesFn(this.pageData.data);
+		this.aggregatedValues = await this.getColumnAggregatedValuesFn?.(this.pageData.data);
 		this.pageData.data.forEach(e => {
 			this.idByRow.set(e.id, e);
 		});

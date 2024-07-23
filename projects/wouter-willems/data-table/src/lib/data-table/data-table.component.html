@@ -132,7 +132,7 @@
 				</td>
 			</tr>
 		</ng-container>
-		<tr>
+		<tr *ngIf="aggregatedValues">
 			<td></td>
 			<td *ngFor="let header of headerKeys" [klpWithTooltip]="true">
 				<ng-container *ngIf="aggregatedValues[header]">
