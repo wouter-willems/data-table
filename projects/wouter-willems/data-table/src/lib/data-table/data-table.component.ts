@@ -54,6 +54,7 @@ export class ColumnKeyDirective {
 	@Input() rightAligned: boolean;
 	@Input() emphasize: number;
 	@Input() preset: PresetValue;
+	@Input() aggregationTpl: TemplateRef<any>;
 
 	// the fields that start with an underscore hold values that we can alter within our component, without losing
 	// what the user intended (which is stored in the non-underscored fields)
@@ -118,6 +119,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		data: Array<WDTRow>
 	}>;
 	@Input() fetchItemByIds: (ids: Array<any>) => Promise<Array<WDTRow>>;
+	@Input() getColumnAggregatedValuesFn: (data: Array<WDTRow>) => Promise<Record<string, any>>;
 	@Input() getActionsForRowFn: (r: any) => Array<{
 		caption: string,
 		action: () => void,
@@ -151,6 +153,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	public headerKeys: Array<string> = [];
 	public headerCaptionByKey: Map<string, string> = new Map();
 	public pageData: { totalAmount: number; data: Array<WDTRow> };
+	public aggregatedValues: Record<string, any>;
 	public actions: Array<{
 		caption: string,
 		action: () => void,
@@ -180,7 +183,8 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	public selectAllAcrossPagesLoading: boolean = false;
 	private escapeKeyListener: (ev) => void;
 	private resizeListener: (ev) => void;
-	private hasHorizontalScroll: boolean;
+	public hasHorizontalScroll: boolean;
+
 
 	constructor(private injector: Injector, private elRef: ElementRef) {
 	}
@@ -294,6 +298,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			params.sortOrder,
 			this.activeFilters,
 		);
+		this.aggregatedValues = await this.getColumnAggregatedValuesFn(this.pageData.data);
 		this.pageData.data.forEach(e => {
 			this.idByRow.set(e.id, e);
 		});
@@ -498,6 +503,15 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			return this.templates.toArray()[index];
 		}
 		return null;
+	}
+
+	public getTemplateForAggregation(header: string, value: any): TemplateRef<any> {
+		if (!isValueSet(value))  {
+			return;
+		}
+		return this.columnKeyDirectives.toArray().find(e => {
+			return e.columnKey === header;
+		})?.aggregationTpl;
 	}
 
 	public isRightAligned(header: string): boolean {

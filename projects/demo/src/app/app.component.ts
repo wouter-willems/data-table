@@ -135,6 +135,13 @@ export class AppComponent implements OnInit {
 		return data;
 	};
 
+	getColumnAggregatedValuesFn = async (data: Array<WDTRow>): Promise<Record<string, any>> => {
+		console.log(data);
+		return {
+			occupation: 'Aggregated',
+		};
+	};
+
 	updateItemsById = async (ids: Array<any>): Promise<Array<WDTRow>> => {
 		console.log('zoekeuh', ids);
 		return ids.map(e => getSingleDummyItem(e, true));

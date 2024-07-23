@@ -132,6 +132,18 @@
 				</td>
 			</tr>
 		</ng-container>
+		<tr>
+			<td></td>
+			<td *ngFor="let header of headerKeys" [klpWithTooltip]="true">
+				<ng-container *ngIf="aggregatedValues[header]">
+					<ng-container
+						[ngTemplateOutlet]="getTemplateForAggregation(header, aggregatedValues[header])"
+						[ngTemplateOutletContext]="{ value: aggregatedValues[header] }"
+					></ng-container>
+				</ng-container>
+			</td>
+			<td></td>
+		</tr>
 		</tbody>
 	</table>
 	<div class="summary"><ng-container [ngTemplateOutlet]="summaryTpl"></ng-container></div>

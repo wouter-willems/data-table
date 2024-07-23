@@ -36,6 +36,7 @@
 	<wutu-data-table
 		[fetchItemsFn]="fetchItemsFn"
 		[fetchItemByIds]="updateItemsById"
+		[getColumnAggregatedValuesFn]="getColumnAggregatedValuesFn"
 		[getActionsForRowFn]="getActionsForRowFn"
 		[getActionsForMultipleRowsFn]="getActionsForMultipleRowsFn"
 		[searchParams]="getSearchParams()"
@@ -58,9 +59,10 @@
 		<ng-template columnKey="address" columnCaption="Address" [sortKey]="null" let-value="value" [enabledByDefault]="false">
 			{{value.street}} at number {{value.number}}
 		</ng-template>
-		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value" [fixedWidthOnContents]="true" [minWidthInREM]="10" [maxWidthInREM]="26">
+		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value" [fixedWidthOnContents]="true" [minWidthInREM]="10" [maxWidthInREM]="26" [aggregationTpl]="occupationAggr">
 			{{value}} occupation occupation occupation
 		</ng-template>
+		<ng-template #occupationAggr let-value="value">occupationAggr: {{value}}</ng-template>
 		<ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [minWidthInREM]="36" [rightAligned]="true" [preset]="presets.shalala">
 			{{value}}
 		</ng-template>
