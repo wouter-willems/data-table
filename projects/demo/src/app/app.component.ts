@@ -78,10 +78,11 @@ export class AppComponent implements OnInit {
 
 	}
 
-	getActionsForRowFn = (row: any): Array<{
+	getActionsForRowFn = async (row: any): Promise<Array<{
 		caption: string,
 		action: () => void,
-	}> => {
+	}>> => {
+		await new Promise(resolve => setTimeout(resolve, 200));
 		return [{
 			caption: 'Export',
 			action: () => {
@@ -101,10 +102,11 @@ export class AppComponent implements OnInit {
 		];
 	};
 
-	getActionsForMultipleRowsFn = (rows: Array<any>): Array<{
+	getActionsForMultipleRowsFn = async (rows: Array<any>): Promise<Array<{
 		caption: string,
 		action: () => void,
-	}> => {
+	}>> => {
+		await new Promise(resolve => setTimeout(resolve, 300));
 		return [{
 			caption: 'Export ALL',
 			action: () => {
@@ -123,7 +125,6 @@ export class AppComponent implements OnInit {
 		totalAmount: number,
 		data: Array<WDTRow>
 	}> => {
-		console.log(start, searchQuery, itemsPerPage, sortField, sortOrder, filters);
 		if (searchQuery === 'empty') {
 			return {
 				totalAmount: 0,
@@ -136,14 +137,12 @@ export class AppComponent implements OnInit {
 	};
 
 	getColumnAggregatedValuesFn = async (data: Array<WDTRow>): Promise<Record<string, any>> => {
-		console.log(data);
 		return {
 			occupation: 'Aggregated',
 		};
 	};
 
 	updateItemsById = async (ids: Array<any>): Promise<Array<WDTRow>> => {
-		console.log('zoekeuh', ids);
 		return ids.map(e => getSingleDummyItem(e, true));
 	};
 

@@ -1,7 +1,7 @@
 <wutu-lib-style></wutu-lib-style>
 
 <div class="dummies" *ngIf="true">
-	<div class="selectBox" #selectBoxDummy><ng-container [ngTemplateOutlet]="checkboxRef"></ng-container></div>
+	<div class="selectBox" #selectBoxDummy *ngIf="getActionsForMultipleRowsFn"><ng-container [ngTemplateOutlet]="checkboxRef"></ng-container></div>
 	<div #actionMenuDummy><ng-container [ngTemplateOutlet]="actionMenuBtnRef"></ng-container></div>
 	<div class="configButton" #configBtnDummy>
 		<div #configButtonContainer><ng-container [ngTemplateOutlet]="configBtnRef"></ng-container></div>
@@ -41,16 +41,23 @@
 			<ng-container *ngIf="filterFormTpl" [ngTemplateOutlet]="filterBtnRef" [ngTemplateOutletContext]="{clickHandler: openFilters, nrOfActiveFilters: getNrOfActiveFilters()}"></ng-container>
 		</ng-container>
 		<div class="multiSelectActionMenu" *ngIf="getSelectedRows().length > 0">
-			<div class="actionMenuContainer" *ngIf="getActionsForMultipleRowsFn?.(getSelectedRows())?.length > 0" #actionMenuContainer>
+			<div class="actionMenuContainer" #actionMenuContainer>
 				<ng-container [ngTemplateOutlet]="actionMenuMultipleBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsMultipleFn()}"></ng-container>
 				<div
 					*ngIf="multipleRowsActionsShown"
 					class="actionMenu forMultipleRows"
 					[ngStyle]="{transform: 'translate('+actionMenuOffset.x+ 'px,'+ actionMenuOffset.y + 'px)'}"
 				>
-					<button *ngFor="let action of actions" (click)="closeActionMenu(); action.action()">
-						{{action.caption}}
-					</button>
+					<ng-container *ngIf="!(actions?.length > 0)">
+						<button disabled>
+							{{translate('No options available')}}
+						</button>
+					</ng-container>
+					<ng-container *ngIf="actions?.length > 0">
+						<button *ngFor="let action of actions" (click)="closeActionMenu(); action.action()">
+							{{action.caption}}
+						</button>
+					</ng-container>
 				</div>
 			</div>
 		</div>
@@ -110,7 +117,7 @@
 					></ng-container>
 				</td>
 				<td class="actionMenuContainerTd" [ngClass]="{sticky: hasHorizontalScroll}">
-					<div class="actionMenuContainer" *ngIf="getActionsForRowFn?.(row)?.length > 0">
+					<div class="actionMenuContainer" *ngIf="getActionsForRowFn">
 						<ng-container [ngTemplateOutlet]="actionMenuBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsFn(row)}"></ng-container>
 						<div
 							#actionMenu
@@ -118,9 +125,16 @@
 							*ngIf="actionMenuForRow === row"
 							[ngStyle]="{transform: 'translate('+actionMenuOffset.x+ 'px,'+ actionMenuOffset.y + 'px)'}"
 						>
-							<button *ngFor="let action of actions" (click)="closeActionMenu(); action.action()">
-								{{action.caption}}
-							</button>
+							<ng-container *ngIf="!(actions?.length > 0)">
+								<button disabled>
+									{{translate('No options available')}}
+								</button>
+							</ng-container>
+							<ng-container *ngIf="actions?.length > 0">
+								<button *ngFor="let action of actions" (click)="closeActionMenu(); action.action()">
+									{{action.caption}}
+								</button>
+							</ng-container>
 						</div>
 					</div>
 					<div *ngIf="hasHorizontalScroll" class="stickyShadow"></div>

@@ -4,4 +4,3 @@ export const wdtColumnPresets: Record<string, PresetValue> =
 	{
 		name: {emphasize: 1},
 	};
-console.log(wdtColumnPresets);

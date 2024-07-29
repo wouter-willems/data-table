@@ -120,11 +120,17 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}>;
 	@Input() fetchItemByIds: (ids: Array<any>) => Promise<Array<WDTRow>>;
 	@Input() getColumnAggregatedValuesFn: (data: Array<WDTRow>) => Promise<Record<string, any>>;
-	@Input() getActionsForRowFn: (r: any) => Array<{
+	@Input() getActionsForRowFn: (r: any) => Promise<Array<{
+		caption: string,
+		action: () => void,
+	}>> | Array<{
 		caption: string,
 		action: () => void,
 	}>;
-	@Input() getActionsForMultipleRowsFn: (r: Array<any>) => Array<{
+	@Input() getActionsForMultipleRowsFn: (r: Array<any>) => Promise<Array<{
+		caption: string,
+		action: () => void,
+	}>> | Array<{
 		caption: string,
 		action: () => void,
 	}>;
@@ -400,7 +406,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		this.columnWidthsToBeCalculated = true;
 		await awaitableForNextCycle();
 		const remInPx = Number(getComputedStyle(document.documentElement).fontSize.split('px')[0]);
-		const selectBoxWidth = Math.ceil(this.selectBoxDummy.nativeElement.getBoundingClientRect().width);
+		const selectBoxWidth = this.selectBoxDummy ? Math.ceil(this.selectBoxDummy.nativeElement.getBoundingClientRect().width) : 0;
 		const lastColWidth = Math.ceil(Math.max(this.actionMenuDummy.nativeElement.getBoundingClientRect().width, this.configBtnDummy.nativeElement.getBoundingClientRect().width));
 		const selectBoxContainerRef = this.elRef.nativeElement.querySelector('thead td.selectBoxContainer');
 		const configBtnContainerRef = this.elRef.nativeElement.querySelector('thead td.configButtonContainer');
@@ -530,12 +536,12 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		this.onRowClicked.emit({row, index});
 	}
 
-	showActions(row: any): void {
+	async showActions(row: any): Promise<void> {
 		if (this.multipleRowsActionsShown) {
 			this.closeActionMenu();
 		}
 		this.actionMenuOffset = {x: 0, y: 15};
-		const actions = this.getActionsForRowFn?.(row) ?? [];
+		const actions = (await this.getActionsForRowFn?.(row)) ?? [];
 		this.actionMenuForRow = row;
 		this.actions = actions;
 		this.createBackdrop(() => {
@@ -552,10 +558,10 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		});
 	}
 
-	showActionsMultipleRows(): void {
+	async showActionsMultipleRows(): Promise<void> {
+		const actions = (await this.getActionsForMultipleRowsFn(this.getSelectedRows())) ?? [];
 		this.multipleRowsActionsShown = true;
 		this.actionMenuOffset = {x: 0, y: 40};
-		const actions = this.getActionsForMultipleRowsFn(this.getSelectedRows()) ?? [];
 		this.actions = actions;
 	}
 

@@ -397,6 +397,9 @@ td {
     &:hover {
       background: #F2F4F7;
     }
+    &[disabled] {
+      pointer-events: none;
+    }
   }
 }
 
