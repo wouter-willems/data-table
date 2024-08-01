@@ -1,4 +1,5 @@
 import {Directive, ElementRef, Input} from "@angular/core";
+import {stringIsSetAndFilled} from "./util/values";
 
 const triangleSize = '12px';
 
@@ -10,15 +11,17 @@ export class WithTooltipDirective {
 	private triangle: HTMLElement;
 	private triangleWhite: HTMLElement;
 	@Input() klpWithTooltip = true;
+	@Input() tooltipText: string;
 	constructor(el: ElementRef) {
 		el.nativeElement.addEventListener('mouseenter', () => {
 			if (!this.klpWithTooltip) {
 				return;
 			}
-			if (el.nativeElement.innerText.trim().length < 1) {
+			const textToDisplay = this.tooltipText || el.nativeElement.innerText.trim();
+			if (textToDisplay.length < 1) {
 				return;
 			}
-			if (el.nativeElement.offsetWidth >= el.nativeElement.scrollWidth) {
+			if (!stringIsSetAndFilled(this.tooltipText) && el.nativeElement.offsetWidth >= el.nativeElement.scrollWidth) {
 				return;
 			}
 			if (getComputedStyle(el.nativeElement).position === 'static') {
@@ -41,7 +44,7 @@ export class WithTooltipDirective {
 			this.div.style.boxSizing = 'border-box';
 			this.div.style.borderRadius = '3px';
 			this.div.style.pointerEvents = 'none';
-			this.div.textContent = el.nativeElement.innerText;
+			this.div.textContent = textToDisplay;
 			el.nativeElement.prepend(this.div);
 
 			this.triangle = document.createElement('div');

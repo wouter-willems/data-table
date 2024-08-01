@@ -59,7 +59,7 @@
 		<ng-template columnKey="address" columnCaption="Address" [sortKey]="null" let-value="value" [enabledByDefault]="false">
 			{{value.street}} at number {{value.number}}
 		</ng-template>
-		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value" [fixedWidthOnContents]="true" [minWidthInREM]="10" [maxWidthInREM]="26" [aggregationTpl]="occupationAggr">
+		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value" [fixedWidthOnContents]="true" [minWidthInREM]="10" [maxWidthInREM]="26" [aggregationTpl]="occupationAggr" [showTooltipOnOverflow]="false">
 			{{value}} occupation occupation occupation
 		</ng-template>
 		<ng-template #occupationAggr let-value="value">occupationAggr: {{value}}</ng-template>

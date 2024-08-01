@@ -110,7 +110,7 @@
 						<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: isSelected(row)}"></ng-container>
 					</div>
 				</td>
-				<td *ngFor="let header of headerKeys" (click)="rowClicked(row, i)" [klpWithTooltip]="true" [ngClass]="[isRightAligned(header) ? 'rightAligned' : '', 'emphasize' + getEmphasizeValue(header)]">
+				<td *ngFor="let header of headerKeys" (click)="rowClicked(row, i)" [klpWithTooltip]="showTooltipOnOverflow(header)" [ngClass]="[isRightAligned(header) ? 'rightAligned' : '', 'emphasize' + getEmphasizeValue(header)]">
 					<ng-container
 						[ngTemplateOutlet]="getTemplate(header, row[header])"
 						[ngTemplateOutletContext]="{ value: row[header], row: row }"

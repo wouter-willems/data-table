@@ -55,6 +55,7 @@ export class ColumnKeyDirective {
 	@Input() emphasize: number;
 	@Input() preset: PresetValue;
 	@Input() aggregationTpl: TemplateRef<any>;
+	@Input() showTooltipOnOverflow = true;
 
 	// the fields that start with an underscore hold values that we can alter within our component, without losing
 	// what the user intended (which is stored in the non-underscored fields)
@@ -520,6 +521,12 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		})?.aggregationTpl;
 	}
 
+	public showTooltipOnOverflow(header: string): boolean {
+		return this.columnKeyDirectives.toArray().find(e => {
+			return e.columnKey === header;
+		})?.showTooltipOnOverflow ?? true;
+	}
+
 	public isRightAligned(header: string): boolean {
 		return this.columnKeyDirectives.toArray().find(e => {
 			return e.columnKey === header;
@@ -592,9 +599,10 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		return Math.ceil(this.pageData.totalAmount / (this.itemsPerPage ?? 1));
 	}
 
-	public toPage(pageNr: number): void {
+	public async toPage(pageNr: number): Promise<void> {
 		this.page = pageNr;
-		this.getData();
+		await this.getData();
+		await this.calculateColumnWidths();
 	}
 
 	public openConfig = (): void => {
