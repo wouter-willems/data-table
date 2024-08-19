@@ -141,7 +141,7 @@
 				</td>
 			</tr>
 			<tr *ngIf="getExpandedTplFn?.()?.index === i">
-				<td colspan="999">
+				<td [attr.colspan]="getTotalAmountOfCols()">
 					<ng-container [ngTemplateOutlet]="getExpandedTplFn()?.tpl" [ngTemplateOutletContext]="{row: row}"></ng-container>
 				</td>
 			</tr>

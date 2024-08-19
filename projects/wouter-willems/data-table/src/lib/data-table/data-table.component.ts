@@ -857,4 +857,8 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		this.closeActionMenu();
 		this.closeFilters();
 	}
+
+	public getTotalAmountOfCols(): number {
+		return [...this.elRef.nativeElement.querySelectorAll('thead td')].length;
+	}
 }
