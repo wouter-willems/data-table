@@ -77,7 +77,7 @@
 					<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: getHeaderSelectState()}"></ng-container>
 				</div>
 			</td>
-			<td *ngFor="let headerKey of headerKeys">
+			<td *ngFor="let headerKey of headerKeys; let last = last;" #td>
 				<div class="colHeader" [ngClass]="{rightAligned: isRightAligned(headerKey)}">
 					<div class="caption" [klpWithTooltip]="true" (click)="setSortField(headerKey)">{{headerCaptionByKey.get(headerKey)}}</div>
 					<button class="sortButton" *ngIf="isSortable(headerKey)" (click)="setSortField(headerKey)">
@@ -95,6 +95,7 @@
 						</svg>
 					</button>
 				</div>
+				<div class="resizer" *ngIf="!last" (mousedown)="onResizeMouseDown($event, headerKey, td)"></div>
 			</td>
 			<td class="configButtonContainer" [ngClass]="{sticky: hasHorizontalScroll}">
 				<ng-container [ngTemplateOutlet]="configBtnRef" [ngTemplateOutletContext]="{clickHandler: openConfig}"></ng-container>

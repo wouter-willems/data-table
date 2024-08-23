@@ -76,6 +76,7 @@ $tdPadding: var(#{$p}td-padding);
       width: 100%;
     }
     td {
+      position: relative;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -462,3 +463,13 @@ footer {
   }
 }
 
+.resizer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: $color;
+  transform: scaleY(0.4);
+  cursor: ew-resize;
+}
