@@ -195,11 +195,14 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	private tdResizing: {name: string, el: HTMLElement};
 	private userDefinedWidths: Record<string, number>;
 
-	constructor(private injector: Injector, private elRef: ElementRef) {
-		this.userDefinedWidths = JSON.parse(localStorage.getItem(`wdtUserWidths`));
-	}
+	constructor(private injector: Injector, private elRef: ElementRef) {}
 
 	async ngOnInit(): Promise<void> {
+		if (this.userResizableColumns === 'PIXEL') {
+			this.userDefinedWidths = JSON.parse(localStorage.getItem(`wdtUserWidths_pixel`));
+		} else if (this.userResizableColumns === 'PERCENTAGE') {
+			this.userDefinedWidths = JSON.parse(localStorage.getItem(`wdtUserWidths_percentage`));
+		}
 		await awaitableForNextCycle();
 		this.translations = this.injector.get<Record<string, string>>(TranslationsToken);
 		this.checkboxRef = this.injector.get<TemplateRef<any>>(CheckBoxRefToken);
@@ -429,9 +432,16 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		dynamicCols.forEach((e, i) => {
 			const colDirective = this.columnKeyDirectives.find(col => col.columnKey === this.headerKeys[i]);
 			const userDefinedWidth = this.userDefinedWidths?.[colDirective.columnKey];
-			if (this.userResizableColumns === 'PIXEL' && Number.isFinite(userDefinedWidth)) {
-				colDirective._minWidthInREM = userDefinedWidth;
-				colDirective._maxWidthInREM = userDefinedWidth;
+			if (Number.isFinite(userDefinedWidth)) {
+				if (this.userResizableColumns === 'PIXEL') {
+					colDirective._minWidthInREM = userDefinedWidth;
+					colDirective._maxWidthInREM = userDefinedWidth;
+				} else if (this.userResizableColumns === 'PERCENTAGE') {
+					const totalWidth = this.tableContainer.nativeElement.getBoundingClientRect().width;
+					const widthInPx = totalWidth * (userDefinedWidth / 100);
+					colDirective._minWidthInREM = widthInPx / pxPerRem;
+					colDirective._maxWidthInREM = widthInPx / pxPerRem;
+				}
 			} else {
 				if (colDirective.getFixedWidthOnContents()) {
 					const actualWidth = Math.ceil(e.getBoundingClientRect().width) / pxPerRem;
@@ -465,17 +475,14 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 
 		const spacings = this.distributeSpaceAfterMinWidths(bonusSpaceLeftInREM);
 		dynamicCols.forEach((e, i) => {
-			const colDirective = this.columnKeyDirectives.find(col => col.columnKey === this.headerKeys[i]);
-			const colSpacings = spacings.find(sp => sp.col.columnKey === colDirective.columnKey);
 
-			if (this.userResizableColumns === 'PERCENTAGE') {
-				if (Number.isFinite(this.userDefinedWidths?.[colDirective.columnKey])) {
-					e.style.width = this.userDefinedWidths?.[colDirective.columnKey] + '%';
-				} else {
-					e.style.width = '20%';
-				}
+			if (this.userResizableColumns !== 'NO' && i === dynamicCols.length - 1) {
+				// last column has to have an auto width, otherwise the other columns can not be scaled
 				return;
 			}
+
+			const colDirective = this.columnKeyDirectives.find(col => col.columnKey === this.headerKeys[i]);
+			const colSpacings = spacings.find(sp => sp.col.columnKey === colDirective.columnKey);
 
 			if (spaceLeftForDistribution < minWidthsCumulative) {
 				if (Number.isFinite(colDirective._minWidthInREM)) {
@@ -909,7 +916,8 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	private onMouseMove = (ev: MouseEvent) => {
 		const diff = ev.screenX - this.prevX;
 		const pxPerRem = this.getPXPerRem();
-		this.tdResizing.el.style.width =  `${Math.max(4, (this.tdResizing.el.getBoundingClientRect().width + diff) / pxPerRem)}rem`;
+		const newWidth = `${Math.max(4, (this.tdResizing.el.getBoundingClientRect().width + diff) / pxPerRem)}rem`;
+		this.tdResizing.el.style.width = newWidth;
 		this.prevX = ev.screenX;
 	};
 
@@ -917,16 +925,17 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		const existing = JSON.parse(localStorage.getItem(`wdtUserWidths`)) ?? {};
 		if (this.userResizableColumns === 'PIXEL') {
 			existing[headerKey] = widthInRem;
-			localStorage.setItem(`wdtUserWidths`, JSON.stringify(existing));
+			localStorage.setItem(`wdtUserWidths_pixel`, JSON.stringify(existing));
 		}
 		else if (this.userResizableColumns === 'PERCENTAGE') {
 			const dynamicCols = this.getDynamicCols();
-			const totalWidthInRem = dynamicCols.reduce((acc, cur) => {
-				return acc + cur.getBoundingClientRect().width;
-			}, 0) / this.getPXPerRem();
-			const percentage = widthInRem / totalWidthInRem * 100;
-			existing[headerKey] = percentage;
-			localStorage.setItem(`wdtUserWidths`, JSON.stringify(existing));
+			const totalWidthInPx = this.tableContainer.nativeElement.getBoundingClientRect().width;
+			dynamicCols.forEach((e, i) => {
+				const colDirective = this.columnKeyDirectives.find(col => col.columnKey === this.headerKeys[i]);
+				existing[colDirective.columnKey] = e.getBoundingClientRect().width / totalWidthInPx * 100;
+			});
+
+			localStorage.setItem(`wdtUserWidths_percentage`, JSON.stringify(existing));
 		}
 	}
 }

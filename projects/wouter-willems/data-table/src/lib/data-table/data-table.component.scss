@@ -468,8 +468,10 @@ footer {
   right: 0;
   top: 0;
   bottom: 0;
-  width: 2px;
-  background: $color;
-  transform: scaleY(0.4);
+  width: 4px;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  background: transparent;
+  transform: scaleY(0.5);
   cursor: ew-resize;
 }

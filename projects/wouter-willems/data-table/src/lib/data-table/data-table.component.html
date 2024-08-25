@@ -95,7 +95,7 @@
 						</svg>
 					</button>
 				</div>
-				<div class="resizer" *ngIf="!last" (mousedown)="onResizeMouseDown($event, headerKey, td)"></div>
+				<div class="resizer" *ngIf="!last && userResizableColumns !== 'NO'" (mousedown)="onResizeMouseDown($event, headerKey, td)"></div>
 			</td>
 			<td class="configButtonContainer" [ngClass]="{sticky: hasHorizontalScroll}">
 				<ng-container [ngTemplateOutlet]="configBtnRef" [ngTemplateOutletContext]="{clickHandler: openConfig}"></ng-container>
