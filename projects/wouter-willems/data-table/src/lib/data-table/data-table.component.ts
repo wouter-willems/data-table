@@ -149,8 +149,8 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	@Output() onRowClicked = new EventEmitter<{row: any, index: number}>();
 	@Output() onParamsChanged = new EventEmitter<any>();
 	@Input() userResizableColumns: 'NO' | 'PERCENTAGE' | 'PIXEL' = 'NO';
-	@Input() retrieveUserResizableColumnsFn: () => Record<string, number>;
-	@Input() persistUserResizableColumnsFn: (cols: Record<string, number>) => void;
+	@Input() retrieveUserResizableColumnsFn: () => Promise<Record<string, number>>;
+	@Input() persistUserResizableColumnsFn: (cols: Record<string, number>) => Promise<void>;
 
 	public columnWidthsToBeCalculated = true;
 
@@ -201,7 +201,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 
 	async ngOnInit(): Promise<void> {
 		if (this.userResizableColumns !== 'NO') {
-			this.userDefinedWidths = this.retrieveUserResizableColumnsFn();
+			this.userDefinedWidths = await this.retrieveUserResizableColumnsFn();
 		}
 		await awaitableForNextCycle();
 		this.translations = this.injector.get<Record<string, string>>(TranslationsToken);
@@ -921,11 +921,11 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		this.prevX = ev.screenX;
 	};
 
-	private persistUserResizedColumns(headerKey: string, widthInRem: number): void {
-		const existing = this.retrieveUserResizableColumnsFn() ?? {};
+	private async persistUserResizedColumns(headerKey: string, widthInRem: number): Promise<void> {
+		const existing = (await this.retrieveUserResizableColumnsFn()) ?? {};
 		if (this.userResizableColumns === 'PIXEL') {
 			existing[headerKey] = widthInRem;
-			this.persistUserResizableColumnsFn(existing);
+			await this.persistUserResizableColumnsFn(existing);
 		}
 		else if (this.userResizableColumns === 'PERCENTAGE') {
 			const dynamicCols = this.getDynamicCols();
@@ -935,7 +935,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 				existing[colDirective.columnKey] = e.getBoundingClientRect().width / totalWidthInPx * 100;
 			});
 
-			this.persistUserResizableColumnsFn(existing);
+			await this.persistUserResizableColumnsFn(existing);
 		}
 	}
 }

@@ -177,7 +177,7 @@ export class AppComponent implements OnInit {
 		};
 	};
 
-	retrieveUserResizableColumnsFn = (): Record<string, number> => {
+	retrieveUserResizableColumnsFn = async (): Promise<Record<string, number>> => {
 		try {
 			return JSON.parse(localStorage.getItem('resizableCols'));
 		} catch (e) {
@@ -185,7 +185,7 @@ export class AppComponent implements OnInit {
 		}
 	};
 
-	persistUserResizableColumnsFn = (cols: Record<string, number>): void => {
+	persistUserResizableColumnsFn = async (cols: Record<string, number>): Promise<void> => {
 		localStorage.setItem('resizableCols', JSON.stringify(cols));
 	};
 
