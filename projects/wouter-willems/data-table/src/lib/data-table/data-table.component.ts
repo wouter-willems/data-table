@@ -149,6 +149,8 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	@Output() onRowClicked = new EventEmitter<{row: any, index: number}>();
 	@Output() onParamsChanged = new EventEmitter<any>();
 	@Input() userResizableColumns: 'NO' | 'PERCENTAGE' | 'PIXEL' = 'NO';
+	@Input() retrieveUserResizableColumnsFn: () => Record<string, number>;
+	@Input() persistUserResizableColumnsFn: (cols: Record<string, number>) => void;
 
 	public columnWidthsToBeCalculated = true;
 
@@ -198,10 +200,8 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	constructor(private injector: Injector, private elRef: ElementRef) {}
 
 	async ngOnInit(): Promise<void> {
-		if (this.userResizableColumns === 'PIXEL') {
-			this.userDefinedWidths = JSON.parse(localStorage.getItem(`wdtUserWidths_pixel`));
-		} else if (this.userResizableColumns === 'PERCENTAGE') {
-			this.userDefinedWidths = JSON.parse(localStorage.getItem(`wdtUserWidths_percentage`));
+		if (this.userResizableColumns !== 'NO') {
+			this.userDefinedWidths = this.retrieveUserResizableColumnsFn();
 		}
 		await awaitableForNextCycle();
 		this.translations = this.injector.get<Record<string, string>>(TranslationsToken);
@@ -922,10 +922,10 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	};
 
 	private persistUserResizedColumns(headerKey: string, widthInRem: number): void {
-		const existing = JSON.parse(localStorage.getItem(`wdtUserWidths`)) ?? {};
+		const existing = this.retrieveUserResizableColumnsFn() ?? {};
 		if (this.userResizableColumns === 'PIXEL') {
 			existing[headerKey] = widthInRem;
-			localStorage.setItem(`wdtUserWidths_pixel`, JSON.stringify(existing));
+			this.persistUserResizableColumnsFn(existing);
 		}
 		else if (this.userResizableColumns === 'PERCENTAGE') {
 			const dynamicCols = this.getDynamicCols();
@@ -935,7 +935,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 				existing[colDirective.columnKey] = e.getBoundingClientRect().width / totalWidthInPx * 100;
 			});
 
-			localStorage.setItem(`wdtUserWidths_percentage`, JSON.stringify(existing));
+			this.persistUserResizableColumnsFn(existing);
 		}
 	}
 }

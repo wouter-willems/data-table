@@ -49,7 +49,9 @@
 		[retrieveColumnsFn]="retrieveColumns"
 		[getExpandedTplFn]="getExpandedTplFn"
 		[summaryTpl]="summaryTpl"
-		userResizableColumns="NO"
+		userResizableColumns="PERCENTAGE"
+		[retrieveUserResizableColumnsFn]="retrieveUserResizableColumnsFn"
+		[persistUserResizableColumnsFn]="persistUserResizableColumnsFn"
 	>
 		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [preset]="presets.name" [emphasize]="1">
 			{{value}}

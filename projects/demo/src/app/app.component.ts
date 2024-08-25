@@ -177,6 +177,18 @@ export class AppComponent implements OnInit {
 		};
 	};
 
+	retrieveUserResizableColumnsFn = (): Record<string, number> => {
+		try {
+			return JSON.parse(localStorage.getItem('resizableCols'));
+		} catch (e) {
+			return {};
+		}
+	};
+
+	persistUserResizableColumnsFn = (cols: Record<string, number>): void => {
+		localStorage.setItem('resizableCols', JSON.stringify(cols));
+	};
+
 
 	ngOnInit(): void {
 
