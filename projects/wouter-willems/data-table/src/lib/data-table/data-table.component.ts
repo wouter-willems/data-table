@@ -778,8 +778,13 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			return;
 		}
 		if (this.sortField === headerKey && this.sortOrder === 'DESC') {
-			this.sortOrder = null;
-			this.sortField = null;
+			const defaultSortField = this.columnKeyDirectives.find(e => stringIsSetAndFilled(e.defaultSort));
+			if (defaultSortField?.columnKey === headerKey) {
+				this.sortOrder = 'ASC';
+			} else {
+				this.sortOrder = null;
+				this.sortField = null;
+			}
 		} else if (this.sortField === headerKey && this.sortOrder === 'ASC') {
 			this.sortOrder = 'DESC';
 		} else {
@@ -822,6 +827,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	};
 
 	public async _ext_setFilters(filters: Record<string, any>): Promise<void> {
+		this.page = 1;
 		this.activeFilters = filters;
 		await awaitableForNextCycle();
 		this.closeFilters();
