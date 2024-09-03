@@ -944,4 +944,8 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			await this.persistUserResizableColumnsFn(existing);
 		}
 	}
+
+	public getTotalAmountOfCols(): number {
+		return [...this.elRef.nativeElement.querySelectorAll('thead td')].length;
+	}
 }
