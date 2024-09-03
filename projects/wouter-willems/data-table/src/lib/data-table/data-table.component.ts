@@ -691,7 +691,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}
 
 	private openMultipleActionsMenuIfMultipleRowsAreSelected(): void {
-		if (this.getSelectedRows().length >= 2) {
+		if (this.getSelectedRows().length >= 1) {
 			this.showActionsMultipleRows();
 		} else {
 			this.closeActionMenu();
