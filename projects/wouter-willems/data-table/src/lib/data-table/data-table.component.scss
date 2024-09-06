@@ -1,6 +1,6 @@
 @import "../_variables.scss";
 
-$color: #60626c;
+$color: #475467;
 $topButtonsPadding: var(#{$p}top-buttons-padding);
 $footerButtonsPadding: var(#{$p}footer-buttons-padding);
 $tdPaddingSelectBox: var(#{$p}td-padding-select-box);
@@ -324,6 +324,7 @@ table {
       }
       &.emphasize1 {
         font-weight: var(--wdt-emphasize1);
+        color: #101828;
       }
       &.emphasize-2 {
         font-weight: var(--wdt-emphasize-2);

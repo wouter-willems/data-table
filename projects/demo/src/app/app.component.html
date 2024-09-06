@@ -53,10 +53,10 @@
 		[retrieveUserResizableColumnsFn]="retrieveUserResizableColumnsFn"
 		[persistUserResizableColumnsFn]="persistUserResizableColumnsFn"
 	>
-		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [preset]="presets.name" [emphasize]="1">
+		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [preset]="presets.name">
 			{{value}}
 		</ng-template>
-		<ng-template columnKey="age" columnCaption="Age" let-value="value" let-row="row" [emphasize]="-1" defaultSort="DESC">
+		<ng-template columnKey="age" columnCaption="Age" let-value="value" let-row="row" [emphasize]="1" defaultSort="DESC">
 			{{value}} years old
 		</ng-template>
 		<ng-template columnKey="address" columnCaption="Address" [sortKey]="null" let-value="value" [enabledByDefault]="false">

@@ -2,5 +2,5 @@ import { PresetValue } from "projects/wouter-willems/data-table/src/lib/data-tab
 
 export const wdtColumnPresets: Record<string, PresetValue> =
 	{
-		name: {emphasize: 1},
+
 	};
