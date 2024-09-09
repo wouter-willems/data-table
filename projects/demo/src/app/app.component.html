@@ -56,20 +56,20 @@
 		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [preset]="presets.name">
 			{{value}}
 		</ng-template>
-		<ng-template columnKey="age" columnCaption="Age" let-value="value" let-row="row" [emphasize]="1" defaultSort="DESC">
+		<ng-template columnKey="age" columnCaption="Age" let-value="value" let-row="row" defaultSort="DESC" [preset]="presets.age">
 			{{value}} years old
 		</ng-template>
-		<ng-template columnKey="address" columnCaption="Address" [sortKey]="null" let-value="value" [enabledByDefault]="false">
+		<ng-template columnKey="address" columnCaption="Address" [sortKey]="null" let-value="value" [enabledByDefault]="false" [preset]="presets.other">
 			{{value.street}} at number {{value.number}}
 		</ng-template>
-		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value" [aggregationTpl]="occupationAggr" [showTooltipOnOverflow]="false">
+		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value" [aggregationTpl]="occupationAggr" [showTooltipOnOverflow]="false" [preset]="presets.other">
 			{{value}} occupation occupation occupation
 		</ng-template>
 		<ng-template #occupationAggr let-value="value">occupationAggr: {{value}}</ng-template>
-		<ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [rightAligned]="false" [preset]="presets.shalala">
+		<ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [rightAligned]="false" [preset]="presets.shalala"  [preset]="presets.other">
 			{{value}}
 		</ng-template>
-		<ng-template columnKey="newlyAdded" columnCaption="newlyAdded" let-value="value" [enabledByDefault]="false">
+		<ng-template columnKey="newlyAdded" columnCaption="newlyAdded" let-value="value" [enabledByDefault]="false" [preset]="presets.other">
 			{{value}}
 		</ng-template>
 

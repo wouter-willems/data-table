@@ -295,7 +295,7 @@ table {
   }
 
   &:not(.actionMenuOpen) {
-    tbody tr {
+    tbody tr:not(.aggregateRow) {
       &:hover td {
         background: #f6f7fb;
       }
@@ -310,6 +310,11 @@ table {
     }
     &.backgroundVariant3 td {
       background-color: var(--wdt-background-variant3);
+    }
+    &.aggregateRow {
+      td:not(.selectBoxContainer) {
+        cursor: initial;
+      }
     }
     td {
       border-bottom: var(#{$p}border);

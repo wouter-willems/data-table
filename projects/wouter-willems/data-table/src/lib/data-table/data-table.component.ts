@@ -32,7 +32,7 @@ export const FilterBtnRefToken = new InjectionToken('filter btn');
 
 export type PresetValue = {
 	fixedWidthOnContents?: boolean,
-	growRatio?: number,
+	growRatio?: number | 'auto',
 	minWidthInREM?: number,
 	maxWidthInREM?: number,
 	rightAligned?: boolean,
@@ -48,7 +48,7 @@ export class ColumnKeyDirective {
 	@Input() defaultSort: 'ASC' | 'DESC';
 	@Input() enabledByDefault: boolean = true;
 	@Input() fixedWidthOnContents: boolean;
-	@Input() growRatio: number;
+	@Input() growRatio: number | 'auto';
 	@Input() minWidthInREM: number;
 	@Input() maxWidthInREM: number;
 	@Input() rightAligned: boolean;
@@ -66,7 +66,7 @@ export class ColumnKeyDirective {
 		return this.fixedWidthOnContents ?? this.preset?.fixedWidthOnContents ?? false;
 	}
 
-	public getGrowRatio(): number {
+	public getGrowRatio(): number | 'auto' {
 		return this.growRatio ?? this.preset?.growRatio ?? 1;
 	}
 
@@ -486,12 +486,17 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 
 			if (spaceLeftForDistribution < minWidthsCumulative) {
 				if (Number.isFinite(colDirective._minWidthInREM)) {
+					console.log(colDirective);
 					e.style.width = colDirective._minWidthInREM + 'rem';
 				} else {
 					e.style.width = '1rem';
 				}
 			} else {
-				e.style.width = colDirective._minWidthInREM + colSpacings.bonusSpaceItTakes + 'rem';
+				if (colDirective.getGrowRatio() === 'auto') {
+					e.style.width = 'auto';
+				} else {
+					e.style.width = colDirective._minWidthInREM + colSpacings.bonusSpaceItTakes + 'rem';
+				}
 			}
 		});
 		this.columnWidthsToBeCalculated = false;
@@ -514,13 +519,24 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 				if (cur.maximumBonus <= cur.bonusSpaceItTakes) {
 					return acc;
 				}
-				return cur.col.getGrowRatio() + acc;
+				const growRatio = cur.col.getGrowRatio();
+				if (growRatio === 'auto') {
+					return acc;
+				}
+				return growRatio + acc;
 			}, 0);
 
 			cols = cols.map(e => {
+				const growRatio = e.col.getGrowRatio();
+				if (growRatio === 'auto') {
+					return {
+						...e,
+						bonusSpaceItTakes: 0,
+					};
+				}
 				return {
 					...e,
-					bonusSpaceItTakes: Math.min(e.maximumBonus, e.bonusSpaceItTakes + (toStillDistribute * (e.col.getGrowRatio() / ratiosCumulative))),
+					bonusSpaceItTakes: Math.min(e.maximumBonus, e.bonusSpaceItTakes + (toStillDistribute * (growRatio / ratiosCumulative))),
 				};
 			});
 		}
@@ -528,7 +544,12 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}
 
 	private getSpaceToDistribute(bonusSpaceLeftInREM: number, cols: Array<{ col: ColumnKeyDirective; maximumBonus: number; bonusSpaceItTakes: number }>): number {
-		const allMaximumsReached = cols.every(e => e.maximumBonus - e.bonusSpaceItTakes < 0.01); // 0.01 because of floating point precision
+		const allMaximumsReached = cols.every(e => {
+			if (e.col.getGrowRatio() === 'auto') {
+				return true;
+			}
+			return e.maximumBonus - e.bonusSpaceItTakes < 0.01;
+		}); // 0.01 because of floating point precision
 		if (allMaximumsReached) {
 			return 0;
 		}

@@ -8,7 +8,7 @@ export function getDummyData(start: number, searchQuery: string, itemsPerPage: n
 	for (let i = 0; i < 107; i++) {
 		allData.push(getSingleDummyItem(i));
 	}
-	allData[20].occupation = 'Loooooooooooooooooooooong Software Architect #20 - Loooooooooooooooooooooong';
+	// allData[20].occupation = 'Loooooooooooooooooooooong Software Architect #20 - Loooooooooooooooooooooong';
 	allData[5].backgroundVariant = 1;
 	const filteredData = allData.filter((e) => e.name.includes(searchQuery ?? ''));
 	const paged = filteredData.slice(start, start + itemsPerPage);
@@ -29,6 +29,6 @@ export function getSingleDummyItem(id: any, updatedName = false): WDTRow {
 		},
 		occupation: 'Software Architect #' + id,
 		newlyAdded: 'abc',
-		shalala: 'shalalashalala shalalashalala shalalashalalashalalashalalashalala shalalashalalashalalashalalashalala',
+		shalala: 'shalalashalala shalalashalala shla',
 	};
 }
