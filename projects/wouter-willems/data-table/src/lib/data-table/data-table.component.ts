@@ -486,7 +486,6 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 
 			if (spaceLeftForDistribution < minWidthsCumulative) {
 				if (Number.isFinite(colDirective._minWidthInREM)) {
-					console.log(colDirective);
 					e.style.width = colDirective._minWidthInREM + 'rem';
 				} else {
 					e.style.width = '1rem';
