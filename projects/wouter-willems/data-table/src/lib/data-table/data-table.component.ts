@@ -41,7 +41,7 @@ export type PresetValue = {
 
 // tslint:disable-next-line:directive-selector
 @Directive({selector: '[columnKey]'})
-export class ColumnKeyDirective implements OnChanges{
+export class ColumnKeyDirective {
 	@Input() columnKey;
 	@Input() columnCaption;
 	@Input() sortKey;
@@ -56,10 +56,6 @@ export class ColumnKeyDirective implements OnChanges{
 	@Input() preset: PresetValue;
 	@Input() aggregationTpl: TemplateRef<any>;
 	@Input() showTooltipOnOverflow = true;
-
-	ngOnChanges(s: SimpleChanges): void {
-		console.log(s.columnCaption.currentValue);
-	}
 
 	// the fields that start with an underscore hold values that we can alter within our component, without losing
 	// what the user intended (which is stored in the non-underscored fields)
@@ -218,7 +214,6 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		this.saveBtnRef = this.injector.get<TemplateRef<any>>(SaveBtnRefToken);
 		this.initiated = true;
 		await this.getData();
-		await this.calculateColumnWidths();
 
 		this.escapeKeyListener = (ev) => {
 			if (ev.key === 'Escape' && this.showFilters) {
@@ -239,7 +234,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			const stateInternal = {
 				page: Number(this.page),
 				itemsPerPage: Number(this.itemsPerPage),
-				searchQuery: this.searchQuery,
+				searchQuery: this.searchQuery ?? '',
 				sortField: this.sortField,
 				sortOrder: this.sortOrder,
 			};
@@ -247,7 +242,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			const stateExternal = {
 				page: Number(c.page ?? 1),
 				itemsPerPage: Number(c.itemsPerPage ?? 25),
-				searchQuery: c.searchQuery,
+				searchQuery: c.searchQuery ?? '',
 				sortField: c.sortField,
 				sortOrder: c.sortOrder
 			};
@@ -408,7 +403,6 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		});
 
 		keys.filter(key => this.columnKeyDirectives.some(e => e.columnKey === key)).forEach(key => {
-			console.log('get header captions', key);
 			this.headerCaptionByKey.set(key, this.columnKeyDirectives.find(e => e.columnKey === key)?.columnCaption);
 		});
 		await awaitableForNextCycle();
@@ -660,7 +654,6 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	public async toPage(pageNr: number): Promise<void> {
 		this.page = pageNr;
 		await this.getData();
-		await this.calculateColumnWidths();
 	}
 
 	public openConfig = (): void => {
