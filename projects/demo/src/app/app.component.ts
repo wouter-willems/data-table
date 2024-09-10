@@ -3,7 +3,7 @@ import {
 	ActionMenuBtnRefToken,
 	CheckBoxRefToken,
 	ConfigBtnRefToken, DataTableComponent, WDTRow, FilterBtnRefToken,
-	SearchInputRefToken, ToggleRefToken, ActionMenuMultipleBtnRefToken
+	SearchInputRefToken, ToggleRefToken, ActionMenuMultipleBtnRefToken, TranslationsToken
 } from 'projects/wouter-willems/data-table/src/public-api';
 import {
 	SaveBtnRefToken
@@ -44,7 +44,7 @@ import {wdtColumnPresets} from "./presets";
 		}, {
 			provide: FilterBtnRefToken,
 			useFactory: () => inject(AppComponent, {self: true}).filterButton,
-		}
+		},
 	]
 })
 export class AppComponent implements OnInit {
