@@ -118,7 +118,7 @@
 					></ng-container>
 				</td>
 				<td class="actionMenuContainerTd" [ngClass]="{sticky: hasHorizontalScroll}">
-					<div class="actionMenuContainer" *ngIf="getActionsForRowFn">
+					<div class="actionMenuContainer" [ngClass]="{hasActionMenuButton: getActionsForRowFn}">
 						<ng-container [ngTemplateOutlet]="actionMenuBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsFn(row)}"></ng-container>
 						<div
 							#actionMenu

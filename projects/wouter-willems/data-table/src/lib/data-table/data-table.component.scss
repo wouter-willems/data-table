@@ -375,6 +375,12 @@ td {
 .actionMenuContainer {
   display: flex;
   justify-content: flex-end;
+  visibility: hidden;
+  pointer-events: none;
+  &.hasActionMenuButton {
+    visibility: visible;
+    pointer-events: initial;
+  }
 }
 
 .actionMenu {

@@ -418,6 +418,8 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}
 
 	private async calculateColumnWidths(): Promise<void> {
+		console.log('calcu');
+		// console.trace();
 		this.columnWidthsToBeCalculated = true;
 		await awaitableForNextCycle();
 		const pxPerRem = this.getPXPerRem();
