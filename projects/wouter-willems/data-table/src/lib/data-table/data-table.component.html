@@ -79,7 +79,8 @@
 			</td>
 			<td *ngFor="let headerKey of headerKeys; let last = last;" #td>
 				<div class="colHeader" [ngClass]="{rightAligned: isRightAligned(headerKey)}">
-					<div class="caption" [klpWithTooltip]="true" (click)="setSortField(headerKey)">{{headerCaptionByKey.get(headerKey)}}</div>
+					<div class="caption" *ngIf="headerTplByKey.get(headerKey)" [klpWithTooltip]="true" [tooltipText]="headerCaptionByKey.get(headerKey)" (click)="setSortField(headerKey)"><ng-container [ngTemplateOutlet]="headerTplByKey.get(headerKey)"></ng-container></div>
+					<div class="caption" *ngIf="!headerTplByKey.get(headerKey)" [klpWithTooltip]="true" (click)="setSortField(headerKey)">{{headerCaptionByKey.get(headerKey)}}</div>
 					<button class="sortButton" *ngIf="isSortable(headerKey)" (click)="setSortField(headerKey)">
 						<svg width="8" height="13" *ngIf="sortField !== headerKey || !sortOrder" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path d="M4.63388 0.366116C4.14573 -0.122039 3.35427 -0.122039 2.86612 0.366116L0.21967 3.01256C-0.0732233 3.30546 -0.0732233 3.78033 0.21967 4.07322C0.512563 4.36612 0.987437 4.36612 1.28033 4.07322L3.75 1.60355L6.21967 4.07322C6.51256 4.36612 6.98744 4.36612 7.28033 4.07322C7.57322 3.78033 7.57322 3.30546 7.28033 3.01256L4.63388 0.366116Z" fill="#CCCCCC"/>
