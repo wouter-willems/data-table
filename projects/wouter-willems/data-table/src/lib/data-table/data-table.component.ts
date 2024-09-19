@@ -902,8 +902,8 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		return Object.keys(this.getActiveFilters() ?? {}).length;
 	}
 
-	public _ext_getFilters(): Record<string, any> {
-		return this.filterForm.value;
+	public _ext_getActiveFilters(): Record<string, any> {
+		return this.getActiveFilters();
 	}
 
 	public _ext_resetSelection(): void {
