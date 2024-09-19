@@ -12,6 +12,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {FormControl, FormGroup, Validators } from '@angular/forms';
 import {getDummyData, getSingleDummyItem} from "./dummy";
 import {wdtColumnPresets} from "./presets";
+import {memoize} from "lodash";
 
 
 @Component({
@@ -226,4 +227,12 @@ export class AppComponent implements OnInit {
 	public setFilters(): void {
 		this.dataTableComponent._ext_setFilters(this.myFilterForm.value);
 	}
+
+	getDelayed = memoize(() => {
+		return new Promise(resolve => {
+			setTimeout(() => {
+				resolve('Delayed');
+			}, 200);
+		});
+	});
 }

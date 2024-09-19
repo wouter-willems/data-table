@@ -64,7 +64,7 @@
 		<ng-template columnKey="address" columnCaption="Address" [sortKey]="null" let-value="value" [enabledByDefault]="false" [preset]="presets.other">
 			{{value.street}} at number {{value.number}}
 		</ng-template>
-		<ng-template columnKey="occupation" columnCaption="Occupation" sortKey="blargh" let-value="value" [aggregationTpl]="occupationAggr" [showTooltipOnOverflow]="false" [preset]="presets.other">
+		<ng-template columnKey="occupation" columnCaption="{{getDelayed() | async}}" sortKey="blargh" let-value="value" [aggregationTpl]="occupationAggr" [showTooltipOnOverflow]="false" [preset]="presets.other" growRatio="auto">
 			{{value}} occupation occupation occupation
 		</ng-template>
 		<ng-template #occupationAggr let-value="value">occupationAggr: {{value}}</ng-template>

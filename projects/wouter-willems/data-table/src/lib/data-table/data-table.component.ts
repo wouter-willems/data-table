@@ -41,7 +41,7 @@ export type PresetValue = {
 
 // tslint:disable-next-line:directive-selector
 @Directive({selector: '[columnKey]'})
-export class ColumnKeyDirective implements OnChanges{
+export class ColumnKeyDirective {
 	@Input() columnKey: string;
 	@Input() columnCaption: string;
 	@Input() headerTpl: TemplateRef<any>;
@@ -57,10 +57,6 @@ export class ColumnKeyDirective implements OnChanges{
 	@Input() preset: PresetValue;
 	@Input() aggregationTpl: TemplateRef<any>;
 	@Input() showTooltipOnOverflow = true;
-
-	ngOnChanges(s: SimpleChanges): void {
-		console.log(s.columnCaption.previousValue, s.columnCaption.currentValue);
-	}
 
 	// the fields that start with an underscore hold values that we can alter within our component, without losing
 	// what the user intended (which is stored in the non-underscored fields)
@@ -376,6 +372,15 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}
 
 	private async extractHeaders(): Promise<void> {
+		let count = 0;
+		while (!([...this.columnKeyDirectives].every(e => stringIsSetAndFilled(e.columnCaption)))) {
+			await new Promise(resolve => setTimeout(resolve, 50));
+			count++;
+			if (count > 100) {
+				throw new Error('Could not extract headers, not all columns have headers');
+			}
+		}
+
 		const keys = removeDuplicatesFromArray(this.columnKeyDirectives.map(e => e.columnKey));
 		if (!arrayIsSetAndFilled(this.definedColumns)) {
 			const retrievedColumns = (await this.retrieveColumnsFn?.()) ?? [];
@@ -408,12 +413,10 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			return this.definedColumns.findIndex(e => e.key === a) > this.definedColumns.findIndex(e => e.key === b) ? 1 : -1;
 		});
 
-		console.log('setting captions');
 		keys.filter(key => this.columnKeyDirectives.some(e => e.columnKey === key)).forEach(key => {
 			this.headerTplByKey.set(key, this.columnKeyDirectives.find(e => e.columnKey === key)?.headerTpl);
 			this.headerCaptionByKey.set(key, this.columnKeyDirectives.find(e => e.columnKey === key)?.columnCaption);
 		});
-		console.log(this.headerCaptionByKey);
 		await awaitableForNextCycle();
 	}
 
