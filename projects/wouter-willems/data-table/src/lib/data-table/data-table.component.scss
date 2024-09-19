@@ -128,7 +128,7 @@ $tdPadding: var(#{$p}td-padding);
     color: #515365;
     margin: 0;
     padding-left: 0.6rem;
-    padding-right: 1rem;
+    padding-right: 1.8rem;
     min-height: 2.25rem;
   }
 }
@@ -299,13 +299,18 @@ table {
     }
   }
 
-  &:not(.actionMenuOpen) {
+  &.hasRowClick:not(.actionMenuOpen) {
     tbody tr:not(.aggregateRow) {
       &:hover td {
         background: #f6f7fb;
       }
     }
   }
+
+  &.hasRowClick tbody tr td:not(.selectBoxContainer) {
+    cursor: pointer;
+  }
+
   tbody tr {
     &.backgroundVariant1 td {
       background-color: var(--wdt-background-variant1);
@@ -323,9 +328,6 @@ table {
     }
     td {
       border-bottom: var(#{$p}border);
-      &:not(.selectBoxContainer) {
-        cursor: pointer;
-      }
       &.rightAligned {
         text-align: right;
       }

@@ -69,7 +69,7 @@
 	#tableContainer
 >
 	<ng-container *ngIf="!loading && !hasAtLeastOneResult()" [ngTemplateOutlet]="emptyTpl"></ng-container>
-	<table *ngIf="hasAtLeastOneResult()" [ngClass]="{actionMenuOpen: hasActionMenuOpen(), fullWidth: !columnWidthsToBeCalculated}">
+	<table *ngIf="hasAtLeastOneResult()" [ngClass]="{actionMenuOpen: hasActionMenuOpen(), fullWidth: !columnWidthsToBeCalculated, hasRowClick: onRowClicked.observers.length > 0}">
 		<thead>
 		<tr>
 			<td (click)="headerSelectClicked()" class="selectBoxContainer" *ngIf="getActionsForMultipleRowsFn" [ngClass]="{hidden: selectAllAcrossPagesActive}">
