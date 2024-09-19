@@ -866,6 +866,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 
 	public async _ext_refetchItems(ids: Array<any>): Promise<void> {
 		const items = await this.fetchItemByIds(ids);
+		items.forEach(e => this.idByRow.set(e.id, e));
 		this.pageData = {
 			...this.pageData,
 			data: this.pageData.data.map(e => {
