@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, inject, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {
 	ActionMenuBtnRefToken,
 	CheckBoxRefToken,
@@ -13,6 +13,7 @@ import {FormControl, FormGroup, Validators } from '@angular/forms';
 import {getDummyData, getSingleDummyItem} from "./dummy";
 import {wdtColumnPresets} from "./presets";
 import {memoize} from "lodash";
+import {stringIsSetAndFilled} from "../../../wouter-willems/data-table/src/lib/util/values";
 
 
 @Component({
@@ -48,7 +49,7 @@ import {memoize} from "lodash";
 		},
 	]
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements AfterViewInit {
 
 	@ViewChild('myToggle') myToggle: TemplateRef<any>;
 	@ViewChild('configBtn') configBtn: TemplateRef<any>;
@@ -76,7 +77,12 @@ export class AppComponent implements OnInit {
 		setTimeout(() => {
 			this.dataTableComponent._ext_refetchItems([7, 11]);
 		}, 3000);
+	}
 
+	ngAfterViewInit(): void {
+		this.dataTableComponent._ext_initialize(this.myFilterForm, { name: 'john' }, (val) => {
+			return stringIsSetAndFilled(val);
+		});
 	}
 
 	getActionsForRowFn = async (row: any): Promise<Array<{
@@ -126,6 +132,7 @@ export class AppComponent implements OnInit {
 		totalAmount: number,
 		data: Array<WDTRow>
 	}> => {
+		console.log('fetch', filters);
 		if (searchQuery === 'empty') {
 			return {
 				totalAmount: 0,
@@ -190,11 +197,6 @@ export class AppComponent implements OnInit {
 		localStorage.setItem('resizableCols', JSON.stringify(cols));
 	};
 
-
-	ngOnInit(): void {
-
-	}
-
 	onRowClicked($event: any) {
 		console.log('$event');
 		console.log($event);
@@ -225,7 +227,7 @@ export class AppComponent implements OnInit {
 	}
 
 	public setFilters(): void {
-		this.dataTableComponent._ext_setFilters(this.myFilterForm.value);
+		this.dataTableComponent._ext_triggerFilterSearch();
 	}
 
 	getDelayed = memoize(() => {

@@ -21,6 +21,7 @@ import {isValueSet, stringIsSetAndFilled, useIfStringIsSet} from '../util/values
 import {awaitableForNextCycle, runNextRenderCycle} from "../util/angular";
 import {debounce, isEqual} from 'lodash';
 import {SaveBtnRefToken} from "../column-rearranger/column-rearranger.component";
+import {FormGroup} from "@angular/forms";
 
 export const TranslationsToken = new InjectionToken('translations');
 export const CheckBoxRefToken = new InjectionToken('checkbox');
@@ -189,7 +190,6 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	public actionMenuOffset: { x: number, y: number };
 	public loading = true;
 	private initiated = false;
-	private activeFilters: Record<string, any>;
 	private translations: Record<string, string>;
 	public selectAllAcrossPagesActive: boolean = false;
 	public selectAllAcrossPagesLoading: boolean = false;
@@ -198,6 +198,8 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	public hasHorizontalScroll: boolean;
 	private tdResizing: {name: string, el: HTMLElement};
 	private userDefinedWidths: Record<string, number>;
+	private filterForm: FormGroup;
+	private filterOutInactiveFilterFieldsFn: (val: unknown) => boolean;
 
 	constructor(private injector: Injector, private elRef: ElementRef) {}
 
@@ -214,8 +216,6 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		this.searchInputRef = this.injector.get<TemplateRef<any>>(SearchInputRefToken);
 		this.filterBtnRef = this.injector.get<TemplateRef<any>>(FilterBtnRefToken);
 		this.saveBtnRef = this.injector.get<TemplateRef<any>>(SaveBtnRefToken);
-		this.initiated = true;
-		await this.getData();
 
 		this.escapeKeyListener = (ev) => {
 			if (ev.key === 'Escape' && this.showFilters) {
@@ -230,6 +230,14 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		window.addEventListener('resize', this.resizeListener);
 	}
 
+	public async _ext_initialize(filterForm: FormGroup, filterValues: Record<string, unknown>, filterOutInactiveFilterFieldsFn: (val: unknown) => boolean): Promise<void> {
+		await awaitableForNextCycle();
+		this.filterForm = filterForm;
+		this.filterOutInactiveFilterFieldsFn = filterOutInactiveFilterFieldsFn;
+		filterForm.patchValue(filterValues);
+		this.initiated = true;
+		await this.getData();
+	}
 
 	ngOnChanges(simpleChanges: SimpleChanges): void {
 		if (isValueSet(simpleChanges.searchParams)) {
@@ -310,7 +318,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			params.itemsPerPage,
 			sortFieldToUse,
 			params.sortOrder,
-			this.activeFilters,
+			this.getActiveFilters(),
 		);
 		this.aggregatedValues = await this.getColumnAggregatedValuesFn?.(this.pageData.data);
 		this.pageData.data.forEach(e => {
@@ -321,6 +329,13 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			await this.calculateColumnWidths();
 		}
 		this.loading = false;
+	}
+
+	private getActiveFilters(): Record<string, unknown> {
+		const r = Object.entries(this.filterForm?.value ?? {}).filter(([key, val]) => this.filterOutInactiveFilterFieldsFn(val));
+		return r.reduce((acc, [key, val]) => {
+			return { ...acc, [key]: val };
+		}, {});
 	}
 
 	public async selectAllAcrossPages(): Promise<void> {
@@ -338,7 +353,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 				batchSize,
 				null,
 				null,
-				this.activeFilters,
+				this.getActiveFilters(),
 			);
 			batch.data.forEach(e => {
 				this.idByRow.set(e.id, e);
@@ -856,9 +871,8 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		await this.calculateColumnWidths();
 	};
 
-	public async _ext_setFilters(filters: Record<string, any>): Promise<void> {
+	public async _ext_triggerFilterSearch(): Promise<void> {
 		this.page = 1;
-		this.activeFilters = filters;
 		await awaitableForNextCycle();
 		this.closeFilters();
 		this.getData();
@@ -885,11 +899,11 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}
 
 	public getNrOfActiveFilters(): number {
-		return Object.keys(this.activeFilters ?? {}).length;
+		return Object.keys(this.getActiveFilters() ?? {}).length;
 	}
 
 	public _ext_getFilters(): Record<string, any> {
-		return this.activeFilters;
+		return this.filterForm.value;
 	}
 
 	public _ext_resetSelection(): void {
