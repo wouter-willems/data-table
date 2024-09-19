@@ -198,7 +198,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	public hasHorizontalScroll: boolean;
 	private tdResizing: {name: string, el: HTMLElement};
 	private userDefinedWidths: Record<string, number>;
-	private filterForm: FormGroup;
+	public filterForm: FormGroup;
 	private filterOutInactiveFilterFieldsFn: (val: unknown) => boolean;
 
 	constructor(private injector: Injector, private elRef: ElementRef) {}
@@ -234,7 +234,9 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		await awaitableForNextCycle();
 		this.filterForm = filterForm;
 		this.filterOutInactiveFilterFieldsFn = filterOutInactiveFilterFieldsFn;
-		filterForm.patchValue(filterValues);
+		if (isValueSet(filterValues)) {
+			filterForm?.patchValue(filterValues);
+		}
 		this.initiated = true;
 		await this.getData();
 	}
@@ -332,6 +334,9 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}
 
 	private getActiveFilters(): Record<string, unknown> {
+		if (!isValueSet(this.filterOutInactiveFilterFieldsFn)) {
+			return this.filterForm?.value ?? {};
+		}
 		const r = Object.entries(this.filterForm?.value ?? {}).filter(([key, val]) => this.filterOutInactiveFilterFieldsFn(val));
 		return r.reduce((acc, [key, val]) => {
 			return { ...acc, [key]: val };
