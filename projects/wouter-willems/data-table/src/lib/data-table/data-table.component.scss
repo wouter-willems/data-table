@@ -70,8 +70,23 @@ $tdPadding: var(#{$p}td-padding);
 .tableContainer {
   position: relative;
   overflow: auto;
+  &.clone {
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    table {
+      display: table;
+      thead td {
+        width: initial !important;
+      }
+    }
+  }
   table {
     table-layout: fixed;
+    display: none;
+    &.firstWidthsCalculated {
+      display: table;
+    }
     &.fullWidth {
       width: 100%;
     }
@@ -275,6 +290,8 @@ table {
     border-bottom: var(#{$p}border);
     background: #f9fafb;
     font-weight: 600;
+    transition: width 0.5s;
+    transition-timing-function: ease-in-out;
     &:not(:last-of-type) {
       padding: $tdPadding;
       padding-top: $tdHeaderTopPadding;

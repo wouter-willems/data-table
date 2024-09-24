@@ -27,7 +27,7 @@ export function getSingleDummyItem(id: any, updatedName = false): WDTRow {
 			street: 'Streetname',
 			number: 22 + id,
 		},
-		occupation: 'Software Architect #' + id,
+		occupation: 'Software Architect #' + (updatedName ? ' (updatedupdatedu pdatedupdated updatedupdatedu pdatedupdated updatedupdate dupdatedupdated)' : ''),
 		newlyAdded: 'abc',
 		shalala: 'shalalashalala shalalashalala shla',
 	};

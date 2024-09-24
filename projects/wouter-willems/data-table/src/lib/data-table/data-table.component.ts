@@ -154,8 +154,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	@Input() retrieveUserResizableColumnsFn: () => Promise<Record<string, number>>;
 	@Input() persistUserResizableColumnsFn: (cols: Record<string, number>) => Promise<void>;
 
-	public columnWidthsToBeCalculated = true;
-
+	public firstWidthsCalculated = false;
 	private maxBatchSize = 999;
 	public page = 1;
 	public itemsPerPage = 25;
@@ -327,9 +326,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			this.idByRow.set(e.id, e);
 		});
 		await this.extractHeaders();
-		if (resultsBefore === 0) {
-			await this.calculateColumnWidths();
-		}
+		await this.calculateColumnWidths();
 		this.loading = false;
 	}
 
@@ -444,13 +441,23 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		return Number(getComputedStyle(document.documentElement).fontSize.split('px')[0]);
 	}
 
-	private getDynamicCols(): Array<HTMLElement> {
-		return [...this.elRef.nativeElement.querySelectorAll('thead td:not(.selectBoxContainer):not(.configButtonContainer)')];
+	private getDynamicColsOfClone(): Array<HTMLElement> {
+		return [...this.elRef.nativeElement.querySelectorAll('.tableContainer.clone thead td:not(.selectBoxContainer):not(.configButtonContainer)')];
+	}
+	private getDynamicColsOfOriginal(): Array<HTMLElement> {
+		return [...this.elRef.nativeElement.querySelectorAll('.tableContainer:not(.clone) thead td:not(.selectBoxContainer):not(.configButtonContainer)')];
 	}
 
 	private async calculateColumnWidths(): Promise<void> {
-		this.columnWidthsToBeCalculated = true;
 		await awaitableForNextCycle();
+		if (!isValueSet(this.tableContainer)) {
+			return;
+		}
+		const clone = this.tableContainer.nativeElement.cloneNode(true);
+		clone.classList.add('clone');
+		clone.querySelector('table').classList.remove('fullWidth');
+		this.tableContainer.nativeElement.parentElement.appendChild(clone);
+
 		const pxPerRem = this.getPXPerRem();
 		const selectBoxWidth = this.selectBoxDummy ? Math.ceil(this.selectBoxDummy.nativeElement.getBoundingClientRect().width) : 0;
 		const lastColWidth = Math.ceil(Math.max(this.actionMenuDummy.nativeElement.getBoundingClientRect().width, this.configBtnDummy.nativeElement.getBoundingClientRect().width));
@@ -459,8 +466,8 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		if (selectBoxContainerRef) {
 			selectBoxContainerRef.style.width = `${selectBoxWidth}px`;
 		}
-		const dynamicCols = this.getDynamicCols();
-		dynamicCols.forEach((e, i) => {
+		const dynamicColsOfClone = this.getDynamicColsOfClone();
+		dynamicColsOfClone.forEach((e, i) => {
 			const colDirective = this.columnKeyDirectives.find(col => col.columnKey === this.headerKeys[i]);
 			const userDefinedWidth = this.userDefinedWidths?.[colDirective.columnKey];
 			if (Number.isFinite(userDefinedWidth)) {
@@ -468,7 +475,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 					colDirective._minWidthInREM = userDefinedWidth;
 					colDirective._maxWidthInREM = userDefinedWidth;
 				} else if (this.userResizableColumns === 'PERCENTAGE') {
-					const totalWidth = this.tableContainer.nativeElement.getBoundingClientRect().width;
+					const totalWidth = clone.getBoundingClientRect().width;
 					const widthInPx = totalWidth * (userDefinedWidth / 100);
 					colDirective._minWidthInREM = widthInPx / pxPerRem;
 					colDirective._maxWidthInREM = widthInPx / pxPerRem;
@@ -484,6 +491,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 				}
 			}
 		});
+		this.tableContainer.nativeElement.parentElement.removeChild(clone);
 
 		const minWidthsCumulative = this.columnKeyDirectives.filter(e => {
 			if (!this.headerKeys.includes(e.columnKey)) {
@@ -505,9 +513,10 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		}
 
 		const spacings = this.distributeSpaceAfterMinWidths(bonusSpaceLeftInREM);
-		dynamicCols.forEach((e, i) => {
+		const dynamicColsOfOriginal = this.getDynamicColsOfOriginal();
+		dynamicColsOfOriginal.forEach((e, i) => {
 
-			if (this.userResizableColumns !== 'NO' && i === dynamicCols.length - 1) {
+			if (this.userResizableColumns !== 'NO' && i === dynamicColsOfOriginal.length - 1) {
 				// last column has to have an auto width, otherwise the other columns can not be scaled
 				return;
 			}
@@ -529,7 +538,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 				}
 			}
 		});
-		this.columnWidthsToBeCalculated = false;
+		this.firstWidthsCalculated = true;
 	}
 
 	private distributeSpaceAfterMinWidths(bonusSpaceLeftInREM: number): Array<{col: ColumnKeyDirective, maximumBonus: number, bonusSpaceItTakes: number}> {
@@ -893,6 +902,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 				return foundItem ?? e;
 			}),
 		};
+		this.calculateColumnWidths();
 	}
 
 	public _ext_hasItemVisibleWithId(id: any): boolean {
@@ -977,6 +987,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		this.prevX = ev.screenX;
 	};
 
+
 	private async persistUserResizedColumns(headerKey: string, widthInRem: number): Promise<void> {
 		const existing = (await this.retrieveUserResizableColumnsFn()) ?? {};
 		if (this.userResizableColumns === 'PIXEL') {
@@ -984,7 +995,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			await this.persistUserResizableColumnsFn(existing);
 		}
 		else if (this.userResizableColumns === 'PERCENTAGE') {
-			const dynamicCols = this.getDynamicCols();
+			const dynamicCols = this.getDynamicColsOfOriginal();
 			const totalWidthInPx = this.tableContainer.nativeElement.getBoundingClientRect().width;
 			dynamicCols.forEach((e, i) => {
 				const colDirective = this.columnKeyDirectives.find(col => col.columnKey === this.headerKeys[i]);
