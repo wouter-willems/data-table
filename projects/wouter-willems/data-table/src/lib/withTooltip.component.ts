@@ -45,6 +45,7 @@ export class WithTooltipDirective {
 				this.div.style.boxSizing = 'border-box';
 				this.div.style.borderRadius = '3px';
 				this.div.style.pointerEvents = 'none';
+				this.div.style.wordBreak = 'break-all';
 				this.div.textContent = textToDisplay;
 				el.nativeElement.prepend(this.div);
 

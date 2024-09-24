@@ -21,7 +21,7 @@ export function getDummyData(start: number, searchQuery: string, itemsPerPage: n
 export function getSingleDummyItem(id: any, updatedName = false): WDTRow {
 	return {
 		id,
-		name: 'Person ' + id + (updatedName ? ' (updatedupdatedu pdatedupdated updatedupdatedu pdatedupdated updatedupdate dupdatedupdated)' : '(nooo)'),
+		name: 'Person ' + id + (updatedName ? '(updatedupdatedupdatedupdatedupdatedupdatedupdatedupdatedupdatedupdatedupdatedupdated)' : '(nooo)'),
 		age: 10 + id,
 		address: {
 			street: 'Streetname',
