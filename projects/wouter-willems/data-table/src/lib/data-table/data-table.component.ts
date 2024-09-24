@@ -450,6 +450,9 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 
 	private async calculateColumnWidths(): Promise<void> {
 		await awaitableForNextCycle();
+		if (!arrayIsSetAndFilled(this.pageData.data)) {
+			return;
+		}
 		if (!isValueSet(this.tableContainer)) {
 			return;
 		}
