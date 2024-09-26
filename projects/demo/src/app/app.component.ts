@@ -237,4 +237,8 @@ export class AppComponent implements AfterViewInit {
 			}, 200);
 		});
 	});
+
+	dataRetrieved(data: { totalAmount: number; data: Array<WDTRow>; aggregatedValues: Record<string, any> }) {
+		console.log(data);
+	}
 }

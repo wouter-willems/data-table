@@ -148,11 +148,17 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	@Input() getExpandedTplFn: () => {index: number, tpl: TemplateRef<any>};
 	@Input() emptyTpl: TemplateRef<any>;
 	@Input() summaryTpl: TemplateRef<any>;
-	@Output() onRowClicked = new EventEmitter<{row: any, index: number}>();
-	@Output() onParamsChanged = new EventEmitter<any>();
 	@Input() userResizableColumns: 'NO' | 'PERCENTAGE' | 'PIXEL' = 'NO';
 	@Input() retrieveUserResizableColumnsFn: () => Promise<Record<string, number>>;
 	@Input() persistUserResizableColumnsFn: (cols: Record<string, number>) => Promise<void>;
+
+	@Output() onRowClicked = new EventEmitter<{row: any, index: number}>();
+	@Output() onParamsChanged = new EventEmitter<any>();
+	@Output() onDataRetrieved = new EventEmitter<{
+		totalAmount: number,
+		data: Array<WDTRow>,
+		aggregatedValues: Record<string, any>,
+	}>();
 
 	public firstWidthsCalculated = false;
 	private maxBatchSize = 999;
@@ -292,7 +298,6 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		if (!this.selectAllAcrossPagesActive) {
 			this.selectedState = new Map();
 		}
-		const resultsBefore = this.pageData?.totalAmount ?? 0;
 		const defaultSortField = this.columnKeyDirectives.find(e => stringIsSetAndFilled(e.defaultSort));
 		if (!stringIsSetAndFilled(this.sortField)) {
 			this.sortField = defaultSortField?.columnKey;
@@ -322,6 +327,11 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			this.getActiveFilters(),
 		);
 		this.aggregatedValues = await this.getColumnAggregatedValuesFn?.(this.pageData.data);
+		this.onDataRetrieved.emit({
+			totalAmount: this.pageData.totalAmount,
+			data: this.pageData.data,
+			aggregatedValues: this.aggregatedValues,
+		});
 		this.pageData.data.forEach(e => {
 			this.idByRow.set(e.id, e);
 		});

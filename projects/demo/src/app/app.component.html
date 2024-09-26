@@ -52,6 +52,7 @@
 		userResizableColumns="NO"
 		[retrieveUserResizableColumnsFn]="retrieveUserResizableColumnsFn"
 		[persistUserResizableColumnsFn]="persistUserResizableColumnsFn"
+		(onDataRetrieved)="dataRetrieved($event)"
 	>
 		<ng-template #ageHeader>kers</ng-template>
 
