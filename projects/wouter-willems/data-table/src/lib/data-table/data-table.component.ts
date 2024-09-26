@@ -456,6 +456,9 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		if (!isValueSet(this.tableContainer)) {
 			return;
 		}
+		if (!isValueSet(this.tableContainer.nativeElement.querySelector('table'))) {
+			return;
+		}
 		const clone = this.tableContainer.nativeElement.cloneNode(true);
 		clone.classList.add('clone');
 		clone.querySelector('table').classList.remove('fullWidth');
