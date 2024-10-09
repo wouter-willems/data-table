@@ -8,7 +8,7 @@
 	</div>
 </div>
 
-<div class="topButtons">
+<div class="topButtons" *ngIf="showTopButtons">
 	<div *ngIf="getTopLeftInfoToShow() === 'pagination'">
 		<span *ngIf="hasAtLeastOneResult()">{{translate('Showing %from%-%to% of %total% results', {from: (page -1) * itemsPerPage + 1, to: (page -1) * itemsPerPage + pageData.data.length, total: pageData.totalAmount})}}</span>
 	</div>

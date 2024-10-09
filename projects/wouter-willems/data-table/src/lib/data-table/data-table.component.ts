@@ -151,6 +151,8 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	@Input() userResizableColumns: 'NO' | 'PERCENTAGE' | 'PIXEL' = 'NO';
 	@Input() retrieveUserResizableColumnsFn: () => Promise<Record<string, number>>;
 	@Input() persistUserResizableColumnsFn: (cols: Record<string, number>) => Promise<void>;
+	@Input() showPaginationNumbers = true;
+	@Input() showTopButtons = true;
 
 	@Output() onRowClicked = new EventEmitter<{row: any, index: number}>();
 	@Output() onParamsChanged = new EventEmitter<any>();
@@ -686,6 +688,9 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}
 
 	getPageNumbers(): Array<number> {
+		if (!this.showPaginationNumbers) {
+			return [this.page];
+		}
 		const totalPages = this.getLastPage();
 		const allPageNumbers = [...Array(totalPages).keys()].map(i => i + 1);
 		const filtered = allPageNumbers.filter(i => Math.abs(i - this.page) < 5);
@@ -1002,6 +1007,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		this.tdResizing.el.style.width = newWidth;
 		this.prevX = ev.screenX;
 	};
+
 
 
 	private async persistUserResizedColumns(headerKey: string, widthInRem: number): Promise<void> {

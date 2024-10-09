@@ -34,6 +34,7 @@ $tdPadding: var(#{$p}td-padding);
   justify-content: space-between;
   align-items: center;
   padding: $topButtonsPadding;
+  border-bottom: var(#{$p}border);
   .selectionContainer {
     display: flex;
     gap: 0.8rem;
@@ -286,7 +287,6 @@ table {
 
   thead td {
     color: #344054;
-    border-top: var(#{$p}border);
     border-bottom: var(#{$p}border);
     background: #f9fafb;
     font-weight: 600;
