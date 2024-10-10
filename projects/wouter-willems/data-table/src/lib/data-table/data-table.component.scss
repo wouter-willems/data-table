@@ -106,13 +106,13 @@ $tdPadding: var(#{$p}td-padding);
       }
     }
   }
-  td:not(:last-child) {
+  td:not(.actionMenuContainerTd) {
     padding: $tdPadding;
     &.selectBoxContainer {
       padding: $tdPaddingSelectBox;
     }
   }
-  td:last-child {
+  td.actionMenuContainerTd {
     padding-right: 1rem;
   }
   .summary {
@@ -292,20 +292,17 @@ table {
     font-weight: 600;
     transition: width 0.5s;
     transition-timing-function: ease-in-out;
-    &:not(:last-of-type) {
+    &:not(.configButtonContainer) {
       padding: $tdPadding;
       padding-top: $tdHeaderTopPadding;
       padding-bottom: $tdHeaderBottomPadding;
-    }
-    &:last-of-type {
-      padding: $tdPadding;
-      padding-top: $tdHeaderTopPadding;
-      padding-bottom: $tdHeaderBottomPadding;
-      padding-right: 1rem;;
     }
     &.configButtonContainer {
-      text-align: right;
+      padding: $tdPadding;
+      padding-top: $tdHeaderTopPadding;
+      padding-bottom: $tdHeaderBottomPadding;
       padding-right: 1rem;
+      text-align: right;
       &.sticky {
         position: sticky;
         right: 0;

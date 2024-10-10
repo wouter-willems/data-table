@@ -98,7 +98,7 @@
 				</div>
 				<div class="resizer" *ngIf="!last && userResizableColumns !== 'NO'" (mousedown)="onResizeMouseDown($event, headerKey, td)"></div>
 			</td>
-			<td class="configButtonContainer" [ngClass]="{sticky: hasHorizontalScroll}">
+			<td *ngIf="canConfigureColumns" class="configButtonContainer" [ngClass]="{sticky: hasHorizontalScroll}">
 				<ng-container [ngTemplateOutlet]="configBtnRef" [ngTemplateOutletContext]="{clickHandler: openConfig}"></ng-container>
 				<div *ngIf="hasHorizontalScroll" class="stickyShadow"></div>
 			</td>
@@ -118,7 +118,7 @@
 						[ngTemplateOutletContext]="{ value: row[header], row: row }"
 					></ng-container>
 				</td>
-				<td class="actionMenuContainerTd" [ngClass]="{sticky: hasHorizontalScroll}">
+				<td class="actionMenuContainerTd" *ngIf="canConfigureColumns || getActionsForRowFn" [ngClass]="{sticky: hasHorizontalScroll}">
 					<div class="actionMenuContainer" [ngClass]="{hasActionMenuButton: getActionsForRowFn}">
 						<ng-container [ngTemplateOutlet]="actionMenuBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsFn(row)}"></ng-container>
 						<div
@@ -158,7 +158,7 @@
 					></ng-container>
 				</ng-container>
 			</td>
-			<td></td>
+			<td *ngIf="canConfigureColumns || getActionsForRowFn"></td>
 		</tr>
 		</tbody>
 	</table>
