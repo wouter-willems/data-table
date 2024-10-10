@@ -33,6 +33,13 @@ export function useIfStringIsSet(s: string) {
 	return undefined;
 }
 
+export function useIfNumberIsSet(s: number): number {
+	if (Number.isFinite(s)) {
+		return s;
+	}
+	return undefined;
+}
+
 export function useIfArrayIsSetWithOneItem<T>(a: Array<T>): T {
 	if (isValueSet(a) && a.length === 1) {
 		return a[0];

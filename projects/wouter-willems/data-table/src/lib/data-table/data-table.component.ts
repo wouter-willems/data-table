@@ -17,7 +17,7 @@ import {
 	ViewChild
 } from '@angular/core';
 import {arrayIsSetAndFilled, removeDuplicatesFromArray, removeDuplicatesFromArraysWithComparator} from '../util/arrays';
-import {isValueSet, stringIsSetAndFilled, useIfStringIsSet} from '../util/values';
+import {isValueSet, stringIsSetAndFilled, useIfNumberIsSet, useIfStringIsSet} from '../util/values';
 import {awaitableForNextCycle, runNextRenderCycle} from "../util/angular";
 import {debounce, isEqual} from 'lodash';
 import {SaveBtnRefToken} from "../column-rearranger/column-rearranger.component";
@@ -250,7 +250,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 
 	ngOnChanges(simpleChanges: SimpleChanges): void {
 		if (isValueSet(simpleChanges.searchParams)) {
-			const stateInternal = {
+			const currentState = {
 				page: Number(this.page),
 				itemsPerPage: Number(this.itemsPerPage),
 				searchQuery: this.searchQuery ?? '',
@@ -258,19 +258,20 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 				sortOrder: this.sortOrder,
 			};
 			const c = simpleChanges.searchParams.currentValue;
-			const stateExternal = {
-				page: Number(c.page ?? 1),
-				itemsPerPage: Number(c.itemsPerPage ?? 25),
+			const defaultSortField = this.columnKeyDirectives?.find(e => stringIsSetAndFilled(e.defaultSort));
+			const newState = {
+				page: useIfNumberIsSet(Number(c.page)) ?? 1,
+				itemsPerPage:  useIfNumberIsSet(Number(c.itemsPerPage)) ?? 25,
 				searchQuery: c.searchQuery ?? '',
-				sortField: c.sortField,
-				sortOrder: c.sortOrder
+				sortField: c.sortField ?? defaultSortField?.sortKey ?? defaultSortField?.columnKey,
+				sortOrder: c.sortOrder ?? defaultSortField?.defaultSort,
 			};
-			if (!isEqual(stateInternal, stateExternal)) {
-				this.page = stateExternal.page;
-				this.itemsPerPage = stateExternal.itemsPerPage;
-				this.searchQuery = stateExternal.searchQuery;
-				this.sortField = stateExternal.sortField;
-				this.sortOrder = stateExternal.sortOrder;
+			if (!isEqual(currentState, newState)) {
+				this.page = newState.page;
+				this.itemsPerPage = newState.itemsPerPage;
+				this.searchQuery = newState.searchQuery;
+				this.sortField = newState.sortField;
+				this.sortOrder = newState.sortOrder;
 				if (this.initiated) {
 					this.getData().then(() => this.calculateColumnWidths());
 				}
@@ -291,7 +292,6 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 
 	private prevSearchParams = {};
 	private async getData(): Promise<void> {
-
 		this.closeConfig();
 		this.closeActionMenu();
 		this.closeFilters();

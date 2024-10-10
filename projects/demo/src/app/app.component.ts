@@ -133,6 +133,7 @@ export class AppComponent implements AfterViewInit {
 		data: Array<WDTRow>
 	}> => {
 		console.log('fetch', filters);
+		console.log(start, searchQuery, itemsPerPage, sortField, sortOrder);
 		if (searchQuery === 'empty') {
 			return {
 				totalAmount: 0,
@@ -211,15 +212,28 @@ export class AppComponent implements AfterViewInit {
 	}
 
 	public async updateRoute(queryParams) {
+		console.log('updateRoute', queryParams);
 		await this.router.navigate([], {
 			relativeTo: this.activatedRoute,
-			queryParams,
+			queryParams: {
+				page: queryParams.page,
+				sortField: queryParams.sortField,
+				sortOrder: queryParams.sortOrder,
+				itemsPerPage: queryParams.itemsPerPage,
+			},
 			queryParamsHandling: 'merge',
 		});
 	}
 
 	public getSearchParams() {
-		return this.activatedRoute.snapshot.queryParams;
+		const q =  this.activatedRoute.snapshot.queryParams;
+		console.log('getSearchParams', q);
+		return {
+			itemsPerPage: q.itemsPerPage,
+			page: Number(q.page),
+			sortField: q.sortField,
+			sortOrder: q.sortOrder,
+		};
 	}
 
 	public setQuery(searchQuery2: any): void {
