@@ -153,6 +153,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	@Input() persistUserResizableColumnsFn: (cols: Record<string, number>) => Promise<void>;
 	@Input() showPaginationNumbers = true;
 	@Input() showTopButtons = true;
+	@Input() canConfigureColumns = true;
 
 	@Output() onRowClicked = new EventEmitter<{row: any, index: number}>();
 	@Output() onParamsChanged = new EventEmitter<any>();
@@ -478,7 +479,10 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 
 		const pxPerRem = this.getPXPerRem();
 		const selectBoxWidth = this.selectBoxDummy ? Math.ceil(this.selectBoxDummy.nativeElement.getBoundingClientRect().width) : 0;
-		const lastColWidth = Math.ceil(Math.max(this.actionMenuDummy.nativeElement.getBoundingClientRect().width, this.configBtnDummy.nativeElement.getBoundingClientRect().width));
+		let lastColWidth = 0;
+		if (this.canConfigureColumns || this.getActionsForRowFn) {
+			lastColWidth = Math.ceil(Math.max(this.actionMenuDummy.nativeElement.getBoundingClientRect().width, this.configBtnDummy.nativeElement.getBoundingClientRect().width));
+		}
 		const selectBoxContainerRef = this.elRef.nativeElement.querySelector('thead td.selectBoxContainer');
 		const configBtnContainerRef = this.elRef.nativeElement.querySelector('thead td.configButtonContainer');
 		if (selectBoxContainerRef) {

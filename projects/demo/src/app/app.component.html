@@ -37,7 +37,6 @@
 		[fetchItemsFn]="fetchItemsFn"
 		[fetchItemByIds]="updateItemsById"
 		[getColumnAggregatedValuesFn]="getColumnAggregatedValuesFn"
-		[getActionsForRowFn]="getActionsForRowFn"
 		[getActionsForMultipleRowsFn]="getActionsForMultipleRowsFn"
 		[searchParams]="getSearchParams()"
 		(onParamsChanged)="updateRoute($event)"
@@ -55,6 +54,7 @@
 		(onDataRetrieved)="dataRetrieved($event)"
 		[showPaginationNumbers]="true"
 		[showTopButtons]="true"
+		[canConfigureColumns]="false"
 	>
 		<ng-template #ageHeader>kers</ng-template>
 
