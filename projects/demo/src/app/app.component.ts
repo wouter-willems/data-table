@@ -83,6 +83,9 @@ export class AppComponent implements AfterViewInit {
 		this.dataTableComponent._ext_initialize(this.myFilterForm, { name: 'john' }, (val) => {
 			return stringIsSetAndFilled(val);
 		});
+		this.dataTableComponent._ext_setPageChangeListener((prevPage, newPage) => {
+			console.log(prevPage, newPage);
+		});
 	}
 
 	getActionsForRowFn = async (row: any): Promise<Array<{
@@ -212,7 +215,6 @@ export class AppComponent implements AfterViewInit {
 	}
 
 	public async updateRoute(queryParams) {
-		console.log('updateRoute', queryParams);
 		await this.router.navigate([], {
 			relativeTo: this.activatedRoute,
 			queryParams: {

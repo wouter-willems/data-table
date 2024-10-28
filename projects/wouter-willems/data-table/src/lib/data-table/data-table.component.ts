@@ -208,6 +208,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	private userDefinedWidths: Record<string, number>;
 	public filterForm: FormGroup;
 	private filterOutInactiveFilterFieldsFn: (val: unknown) => boolean;
+	private pageChangeListener: (prevPage: number, newPage: number) => void;
 
 	constructor(private injector: Injector, private elRef: ElementRef) {}
 
@@ -718,7 +719,9 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}
 
 	public async toPage(pageNr: number): Promise<void> {
+		const prevPage = this.page;
 		this.page = pageNr;
+		this.pageChangeListener?.(prevPage, pageNr);
 		await this.getData();
 	}
 
@@ -906,9 +909,17 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		this.getData();
 	}
 
+	public _ext_getCurrentPage(): number {
+		return this.page;
+	}
+
+	public _ext_setPageChangeListener(listener: (prevPage: number, newPage: number) => void): void {
+		this.pageChangeListener = listener;
+	}
+
 	public async _ext_triggerWidthCalculation(): Promise<void> {
 		await this.calculateColumnWidths();
-	};
+	}
 
 	public async _ext_triggerFilterSearch(): Promise<void> {
 		this.page = 1;
