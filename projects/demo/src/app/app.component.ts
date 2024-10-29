@@ -253,6 +253,18 @@ export class AppComponent implements AfterViewInit {
 		});
 	});
 
+	tabs: Array<{ caption: string; count: number; isSelected: boolean; onClick: () => void }> = [{
+		caption: 'To do', count: 13, isSelected: false, onClick: () => {
+			console.log('click');
+		}
+	},
+		{
+			caption: 'All items', count: 46, isSelected: true, onClick: () => {
+				console.log('click 2');
+			}
+		}
+	];
+
 	dataRetrieved(data: { totalAmount: number; data: Array<WDTRow>; aggregatedValues: Record<string, any> }) {
 		console.log(data);
 	}

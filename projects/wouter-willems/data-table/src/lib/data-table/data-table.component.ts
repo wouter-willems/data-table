@@ -154,6 +154,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	@Input() showPaginationNumbers = true;
 	@Input() showTopButtons = true;
 	@Input() canConfigureColumns = true;
+	@Input() tabs: Array<{ caption: string, count: number, isSelected: boolean, onClick: () => void }> = [];
 
 	@Output() onRowClicked = new EventEmitter<{row: any, index: number}>();
 	@Output() onParamsChanged = new EventEmitter<any>();
@@ -209,6 +210,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	public filterForm: FormGroup;
 	private filterOutInactiveFilterFieldsFn: (val: unknown) => boolean;
 	private pageChangeListener: (prevPage: number, newPage: number) => void;
+	protected numberIsFinite = Number.isFinite;
 
 	constructor(private injector: Injector, private elRef: ElementRef) {}
 
@@ -684,7 +686,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	async showActionsMultipleRows(): Promise<void> {
 		const actions = (await this.getActionsForMultipleRowsFn(this.getSelectedRows())) ?? [];
 		this.multipleRowsActionsShown = true;
-		this.actionMenuOffset = {x: 0, y: 40};
+		this.actionMenuOffset = {x: 0, y: 30};
 		this.actions = actions;
 	}
 
@@ -987,11 +989,11 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		return this.getHeaderSelectState() === true;
 	}
 
-	public getTopLeftInfoToShow(): 'pagination' | 'selection' {
+	public shouldShowSelectionSection(): boolean {
 		if (arrayIsSetAndFilled(this.getSelectedRows())) {
-			return 'selection';
+			return true;
 		}
-		return 'pagination';
+		return false;
 	}
 
 	ngOnDestroy(): void {

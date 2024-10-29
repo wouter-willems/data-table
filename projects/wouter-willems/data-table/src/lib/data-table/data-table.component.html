@@ -9,10 +9,22 @@
 </div>
 
 <div class="topButtons" *ngIf="showTopButtons">
-	<div *ngIf="getTopLeftInfoToShow() === 'pagination'">
-		<span *ngIf="hasAtLeastOneResult()">{{translate('Showing %from%-%to% of %total% results', {from: (page -1) * itemsPerPage + 1, to: (page -1) * itemsPerPage + pageData.data.length, total: pageData.totalAmount})}}</span>
+	<div class="tabs">
+		<button class="tab" [ngClass]="{selected: tab.isSelected}" *ngFor="let tab of tabs" (click)="tab.onClick()">
+			<div class="tabCaption">{{tab.caption}}</div>
+			<div *ngIf="numberIsFinite(tab.count)" class="count">{{tab.count}}</div>
+		</button>
 	</div>
-	<div *ngIf="getTopLeftInfoToShow() === 'selection'" class="selectionContainer">
+	<div class="searchAndMultiSelect">
+		<ng-container *ngIf="!selectAllAcrossPagesActive && !selectAllAcrossPagesLoading">
+			<ng-container *ngIf="showSearchField" [ngTemplateOutlet]="searchInputRef" [ngTemplateOutletContext]="{changeHandler: searchQueryChanged, searchQuery: searchQuery}"></ng-container>
+			<ng-container *ngIf="filterFormTpl && filterForm" [ngTemplateOutlet]="filterBtnRef" [ngTemplateOutletContext]="{clickHandler: openFilters, nrOfActiveFilters: getNrOfActiveFilters()}"></ng-container>
+		</ng-container>
+	</div>
+</div>
+
+<div *ngIf="shouldShowSelectionSection()" class="selectionAndMultiActions">
+	<div class="selectionContainer">
 		<div>{{translate('%count% item(s) selected', {count: getSelectedRows().length})}}</div>
 		<ng-container *ngIf="shouldShowSelectAcrossAllPages()">
 			<div class="separator"></div>
@@ -35,30 +47,25 @@
 			</ng-container>
 		</ng-container>
 	</div>
-	<div class="searchAndMultiSelect">
-		<ng-container *ngIf="!selectAllAcrossPagesActive && !selectAllAcrossPagesLoading">
-			<ng-container *ngIf="showSearchField" [ngTemplateOutlet]="searchInputRef" [ngTemplateOutletContext]="{changeHandler: searchQueryChanged, searchQuery: searchQuery}"></ng-container>
-			<ng-container *ngIf="filterFormTpl && filterForm" [ngTemplateOutlet]="filterBtnRef" [ngTemplateOutletContext]="{clickHandler: openFilters, nrOfActiveFilters: getNrOfActiveFilters()}"></ng-container>
-		</ng-container>
-		<div class="multiSelectActionMenu" *ngIf="getSelectedRows().length > 0">
-			<div class="actionMenuContainer multi" #actionMenuContainer>
-				<ng-container [ngTemplateOutlet]="actionMenuMultipleBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsMultipleFn()}"></ng-container>
-				<div
-					*ngIf="multipleRowsActionsShown"
-					class="actionMenu forMultipleRows"
-					[ngStyle]="{transform: 'translate('+actionMenuOffset.x+ 'px,'+ actionMenuOffset.y + 'px)'}"
-				>
-					<ng-container *ngIf="!(actions?.length > 0)">
-						<button disabled>
-							{{translate('No options available')}}
-						</button>
-					</ng-container>
-					<ng-container *ngIf="actions?.length > 0">
-						<button *ngFor="let action of actions" (click)="closeActionMenu(); action.action()">
-							{{action.caption}}
-						</button>
-					</ng-container>
-				</div>
+
+	<div class="multiSelectActionMenu" *ngIf="getSelectedRows().length > 0">
+		<div class="actionMenuContainer multi" #actionMenuContainer>
+			<ng-container [ngTemplateOutlet]="actionMenuMultipleBtnRef" [ngTemplateOutletContext]="{clickHandler: getShowActionsMultipleFn()}"></ng-container>
+			<div
+				*ngIf="multipleRowsActionsShown"
+				class="actionMenu forMultipleRows"
+				[ngStyle]="{transform: 'translate('+actionMenuOffset.x+ 'px,'+ actionMenuOffset.y + 'px)'}"
+			>
+				<ng-container *ngIf="!(actions?.length > 0)">
+					<button disabled>
+						{{translate('No options available')}}
+					</button>
+				</ng-container>
+				<ng-container *ngIf="actions?.length > 0">
+					<button *ngFor="let action of actions" (click)="closeActionMenu(); action.action()">
+						{{action.caption}}
+					</button>
+				</ng-container>
 			</div>
 		</div>
 	</div>
@@ -177,31 +184,36 @@
 			</select>
 		</div>
 	</div>
-	<div class="pageNumbers" *ngIf="pageData && hasAtLeastOneResult()">
-		<button *ngIf="false" (click)="toPage(1)" [disabled]="page === 1">{{translate('First')}}</button>
-		<button (click)="toPage(page-1)" [disabled]="page === 1" class="withIcon">
-			<svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M12.8333 7.00002H1.16663M1.16663 7.00002L6.99996 12.8334M1.16663 7.00002L6.99996 1.16669" stroke="#475467" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
-			</svg>
-			<div>{{translate('Previous')}}</div>
-		</button>
-		<div class="pageNrButtons">
-			<ng-container *ngFor="let pageNr of getPageNumbers()">
-				<button class="pageNrButton" *ngIf="pageNr !== null" (click)="toPage(pageNr)" [ngClass]="{selected: page === pageNr}">
-					<span>{{pageNr}}</span>
-				</button>
-				<button class="pageNrButton separator" *ngIf="pageNr == null">
-					<span>...</span>
-				</button>
-			</ng-container>
+	<div class="footerRightSide">
+		<div>
+			<span *ngIf="hasAtLeastOneResult()">{{translate('%from%-%to% of %total%', {from: (page -1) * itemsPerPage + 1, to: (page -1) * itemsPerPage + pageData.data.length, total: pageData.totalAmount})}}</span>
 		</div>
-		<button (click)="toPage(page+1)" [disabled]="page === this.getLastPage()" class="withIcon">
-			<div>{{translate('Next')}}</div>
-			<svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M1.16675 7.00002H12.8334M12.8334 7.00002L7.00008 1.16669M12.8334 7.00002L7.00008 12.8334" stroke="#475467" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
-			</svg>
-		</button>
-		<button *ngIf="false" (click)="toPage(this.getLastPage())" [disabled]="page === this.getLastPage()">{{translate('Last')}}</button>
+		<div class="pageNumbers" *ngIf="pageData && hasAtLeastOneResult()">
+			<button *ngIf="false" (click)="toPage(1)" [disabled]="page === 1">{{translate('First')}}</button>
+			<button (click)="toPage(page-1)" [disabled]="page === 1" class="withIcon">
+				<svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M12.8333 7.00002H1.16663M1.16663 7.00002L6.99996 12.8334M1.16663 7.00002L6.99996 1.16669" stroke="#475467" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+				<div>{{translate('Previous')}}</div>
+			</button>
+			<div class="pageNrButtons">
+				<ng-container *ngFor="let pageNr of getPageNumbers()">
+					<button class="pageNrButton" *ngIf="pageNr !== null" (click)="toPage(pageNr)" [ngClass]="{selected: page === pageNr}">
+						<span>{{pageNr}}</span>
+					</button>
+					<button class="pageNrButton separator" *ngIf="pageNr == null">
+						<span>...</span>
+					</button>
+				</ng-container>
+			</div>
+			<button (click)="toPage(page+1)" [disabled]="page === this.getLastPage()" class="withIcon">
+				<div>{{translate('Next')}}</div>
+				<svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M1.16675 7.00002H12.8334M12.8334 7.00002L7.00008 1.16669M12.8334 7.00002L7.00008 12.8334" stroke="#475467" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+			</button>
+			<button *ngIf="false" (click)="toPage(this.getLastPage())" [disabled]="page === this.getLastPage()">{{translate('Last')}}</button>
+		</div>
 	</div>
 </footer>
 
