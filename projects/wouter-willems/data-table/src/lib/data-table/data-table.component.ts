@@ -228,7 +228,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 
 		this.escapeKeyListener = (ev) => {
 			if (ev.key === 'Escape' && this.showFilters) {
-				this.closeFilters();
+				this.closeFilters(true);
 			}
 		};
 		window.document.addEventListener('keyup', this.escapeKeyListener);
@@ -296,7 +296,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	private async getData(): Promise<void> {
 		this.closeConfig();
 		this.closeActionMenu();
-		this.closeFilters();
+		this.closeFilters(false);
 
 		this.loading = true;
 		if (!this.selectAllAcrossPagesActive) {
@@ -731,9 +731,11 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}
 
 
+	private filtersBeforeClosing;
 	public openFilters = () => {
+		this.filtersBeforeClosing = this.filterForm.getRawValue();
 		this.showFilters = true;
-		this.createBackdrop(() => this.closeFilters(), true);
+		this.createBackdrop(() => this.closeFilters(true), true);
 	};
 
 
@@ -760,8 +762,11 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		this.removeBackdropDiv();
 	}
 
-	closeFilters(): void {
+	closeFilters(resetFiltersToBeforeOpening: boolean): void {
 		this.showFilters = false;
+		if (resetFiltersToBeforeOpening)  {
+			this.filterForm.patchValue(this.filtersBeforeClosing);
+		}
 		this.removeBackdropDiv();
 	}
 
@@ -924,7 +929,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	public async _ext_triggerFilterSearch(): Promise<void> {
 		this.page = 1;
 		await awaitableForNextCycle();
-		this.closeFilters();
+		this.closeFilters(false);
 		this.getData();
 	}
 
@@ -994,7 +999,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		window.document.removeEventListener('resize', this.resizeListener);
 		this.closeConfig();
 		this.closeActionMenu();
-		this.closeFilters();
+		this.closeFilters(true);
 	}
 
 	private prevX = null;

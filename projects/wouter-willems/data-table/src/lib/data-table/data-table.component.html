@@ -217,7 +217,7 @@
 <div class="filters" *ngIf="showFilters">
 	<header>
 		<div>{{translate('Filters')}}</div>
-		<button class="closeButton" (click)="closeFilters()">×</button>
+		<button class="closeButton" (click)="closeFilters(true)">×</button>
 	</header>
 	<div class="filterFormContainer">
 		<ng-container [ngTemplateOutlet]="filterFormTpl"></ng-container>

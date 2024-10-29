@@ -229,7 +229,6 @@ export class AppComponent implements AfterViewInit {
 
 	public getSearchParams() {
 		const q =  this.activatedRoute.snapshot.queryParams;
-		console.log('getSearchParams', q);
 		return {
 			itemsPerPage: q.itemsPerPage,
 			page: Number(q.page),
