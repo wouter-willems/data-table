@@ -198,7 +198,7 @@ $tdPadding: var(#{$p}td-padding);
     gap: 0.4rem;
     background: none;
     cursor: pointer;
-    padding: 0.5rem 0.3rem 0.5rem 0.3rem;
+    padding: var(--wdt-tab-buttons-top-padding) 0.3rem 0.5rem 0.3rem;
     border: none;
     border-bottom: 2px solid transparent;
 
