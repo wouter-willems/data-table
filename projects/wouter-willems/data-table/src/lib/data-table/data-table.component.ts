@@ -768,7 +768,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	closeFilters(resetFiltersToBeforeOpening: boolean): void {
 		this.showFilters = false;
 		if (resetFiltersToBeforeOpening)  {
-			this.filterForm.patchValue(this.filtersBeforeClosing);
+			this.filterForm?.patchValue(this.filtersBeforeClosing);
 		}
 		this.removeBackdropDiv();
 	}
