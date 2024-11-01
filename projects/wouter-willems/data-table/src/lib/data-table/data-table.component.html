@@ -76,6 +76,24 @@
 	#tableContainer
 >
 	<ng-container *ngIf="!loading && !hasAtLeastOneResult()" [ngTemplateOutlet]="emptyTpl"></ng-container>
+	<table class="tableLoadingIndicator fullWidth" *ngIf="loading && !hasAtLeastOneResult()">
+		<thead>
+		<tr>
+			<td>
+				<div>
+					<ng-container [ngTemplateOutlet]="configBtnRef" [ngTemplateOutletContext]="{clickHandler: openConfig}"></ng-container>
+				</div>
+			</td>
+		</tr>
+		</thead>
+		<tbody>
+		<tr *ngFor="let i of multipleTimes">
+			<td>
+				<div class="pulsatingBackground"></div>
+			</td>
+		</tr>
+		</tbody>
+	</table>
 	<table *ngIf="hasAtLeastOneResult()" class="fullWidth" [ngClass]="{firstWidthsCalculated: firstWidthsCalculated, actionMenuOpen: hasActionMenuOpen(), hasRowClick: onRowClicked.observers.length > 0}">
 		<thead>
 		<tr>
@@ -172,8 +190,8 @@
 	<div class="summary"><ng-container [ngTemplateOutlet]="summaryTpl"></ng-container></div>
 </div>
 
-<footer>
-	<div class="amountPicker" *ngIf="hasAtLeastOneResult()">
+<footer *ngIf="hasAtLeastOneResult()">
+	<div class="amountPicker">
 		{{translate('Show')}}
 		<div class="selectContainer">
 			<select [(ngModel)]="itemsPerPage" (ngModelChange)="itemsPerPageChanged()">

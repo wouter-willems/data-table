@@ -211,6 +211,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	private filterOutInactiveFilterFieldsFn: (val: unknown) => boolean;
 	private pageChangeListener: (prevPage: number, newPage: number) => void;
 	protected numberIsFinite = Number.isFinite;
+	protected multipleTimes = Array(10);
 
 	constructor(private injector: Injector, private elRef: ElementRef) {}
 
@@ -940,7 +941,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		items.forEach(e => this.idByRow.set(e.id, e));
 		this.pageData = {
 			...this.pageData,
-			data: this.pageData.data.map(e => {
+			data: (this.pageData?.data ?? []).map(e => {
 				const foundItem = items.find(i => i.id === e.id);
 				return foundItem ?? e;
 			}),
@@ -1029,6 +1030,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		this.tdResizing.el.style.width = newWidth;
 		this.prevX = ev.screenX;
 	};
+
 
 
 

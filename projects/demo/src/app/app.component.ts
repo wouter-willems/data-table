@@ -143,7 +143,7 @@ export class AppComponent implements AfterViewInit {
 				data: [],
 			};
 		}
-		await new Promise(resolve => setTimeout(resolve, 100));
+		await new Promise(resolve => setTimeout(resolve, 3000));
 		const data = getDummyData(start, searchQuery, itemsPerPage, sortField, sortOrder, filters);
 		return data;
 	};
@@ -222,6 +222,7 @@ export class AppComponent implements AfterViewInit {
 				sortField: queryParams.sortField,
 				sortOrder: queryParams.sortOrder,
 				itemsPerPage: queryParams.itemsPerPage,
+				searchQuery: queryParams.searchQuery,
 			},
 			queryParamsHandling: 'merge',
 		});
@@ -234,6 +235,7 @@ export class AppComponent implements AfterViewInit {
 			page: Number(q.page),
 			sortField: q.sortField,
 			sortOrder: q.sortOrder,
+			searchQuery: q.searchQuery,
 		};
 	}
 

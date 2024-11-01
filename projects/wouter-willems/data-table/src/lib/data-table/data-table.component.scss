@@ -77,6 +77,11 @@ $tdPadding: var(#{$p}td-padding);
   }
 }
 
+@keyframes moving-gradient {
+  0% { background-position: -100% 0; }
+  100% { background-position: 100% 0; }
+}
+
 .tableContainer {
   position: relative;
   overflow: auto;
@@ -96,6 +101,26 @@ $tdPadding: var(#{$p}td-padding);
     display: none;
     &.firstWidthsCalculated {
       display: table;
+    }
+    &.tableLoadingIndicator {
+      display: table;
+      //pointer-events: none;
+      thead td div {
+        opacity: 0;
+      }
+      tbody td {
+        padding: 0.5rem;
+      }
+      .pulsatingBackground {
+        height: 12px;
+        background: linear-gradient(to right, #eee 20%, #ddd 50%, #eee 80%);
+        background-size: 500px 100px;
+        animation-name: moving-gradient;
+        animation-duration: 10s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+        animation-fill-mode: forwards;
+      }
     }
     &.fullWidth {
       width: 100%;
@@ -203,9 +228,9 @@ $tdPadding: var(#{$p}td-padding);
     border-bottom: 2px solid transparent;
 
     &.selected {
-      border-color: rgba(0, 137, 42, 1);
+      border-color: var(--wdt-color-green);
       .tabCaption {
-        color: rgba(0, 137, 42, 1);
+        color: var(--wdt-color-green);
       }
     }
   }
