@@ -404,8 +404,10 @@ table {
         cursor: initial;
       }
     }
-    td {
+    &:not(:last-child) td {
       border-bottom: var(#{$p}border);
+    }
+    td {
       &.rightAligned {
         text-align: right;
       }
@@ -505,6 +507,7 @@ footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-top: var(#{$p}border);
   padding: $footerButtonsPadding;
   color: $color;
   .footerRightSide {

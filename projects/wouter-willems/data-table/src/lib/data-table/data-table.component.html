@@ -190,7 +190,7 @@
 	<div class="summary"><ng-container [ngTemplateOutlet]="summaryTpl"></ng-container></div>
 </div>
 
-<footer *ngIf="hasAtLeastOneResult()">
+<footer *ngIf="shouldShowFooter()">
 	<div class="amountPicker">
 		{{translate('Show')}}
 		<div class="selectContainer">

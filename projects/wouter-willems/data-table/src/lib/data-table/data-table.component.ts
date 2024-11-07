@@ -153,6 +153,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	@Input() persistUserResizableColumnsFn: (cols: Record<string, number>) => Promise<void>;
 	@Input() showPaginationNumbers = true;
 	@Input() showTopButtons = true;
+	@Input() showFooter = true;
 	@Input() canConfigureColumns = true;
 	@Input() tabs: Array<{ caption: string, count: number, isSelected: boolean, onClick: () => void }> = [];
 
@@ -907,6 +908,10 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			document.body.removeChild(this.actionMenu.nativeElement);
 		}
 		this.removeBackdropDiv();
+	}
+
+	public shouldShowFooter(): boolean {
+		return this.showFooter && this.hasAtLeastOneResult();
 	}
 
 	public hasAtLeastOneResult(): boolean {
