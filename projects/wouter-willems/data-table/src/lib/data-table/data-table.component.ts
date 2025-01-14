@@ -7,7 +7,7 @@ import {
 	EventEmitter,
 	InjectionToken,
 	Injector,
-	Input,
+	Input, NgZone,
 	OnChanges, OnDestroy,
 	OnInit,
 	Output,
@@ -214,7 +214,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	protected numberIsFinite = Number.isFinite;
 	protected multipleTimes = Array(10);
 
-	constructor(private injector: Injector, private elRef: ElementRef) {}
+	constructor(private injector: Injector, private elRef: ElementRef, private ngZone: NgZone) {}
 
 	async ngOnInit(): Promise<void> {
 		if (this.userResizableColumns !== 'NO') {
@@ -245,13 +245,28 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 
 	public async _ext_initialize(filterForm: FormGroup, filterValues: Record<string, unknown>, filterOutInactiveFilterFieldsFn: (val: unknown) => boolean): Promise<void> {
 		await awaitableForNextCycle();
-		this.filterForm = filterForm;
-		this.filterOutInactiveFilterFieldsFn = filterOutInactiveFilterFieldsFn;
-		if (isValueSet(filterValues)) {
-			filterForm?.patchValue(filterValues);
-		}
-		this.initiated = true;
-		await this.getData();
+		this.callFnWhenAttachedToDom(async () => {
+			this.filterForm = filterForm;
+			this.filterOutInactiveFilterFieldsFn = filterOutInactiveFilterFieldsFn;
+			if (isValueSet(filterValues)) {
+				filterForm?.patchValue(filterValues);
+			}
+			this.initiated = true;
+			await this.getData();
+		});
+	}
+
+	private callFnWhenAttachedToDom(fn: () => void): void {
+		this.ngZone.runOutsideAngular(() => {
+			const interval = setInterval(() => {
+				if (this.elRef.nativeElement.closest('body')) {
+					this.ngZone.run(() => {
+						fn();
+					});
+					clearInterval(interval);
+				}
+			}, 16); // 16 ms = 60fps
+		});
 	}
 
 	ngOnChanges(simpleChanges: SimpleChanges): void {

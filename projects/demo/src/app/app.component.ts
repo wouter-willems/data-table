@@ -143,7 +143,7 @@ export class AppComponent implements AfterViewInit {
 				data: [],
 			};
 		}
-		await new Promise(resolve => setTimeout(resolve, 3000));
+		await new Promise(resolve => setTimeout(resolve, 200));
 		const data = getDummyData(start, searchQuery, itemsPerPage, sortField, sortOrder, filters);
 		return data;
 	};
