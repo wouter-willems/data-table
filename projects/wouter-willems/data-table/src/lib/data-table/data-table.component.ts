@@ -154,6 +154,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	@Input() showPaginationNumbers = true;
 	@Input() showTopButtons = true;
 	@Input() showFooter = true;
+	@Input() showSelectionInfo = true;
 	@Input() canConfigureColumns = true;
 	@Input() tabs: Array<{ caption: string, count: number, isSelected: boolean, onClick: () => void }> = [];
 
@@ -1011,6 +1012,9 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}
 
 	public shouldShowSelectionSection(): boolean {
+		if (!this.showSelectionInfo) {
+			return false;
+		}
 		if (arrayIsSetAndFilled(this.getSelectedRows())) {
 			return true;
 		}
