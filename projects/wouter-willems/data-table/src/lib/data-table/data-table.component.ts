@@ -116,6 +116,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 
 	@Input() searchParams;
 	@Input() showSearchField = true;
+	@Input() showColumnHeaders = true;
 	@Input() allowSelectingAcrossMultiplePages = true;
 	@Input() fetchItemsFn: (start: number, searchQuery: string, itemsPerPage: number, sortField: string, sortOrder: 'ASC' | 'DESC', filters: Record<string, any>) => Promise<{
 		totalAmount: number,

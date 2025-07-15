@@ -99,12 +99,21 @@ $tdPadding: var(#{$p}td-padding);
   table {
     table-layout: fixed;
     display: none;
+    tr.hiddenColumnsHeaders {
+      font-size: 0px;
+      td {
+        padding: 0;
+        border: none;
+      }
+      .colHeader .sortButton {
+        display: none;
+      }
+    }
     &.firstWidthsCalculated {
       display: table;
     }
     &.tableLoadingIndicator {
       display: table;
-      //pointer-events: none;
       thead td div {
         opacity: 0;
       }
@@ -156,6 +165,8 @@ $tdPadding: var(#{$p}td-padding);
     right: 0;
   }
 }
+
+
 
 .amountPicker {
   display: flex;
