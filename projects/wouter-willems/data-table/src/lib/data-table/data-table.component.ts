@@ -694,9 +694,14 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 		runNextRenderCycle(() => {
 			const x = this.actionMenu.nativeElement.getBoundingClientRect().left;
 			const y = this.actionMenu.nativeElement.getBoundingClientRect().top;
+			const spaceLeftUnderneath = window.innerHeight - y - this.actionMenu.nativeElement.getBoundingClientRect().height;
+			if (spaceLeftUnderneath > 50) {
+				this.actionMenu.nativeElement.style.top = `${y}px`;
+			} else {
+				this.actionMenu.nativeElement.style.top = `${y - this.actionMenu.nativeElement.getBoundingClientRect().height - this.actionMenu.nativeElement.parentElement.parentElement.getBoundingClientRect().height}px`;
+			}
 			this.actionMenu.nativeElement.style.position = 'fixed';
 			this.actionMenu.nativeElement.style.left = `${x}px`;
-			this.actionMenu.nativeElement.style.top = `${y}px`;
 			this.actionMenu.nativeElement.style.visibility = 'visible';
 			document.body.appendChild(this.actionMenu.nativeElement);
 		});
