@@ -13,6 +13,7 @@
 		<button class="tab" [ngClass]="{selected: tab.isSelected}" *ngFor="let tab of tabs" (click)="tab.onClick()">
 			<div class="tabCaption">{{tab.caption}}</div>
 			<div *ngIf="numberIsFinite(tab.count)" class="count">{{tab.count}}</div>
+			<div class="bottomLine"></div>
 		</button>
 	</div>
 	<div class="searchAndMultiSelect">
