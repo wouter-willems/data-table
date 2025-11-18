@@ -1,4 +1,5 @@
 import {
+	AfterViewInit,
 	Component,
 	ContentChild,
 	ContentChildren,
@@ -101,7 +102,7 @@ export type WDTRow = {id: any, backgroundVariant?: 1 | 2 | 3} & Record<string, a
 	templateUrl: './data-table.component.html',
 	styleUrls: ['./data-table.component.scss'],
 })
-export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
+export class DataTableComponent implements OnChanges, OnInit, OnDestroy, AfterViewInit {
 	@ViewChild('selectBoxDummy') selectBoxDummy: ElementRef;
 	@ViewChild('actionMenuDummy') actionMenuDummy: ElementRef;
 	@ViewChild('configBtnDummy') configBtnDummy: ElementRef;
@@ -243,6 +244,14 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 			this.calculateColumnWidths();
 		}, 300);
 		window.addEventListener('resize', this.resizeListener);
+	}
+
+	ngAfterViewInit(): void {
+		this.columnKeyDirectives.changes.subscribe(async () => {
+			this.definedColumns = null;
+			await this.extractHeaders();
+			await this.calculateColumnWidths();
+		});
 	}
 
 	public async _ext_initialize(filterForm: FormGroup, filterValues: Record<string, unknown>, filterOutInactiveFilterFieldsFn: (val: unknown) => boolean): Promise<void> {
@@ -913,6 +922,9 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy {
 	}
 
 	isSortable(headerKey: string): boolean {
+		if (!this.columnKeyDirectives.some(e => e.columnKey === headerKey)) {
+			return false;
+		}
 		return this.columnKeyDirectives.find(e => e.columnKey === headerKey).sortKey !== null;
 	}
 
