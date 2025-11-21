@@ -12,7 +12,7 @@
 	<div class="tabs">
 		<button class="tab" [ngClass]="{selected: tab.isSelected}" *ngFor="let tab of tabs" (click)="tab.onClick()">
 			<div class="tabCaption">{{tab.caption}}</div>
-			<div *ngIf="numberIsFinite(tab.count)" class="count">{{tab.count}}</div>
+			<div *ngIf="numberIsFinite(tab.count)" class="count" [ngClass]="{singleCharacter: (tab.count + '').length === 1}">{{tab.count}}</div>
 			<div class="bottomLine"></div>
 		</button>
 	</div>

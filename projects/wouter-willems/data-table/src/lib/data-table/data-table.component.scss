@@ -274,10 +274,19 @@ $tdPadding: var(#{$p}td-padding);
     }
   }
   .count {
+    $countHeight: 18px;
     background: var(--wdt-color-background-gray);
     border-radius: 9999px;
-    padding: 0.2rem 0.5rem;
+    height: $countHeight;
+    padding: 0px 0.375rem;
     font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &.singleCharacter {
+      width: $countHeight;
+      padding: 0;
+    }
   }
 
 }

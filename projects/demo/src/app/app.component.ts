@@ -265,12 +265,12 @@ export class AppComponent implements AfterViewInit {
 	});
 
 	tabs: Array<{ caption: string; count: number; isSelected: boolean; onClick: () => void }> = [{
-		caption: 'To do', count: 13, isSelected: false, onClick: () => {
+		caption: 'To do', count: 8, isSelected: false, onClick: () => {
 			console.log('click');
 		}
 	},
 		{
-			caption: 'All items', count: 46, isSelected: true, onClick: () => {
+			caption: 'All items', count: 48, isSelected: true, onClick: () => {
 				console.log('click 2');
 			}
 		}
