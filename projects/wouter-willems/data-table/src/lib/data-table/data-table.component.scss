@@ -296,7 +296,7 @@ $tdPadding: var(#{$p}td-padding);
   top: 0;
   bottom: 0;
   right: 0;
-  width: 20rem;
+  width: var(--wdt-filters-width);
   display: flex;
   flex-direction: column;
   background: white;
