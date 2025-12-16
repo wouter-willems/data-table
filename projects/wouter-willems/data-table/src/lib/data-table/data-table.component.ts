@@ -42,6 +42,12 @@ export type PresetValue = {
 };
 
 // tslint:disable-next-line:directive-selector
+@Directive({selector: '[staticColumnCaption]'})
+export class StaticColumnDirective {
+	@Input() staticColumnCaption: string;
+}
+
+// tslint:disable-next-line:directive-selector
 @Directive({selector: '[columnKey]'})
 export class ColumnKeyDirective {
 	@Input() columnKey: string;
@@ -110,6 +116,9 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy, AfterVi
 	@ViewChild('actionMenuContainer') actionMenuContainer: ElementRef;
 	@ViewChild('tableContainer') tableContainer: ElementRef;
 	@ViewChild('actionMenu') actionMenu: ElementRef;
+
+	@ContentChildren(StaticColumnDirective, {read: TemplateRef}) staticColumnTemplates: QueryList<TemplateRef<any>>;
+	@ContentChildren(StaticColumnDirective, {read: StaticColumnDirective}) staticColumnDirectives: QueryList<StaticColumnDirective>;
 
 	@ContentChildren(ColumnKeyDirective, {read: TemplateRef}) templates: QueryList<TemplateRef<any>>;
 	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) columnKeyDirectives: QueryList<ColumnKeyDirective>;
@@ -486,10 +495,16 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy, AfterVi
 	}
 
 	private getDynamicColsOfClone(): Array<HTMLElement> {
-		return [...this.elRef.nativeElement.querySelectorAll('.tableContainer.clone thead td:not(.selectBoxContainer):not(.configButtonContainer)')];
+		return [...this.elRef.nativeElement.querySelectorAll('.tableContainer.clone thead td:not(.staticColumn):not(.selectBoxContainer):not(.configButtonContainer)')];
 	}
 	private getDynamicColsOfOriginal(): Array<HTMLElement> {
-		return [...this.elRef.nativeElement.querySelectorAll('.tableContainer:not(.clone) thead td:not(.selectBoxContainer):not(.configButtonContainer)')];
+		return [...this.elRef.nativeElement.querySelectorAll('.tableContainer.original thead td:not(.staticColumn):not(.selectBoxContainer):not(.configButtonContainer)')];
+	}
+	private getStaticColsOfClone(): Array<HTMLElement> {
+		return [...this.elRef.nativeElement.querySelectorAll('.tableContainer.clone thead td.staticColumn')];
+	}
+	private getStaticColsOfOriginal(): Array<HTMLElement> {
+		return [...this.elRef.nativeElement.querySelectorAll('.tableContainer.original thead td.staticColumn')];
 	}
 
 	private async calculateColumnWidths(): Promise<void> {
@@ -504,6 +519,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy, AfterVi
 			return;
 		}
 		const clone = this.tableContainer.nativeElement.cloneNode(true);
+		clone.classList.remove('original');
 		clone.classList.add('clone');
 		clone.querySelector('table').classList.remove('fullWidth');
 		this.tableContainer.nativeElement.parentElement.appendChild(clone);
@@ -519,6 +535,14 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy, AfterVi
 		if (selectBoxContainerRef) {
 			selectBoxContainerRef.style.width = `${selectBoxWidth}px`;
 		}
+
+		const staticColsOfClone = this.getStaticColsOfClone();
+		const staticColsOfOriginal = this.getStaticColsOfOriginal();
+		const staticColsWidth = staticColsOfClone.reduce((acc, cur) => acc + cur.getBoundingClientRect().width, 0);
+		staticColsOfOriginal.forEach(((e, i) => {
+			e.style.width = `${staticColsOfClone[i].getBoundingClientRect().width}px`;
+		}));
+
 		const dynamicColsOfClone = this.getDynamicColsOfClone();
 		dynamicColsOfClone.forEach((e, i) => {
 			const colDirective = this.columnKeyDirectives.find(col => col.columnKey === this.headerKeys[i]);
@@ -546,12 +570,13 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy, AfterVi
 		});
 		this.tableContainer.nativeElement.parentElement.removeChild(clone);
 
-		const minWidthsCumulative = this.columnKeyDirectives.filter(e => {
+		let minWidthsCumulative = this.columnKeyDirectives.filter(e => {
 			if (!this.headerKeys.includes(e.columnKey)) {
 				return false;
 			}
 			return Number.isFinite(e._minWidthInREM);
 		}).reduce((acc, cur) => (cur._minWidthInREM * pxPerRem) + acc, 0);
+		minWidthsCumulative += staticColsWidth;
 
 		const spaceLeftForDistribution = this.tableContainer.nativeElement.getBoundingClientRect().width - selectBoxWidth - lastColWidth;
 		const bonusSpaceLeftInREM = (spaceLeftForDistribution - minWidthsCumulative) / pxPerRem;
@@ -656,6 +681,10 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy, AfterVi
 			return this.templates.toArray()[index];
 		}
 		return null;
+	}
+
+	protected getTemplateForStaticColumn(staticColIndex: number): TemplateRef<any> {
+		return this.staticColumnTemplates.toArray()[staticColIndex];
 	}
 
 	public getTemplateForAggregation(header: string, value: any): TemplateRef<any> {
@@ -1097,4 +1126,6 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy, AfterVi
 	public getTotalAmountOfCols(): number {
 		return [...this.elRef.nativeElement.querySelectorAll('thead td')].length;
 	}
+
+
 }

@@ -73,7 +73,7 @@
 </div>
 
 <div
-	class="tableContainer"
+	class="tableContainer original"
 	#tableContainer
 >
 	<ng-container *ngIf="!loading && !hasAtLeastOneResult()" [ngTemplateOutlet]="emptyTpl"></ng-container>
@@ -102,6 +102,9 @@
 				<div class="selectBox">
 					<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: getHeaderSelectState()}"></ng-container>
 				</div>
+			</td>
+			<td *ngFor="let staticCol of staticColumnDirectives; let last = last;" class="staticColumn">
+				{{staticCol.staticColumnCaption}}
 			</td>
 			<td *ngFor="let headerKey of headerKeys; let last = last;" #td>
 				<div class="colHeader" *ngIf="showColumnHeaders" [ngClass]="{rightAligned: isRightAligned(headerKey)}">
@@ -137,6 +140,12 @@
 					<div class="selectBox">
 						<ng-container [ngTemplateOutlet]="checkboxRef" [ngTemplateOutletContext]="{isSelected: isSelected(row)}"></ng-container>
 					</div>
+				</td>
+				<td *ngFor="let staticCol of staticColumnDirectives; let i = index;">
+					<ng-container
+						[ngTemplateOutlet]="getTemplateForStaticColumn(i)"
+						[ngTemplateOutletContext]="{ row: row }"
+					></ng-container>
 				</td>
 				<td *ngFor="let header of headerKeys" (click)="rowClicked(row, i)" [klpWithTooltip]="showTooltipOnOverflow(header)" [ngClass]="[isRightAligned(header) ? 'rightAligned' : '', 'emphasize' + getEmphasizeValue(header)]">
 					<ng-container
@@ -176,6 +185,7 @@
 		</ng-container>
 		<tr *ngIf="aggregatedValues" class="aggregateRow">
 			<td *ngIf="getActionsForMultipleRowsFn"></td>
+			<td *ngFor="let staticCol of staticColumnDirectives"></td>
 			<td *ngFor="let header of headerKeys" [klpWithTooltip]="true">
 				<ng-container *ngIf="aggregatedValues[header]">
 					<ng-container

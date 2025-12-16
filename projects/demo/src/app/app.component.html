@@ -62,8 +62,19 @@
 	>
 		<ng-template #ageHeader>kers</ng-template>
 
+		<ng-template staticColumnCaption="Static column" let-row="row">
+			woof
+		</ng-template>
+
+		<ng-template staticColumnCaption="Static column 2" let-row="row">
+			miaow
+		</ng-template>
+
 		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [preset]="presets.name">
 			{{value}}
+		</ng-template>
+		<ng-template [columnKey]="null" columnCaption="mjeh" [preset]="presets.name">
+			hello
 		</ng-template>
 		<ng-template *ngIf="withAge" columnKey="age" columnCaption="Age" [headerTpl]="ageHeader" let-value="value" let-row="row" defaultSort="DESC" [preset]="presets.age">
 			{{value}} years old

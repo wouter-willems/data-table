@@ -11,7 +11,7 @@
     "e2e": "ng e2e"
   },
   "engines": {
-    "node": "^20.18.0"
+    "node": "^22.21.1"
   },
   "private": true,
   "dependencies": {
