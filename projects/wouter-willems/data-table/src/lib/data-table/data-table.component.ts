@@ -806,6 +806,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy, AfterVi
 	private createBackdrop(clickHandler: () => void, blackBackground: boolean): void {
 		this.backdropDiv = document.createElement('div');
 		if (blackBackground) {
+			this.backdropDiv.classList.add('wdtModalBlackBackdrop');
 			this.backdropDiv.style.background = 'black';
 		}
 		this.backdropDiv.style.opacity = '0.5';
