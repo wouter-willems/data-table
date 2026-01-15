@@ -560,7 +560,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy, AfterVi
 			} else {
 				if (colDirective.getFixedWidthOnContents()) {
 					const actualWidth = Math.ceil(e.getBoundingClientRect().width) / pxPerRem;
-					colDirective._minWidthInREM = Math.min(actualWidth, (colDirective.getMinWidthInREM() ?? Number.MAX_SAFE_INTEGER));
+					colDirective._minWidthInREM = Math.min(actualWidth, (colDirective.getMinWidthInREM() ?? Number.MAX_SAFE_INTEGER), (colDirective.getMaxWidthInREM() ?? Number.MAX_SAFE_INTEGER));
 					colDirective._maxWidthInREM = Math.min(actualWidth, (colDirective.getMaxWidthInREM() ?? Number.MAX_SAFE_INTEGER));
 				} else {
 					colDirective._minWidthInREM = this.userDefinedWidths?.[colDirective.columnKey] ?? colDirective.getMinWidthInREM();

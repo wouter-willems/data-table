@@ -75,17 +75,17 @@ export class AppComponent implements AfterViewInit {
 			email: new FormControl('', [Validators.required, Validators.email])
 		});
 
-		setTimeout(() => {
-			this.withAge = true;
-			console.log('yes age');
-			this.dataTableComponent._ext_refetchItems([7, 11]);
-
-			setTimeout(() => {
-				this.withAge = false;
-				console.log('no age');
-				this.dataTableComponent._ext_refetchItems([7, 11]);
-			}, 2000);
-		}, 2000);
+		// setTimeout(() => {
+		// 	this.withAge = true;
+		// 	console.log('yes age');
+		// 	this.dataTableComponent._ext_refetchItems([7, 11]);
+		//
+		// 	setTimeout(() => {
+		// 		this.withAge = false;
+		// 		console.log('no age');
+		// 		this.dataTableComponent._ext_refetchItems([7, 11]);
+		// 	}, 2000);
+		// }, 2000);
 	}
 
 	ngAfterViewInit(): void {
