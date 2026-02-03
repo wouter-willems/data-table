@@ -64,10 +64,7 @@
 		<ng-template #ageHeader>kers</ng-template>
 
         <ng-template gridItemTpl let-row="row" let-index="index">
-            <div>
-                <span >{{ row.name }}</span>
-                <span>{{ row.age }} years</span>
-            </div>
+            {{ row.name }}
         </ng-template>
 
         <ng-template staticColumnCaption="Static column" let-row="row">
