@@ -101,6 +101,13 @@ export class ColumnKeyDirective {
 export class FilterFormDirective {
 }
 
+// tslint:disable-next-line:directive-selector
+@Directive({selector: '[gridItemTpl]'})
+export class GridItemTemplateDirective {
+}
+
+export type WDTViewMode = 'table' | 'grid';
+
 export type WDTRow = {id: any, backgroundVariant?: 1 | 2 | 3} & Record<string, any>;
 
 @Component({
@@ -123,6 +130,7 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy, AfterVi
 	@ContentChildren(ColumnKeyDirective, {read: TemplateRef}) templates: QueryList<TemplateRef<any>>;
 	@ContentChildren(ColumnKeyDirective, {read: ColumnKeyDirective}) columnKeyDirectives: QueryList<ColumnKeyDirective>;
 	@ContentChild(FilterFormDirective, {read: TemplateRef}) filterFormTpl: TemplateRef<any>;
+	@ContentChild(GridItemTemplateDirective, {read: TemplateRef}) gridItemTpl: TemplateRef<any>;
 
 	@Input() searchParams;
 	@Input() showSearchField = true;
@@ -168,7 +176,9 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy, AfterVi
 	@Input() showSelectionInfo = true;
 	@Input() canConfigureColumns = true;
 	@Input() tabs: Array<{ caption: string, count: number, isSelected: boolean, onClick: () => void }> = [];
-
+	@Input() viewMode: WDTViewMode = 'table';
+	@Input() tablePageSizeOptions: Array<number> = [10, 25, 50, 100];
+	@Input() gridPageSizeOptions: Array<number> = [6, 12, 24, 48];
 	@Output() onRowClicked = new EventEmitter<{row: any, index: number}>();
 	@Output() onParamsChanged = new EventEmitter<any>();
 	@Output() onDataRetrieved = new EventEmitter<{
@@ -242,6 +252,8 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy, AfterVi
 		this.filterBtnRef = this.injector.get<TemplateRef<any>>(FilterBtnRefToken);
 		this.saveBtnRef = this.injector.get<TemplateRef<any>>(SaveBtnRefToken);
 
+		this.itemsPerPage = this.getPageSizeOptions()[0];
+
 		this.escapeKeyListener = (ev) => {
 			if (ev.key === 'Escape' && this.showFilters) {
 				this.closeFilters(true);
@@ -290,6 +302,14 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy, AfterVi
 	}
 
 	ngOnChanges(simpleChanges: SimpleChanges): void {
+		if (isValueSet(simpleChanges.viewMode) && !simpleChanges.viewMode.firstChange) {
+			this.itemsPerPage = this.getDefaultPageSize();
+			this.page = 1;
+			if (this.initiated) {
+				this.getData().then(() => this.calculateColumnWidths());
+			}
+			return;
+		}
 		if (isValueSet(simpleChanges.searchParams)) {
 			const currentState = {
 				page: Number(this.page),
@@ -300,9 +320,13 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy, AfterVi
 			};
 			const c = simpleChanges.searchParams.currentValue;
 			const defaultSortField = this.columnKeyDirectives?.find(e => stringIsSetAndFilled(e.defaultSort));
+			const pageSizeOptions = this.getPageSizeOptions();
+			const defaultPageSize = this.getDefaultPageSize();
+			const urlItemsPerPage = useIfNumberIsSet(Number(c.itemsPerPage));
+			const validItemsPerPage = urlItemsPerPage && pageSizeOptions.includes(urlItemsPerPage) ? urlItemsPerPage : defaultPageSize;
 			const newState = {
 				page: useIfNumberIsSet(Number(c.page)) ?? 1,
-				itemsPerPage:  useIfNumberIsSet(Number(c.itemsPerPage)) ?? 25,
+				itemsPerPage: validItemsPerPage,
 				searchQuery: c.searchQuery ?? '',
 				sortField: c.sortField ?? defaultSortField?.sortKey ?? defaultSortField?.columnKey,
 				sortOrder: c.sortOrder ?? defaultSortField?.defaultSort,
@@ -432,10 +456,11 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy, AfterVi
 	}
 
 	private getParams(): { itemsPerPage: number; searchQuery: string; sortOrder: 'ASC' | 'DESC'; start: number; sortField: string } {
+		const itemsPerPageNum = Number(this.itemsPerPage) || 25;
 		return {
-			start: (this.page - 1) * (Number(this.itemsPerPage) ?? 1),
+			start: (this.page - 1) * itemsPerPageNum,
 			searchQuery: this.searchQuery,
-			itemsPerPage: (Number(this.itemsPerPage) ?? 1),
+			itemsPerPage: itemsPerPageNum,
 			sortField: this.sortField,
 			sortOrder: this.sortOrder,
 		};
@@ -509,6 +534,10 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy, AfterVi
 
 	private async calculateColumnWidths(): Promise<void> {
 		await awaitableForNextCycle();
+		if (this.viewMode === 'grid') {
+			this.firstWidthsCalculated = true;
+			return;
+		}
 		if (!arrayIsSetAndFilled(this.pageData?.data)) {
 			return;
 		}
@@ -980,6 +1009,14 @@ export class DataTableComponent implements OnChanges, OnInit, OnDestroy, AfterVi
 
 	public hasAtLeastOneResult(): boolean {
 		return this.pageData?.totalAmount > 0;
+	}
+
+	public getPageSizeOptions(): Array<number> {
+		return this.viewMode === 'grid' ? this.gridPageSizeOptions : this.tablePageSizeOptions;
+	}
+
+	public getDefaultPageSize(): number {
+		return this.getPageSizeOptions()[1];
 	}
 
 	public _ext_refreshTable(): void {

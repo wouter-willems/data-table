@@ -21,25 +21,30 @@ $tdPadding: var(#{$p}td-padding);
   display: flex;
   height: 0;
   overflow: hidden;
+
   .selectBox {
     padding: $tdPaddingSelectBox;
   }
+
   .configButton {
     padding: $tdPadding;
     padding-right: 1rem;
   }
 }
+
 .topButtons {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: $topButtonsPadding;
   border-bottom: var(#{$p}border);
+
   .searchAndMultiSelect {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
   }
+
   .multiSelectActionMenu {
     display: flex;
     align-items: center;
@@ -53,24 +58,33 @@ $tdPadding: var(#{$p}td-padding);
   padding: 0.7rem 1rem;
   border-bottom: var(#{$p}border);
   justify-content: space-between;
+
   .selectionContainer {
     display: flex;
     gap: 0.8rem;
     align-items: center;
+
     .separator {
       width: 2px;
       height: 1rem;
       background: #dddddd;
     }
+
     .loadingIndicator {
       display: flex;
       gap: 0.6rem;
       align-items: center;
     }
+
     @keyframes spinner {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
     }
+
     .spinner {
       animation: spinner 2s linear infinite;
     }
@@ -78,48 +92,64 @@ $tdPadding: var(#{$p}td-padding);
 }
 
 @keyframes moving-gradient {
-  0% { background-position: -100% 0; }
-  100% { background-position: 100% 0; }
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 100% 0;
+  }
 }
 
 .tableContainer {
   position: relative;
   overflow: auto;
+
   &.clone {
     opacity: 0;
     height: 0;
     overflow: hidden;
+
     table {
       display: table;
+
       thead td {
         width: initial !important;
       }
     }
   }
+
   table {
     table-layout: fixed;
     display: none;
+
     tr.hiddenColumnsHeaders {
       font-size: 0px;
+
       td {
         padding: 0;
         border: none;
       }
+
       .colHeader .sortButton {
         display: none;
       }
     }
+
     &.firstWidthsCalculated {
       display: table;
     }
+
     &.tableLoadingIndicator {
       display: table;
+
       thead td div {
         opacity: 0;
       }
+
       tbody td {
         padding: 0.5rem;
       }
+
       .pulsatingBackground {
         height: 12px;
         background: linear-gradient(to right, #eee 20%, #ddd 50%, #eee 80%);
@@ -131,17 +161,21 @@ $tdPadding: var(#{$p}td-padding);
         animation-fill-mode: forwards;
       }
     }
+
     &.fullWidth {
       width: 100%;
     }
+
     td {
       position: relative;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+
       &.actionMenuContainerTd {
         position: relative;
         overflow: visible;
+
         &.sticky {
           padding-left: 0;
           padding-right: 0;
@@ -149,15 +183,19 @@ $tdPadding: var(#{$p}td-padding);
       }
     }
   }
+
   td:not(.actionMenuContainerTd) {
     padding: $tdPadding;
+
     &.selectBoxContainer {
       padding: $tdPaddingSelectBox;
     }
   }
+
   td.actionMenuContainerTd {
     padding-right: 1rem;
   }
+
   .summary {
     position: sticky;
     left: 0;
@@ -167,16 +205,17 @@ $tdPadding: var(#{$p}td-padding);
 }
 
 
-
 .amountPicker {
   display: flex;
   align-items: center;
   color: #515365;
   gap: 0.5rem;
+
   .selectContainer {
     border: var(#{$p}border);
     border-radius: 0.4rem;
   }
+
   select {
 
     background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTYgOUwxMiAxNUwxOCA5IiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K) no-repeat 95% 50%;
@@ -198,22 +237,27 @@ $tdPadding: var(#{$p}td-padding);
   display: flex;
   align-items: center;
   gap: 0.6rem;
+
   &.rightAligned {
     justify-content: flex-end;
   }
+
   .caption {
     flex: 0 1 auto;
     overflow: hidden;
     text-overflow: ellipsis;
     cursor: pointer;
+
     &:hover {
       text-decoration: underline;
     }
   }
+
   button {
     cursor: pointer;
     flex: 0 0 auto;
   }
+
   .sortButton {
     background: none;
     border: none;
@@ -241,18 +285,21 @@ $tdPadding: var(#{$p}td-padding);
     border-radius: 6px;
     font-weight: 500;
     color: var(--wdt-color-foreground-gray);
+
     &:hover {
       background: var(--wdt-color-background-gray);
     }
+
     &:focus {
       outline: 2px solid var(--wdt-color-green-medium);
     }
+
     .bottomLine {
       background: transparent;
       position: absolute;
       left: 0;
       right: 0;
-      bottom: calc(-1* var(--wdt-tab-buttons-top-padding));
+      bottom: calc(-1 * var(--wdt-tab-buttons-top-padding));
       height: 2px;
       transform: translateY(1px);
     }
@@ -261,18 +308,22 @@ $tdPadding: var(#{$p}td-padding);
       .tabCaption {
         color: var(--wdt-color-green-dark);
       }
+
       .bottomLine {
         background: var(--wdt-color-green-medium);
       }
+
       .count {
         background: var(--wdt-color-green-medium);
         color: white;
       }
+
       &:hover {
         background: var(--wdt-color-green-light);
       }
     }
   }
+
   .count {
     $countHeight: 18px;
     background: var(--wdt-color-background-gray);
@@ -283,6 +334,7 @@ $tdPadding: var(#{$p}td-padding);
     display: flex;
     align-items: center;
     justify-content: center;
+
     &.singleCharacter {
       width: $countHeight;
       padding: 0;
@@ -329,6 +381,7 @@ $tdPadding: var(#{$p}td-padding);
     border: none;
     font-size: 2rem;
     color: inherit;
+
     &:hover {
       background: #dddddd;
     }
@@ -342,13 +395,16 @@ $tdPadding: var(#{$p}td-padding);
 
 .selectBoxContainer {
   cursor: pointer;
+
   &.hidden {
     pointer-events: none;
+
     .selectBox {
       opacity: 0;
     }
   }
 }
+
 .selectAcrossPagesTooltip {
   position: absolute;
   display: flex;
@@ -364,6 +420,7 @@ $tdPadding: var(#{$p}td-padding);
   transform: translateY(-50%);
   box-sizing: border-box;
 }
+
 .textButton {
   background: none;
   border: none;
@@ -371,10 +428,12 @@ $tdPadding: var(#{$p}td-padding);
   font-weight: bold;
   padding: 0;
   color: #1570EF;
+
   &:hover {
     text-decoration: underline;
   }
 }
+
 .selectBox {
   pointer-events: none;
 }
@@ -394,6 +453,7 @@ table {
   &.fullWidth {
     width: 100%;
   }
+
   border-collapse: collapse;
   color: $color;
 
@@ -404,17 +464,20 @@ table {
     font-weight: 600;
     transition: width 0.5s;
     transition-timing-function: ease-in-out;
+
     &:not(.configButtonContainer) {
       padding: $tdPadding;
       padding-top: $tdHeaderTopPadding;
       padding-bottom: $tdHeaderBottomPadding;
     }
+
     &.configButtonContainer {
       padding: $tdPadding;
       padding-top: $tdHeaderTopPadding;
       padding-bottom: $tdHeaderBottomPadding;
       padding-right: 1rem;
       text-align: right;
+
       &.sticky {
         position: sticky;
         right: 0;
@@ -441,43 +504,55 @@ table {
     &.backgroundVariant1 td {
       background-color: var(--wdt-background-variant1);
     }
+
     &.backgroundVariant2 td {
       background-color: var(--wdt-background-variant2);
     }
+
     &.backgroundVariant3 td {
       background-color: var(--wdt-background-variant3);
     }
+
     &.aggregateRow {
       td:not(.selectBoxContainer) {
         cursor: initial;
       }
     }
+
     &:not(:last-child) td {
       border-bottom: var(#{$p}border);
     }
+
     td {
       &.rightAligned {
         text-align: right;
       }
+
       &.emphasize-1 {
         font-weight: var(--wdt-emphasize-1);
       }
+
       &.emphasize1 {
         font-weight: var(--wdt-emphasize1);
         color: #101828;
       }
+
       &.emphasize-2 {
         font-weight: var(--wdt-emphasize-2);
       }
+
       &.emphasize2 {
         font-weight: var(--wdt-emphasize2);
       }
+
       &.emphasize-3 {
         font-weight: var(--wdt-emphasize-3);
       }
+
       &.emphasize3 {
         font-weight: var(--wdt-emphasize3);
       }
+
       &.sticky {
         position: sticky;
         right: 0;
@@ -512,6 +587,7 @@ td {
   justify-content: flex-end;
   visibility: hidden;
   pointer-events: none;
+
   &.hasActionMenuButton, &.multi {
     visibility: visible;
     pointer-events: initial;
@@ -532,6 +608,7 @@ td {
   &.forMultipleRows {
     visibility: visible;
   }
+
   button {
     width: 100%;
     display: block;
@@ -542,9 +619,11 @@ td {
     cursor: pointer;
     text-align: left;
     padding-left: 1rem;
+
     &:hover {
       background: #F2F4F7;
     }
+
     &[disabled] {
       pointer-events: none;
     }
@@ -558,6 +637,7 @@ footer {
   border-top: var(#{$p}border);
   padding: $footerButtonsPadding;
   color: $color;
+
   .footerRightSide {
     display: flex;
     gap: 0.8rem;
@@ -577,6 +657,7 @@ footer {
       gap: 0.8rem;
       padding: 0.4rem 0.8rem;
     }
+
     color: $color;
     padding: 0.4rem;
     border: none;
@@ -598,10 +679,12 @@ footer {
     &.pageNrButton {
       min-width: 2.25rem;
       min-height: 2.25rem;
+
       &.selected {
         background: #eeeeee;
         pointer-events: none;
       }
+
       &.separator {
         cursor: default;
         pointer-events: none;
@@ -628,3 +711,56 @@ footer {
   transform: scaleY(0.5);
   cursor: ew-resize;
 }
+
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.gridItem {
+  border: var(#{$p}border);
+  border-radius: 8px;
+  background: white;
+  overflow: hidden;
+
+  &.hasRowClick {
+    cursor: pointer;
+  }
+
+  &:hover {
+    background: #F2F4F7;
+  }
+
+  &[disabled] {
+    pointer-events: none;
+  }
+}
+
+.gridLoadingIndicator {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+
+  .gridLoadingItem {
+    border: var(#{$p}border);
+    border-radius: 8px;
+    background: white;
+    height: 200px;
+    overflow: hidden;
+
+    .pulsatingBackground {
+      height: 100%;
+      background: linear-gradient(to right, #eee 20%, #ddd 50%, #eee 80%);
+      background-size: 500px 100px;
+      animation-name: moving-gradient;
+      animation-duration: 10s;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+      animation-fill-mode: forwards;
+    }
+  }
+}
+
