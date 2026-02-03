@@ -77,7 +77,24 @@
 	#tableContainer
 >
 	<ng-container *ngIf="!loading && !hasAtLeastOneResult()" [ngTemplateOutlet]="emptyTpl"></ng-container>
-	<table class="tableLoadingIndicator fullWidth" *ngIf="loading && !hasAtLeastOneResult()">
+
+	<div class="gridLoadingIndicator" *ngIf="viewMode === 'grid' && loading && !hasAtLeastOneResult()">
+		<div class="gridLoadingItem" *ngFor="let i of multipleTimes">
+			<div class="pulsatingBackground"></div>
+		</div>
+	</div>
+
+	<div class="gridContainer" *ngIf="viewMode === 'grid' && hasAtLeastOneResult()">
+		<div class="gridItem" *ngFor="let row of pageData?.data; let i = index" (click)="rowClicked(row, i)" [ngClass]="{hasRowClick: onRowClicked.observers.length > 0}">
+			<ng-container
+				[ngTemplateOutlet]="gridItemTpl"
+				[ngTemplateOutletContext]="{ row: row, index: i }"
+			></ng-container>
+		</div>
+	</div>
+
+
+	<table class="tableLoadingIndicator fullWidth" *ngIf="viewMode === 'table' && loading && !hasAtLeastOneResult()">
 		<thead>
 		<tr>
 			<td>
@@ -95,7 +112,7 @@
 		</tr>
 		</tbody>
 	</table>
-	<table *ngIf="hasAtLeastOneResult()" class="fullWidth" [ngClass]="{firstWidthsCalculated: firstWidthsCalculated, actionMenuOpen: hasActionMenuOpen(), hasRowClick: onRowClicked.observers.length > 0}">
+	<table *ngIf="viewMode === 'table' && hasAtLeastOneResult()" class="fullWidth" [ngClass]="{firstWidthsCalculated: firstWidthsCalculated, actionMenuOpen: hasActionMenuOpen(), hasRowClick: onRowClicked.observers.length > 0}">
 		<thead>
 		<tr [ngClass]="{hiddenColumnsHeaders: !getActionsForMultipleRowsFn && !showColumnHeaders && !canConfigureColumns}">
 			<td (click)="headerSelectClicked()" class="selectBoxContainer" *ngIf="getActionsForMultipleRowsFn" [ngClass]="{hidden: selectAllAcrossPagesActive}">
@@ -206,10 +223,9 @@
 		{{translate('Show')}}
 		<div class="selectContainer">
 			<select [(ngModel)]="itemsPerPage" (ngModelChange)="itemsPerPageChanged()">
-				<option value="10">10 {{translate('results')}}</option>
-				<option value="25">25 {{translate('results')}}</option>
-				<option value="50">50 {{translate('results')}}</option>
-				<option value="100">100 {{translate('results')}}</option>
+                <option *ngFor="let size of ( viewMode === 'grid' ? gridPageSizeOptions : tablePageSizeOptions )"
+                        [ngValue]="size">{{ size }} {{ translate('results') }}
+                </option>
 			</select>
 		</div>
 	</div>

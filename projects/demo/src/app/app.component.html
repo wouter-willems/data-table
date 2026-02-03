@@ -59,82 +59,92 @@
 		[canConfigureColumns]="true"
 		[showFooter]="true"
 		[tabs]="tabs"
+		[viewMode]="viewMode"
 	>
 		<ng-template #ageHeader>kers</ng-template>
 
-		<ng-template staticColumnCaption="Static column" let-row="row">
-			woof
-		</ng-template>
+        <ng-template gridItemTpl let-row="row" let-index="index">
+            {{ row.name }}
+        </ng-template>
 
-		<ng-template staticColumnCaption="Static column 2" let-row="row">
-			miaow
-		</ng-template>
+        <ng-template staticColumnCaption="Static column" let-row="row">
+            woof
+        </ng-template>
 
-		<ng-template columnKey="name" columnCaption="Full name" let-value="value" [preset]="presets.name">
-			{{value}}
-		</ng-template>
-		<ng-template [columnKey]="null" columnCaption="mjeh" [preset]="presets.name">
-			hello
-		</ng-template>
-		<ng-template *ngIf="withAge" columnKey="age" columnCaption="Age" [headerTpl]="ageHeader" let-value="value" let-row="row" defaultSort="DESC" [preset]="presets.age">
-			{{value}} years old
-		</ng-template>
-		<ng-template columnKey="address" columnCaption="Address" [sortKey]="null" let-value="value" [enabledByDefault]="false" [preset]="presets.other">
-			{{value.street}} at number {{value.number}}
-		</ng-template>
-		<ng-template columnKey="occupation" columnCaption="{{getDelayed() | async}}" sortKey="blargh" let-value="value" [aggregationTpl]="occupationAggr" [showTooltipOnOverflow]="false" [preset]="presets.other">
-			{{value}} occupation occupation occupation
-		</ng-template>
-		<ng-template #occupationAggr let-value="value">occupationAggr: {{value}}</ng-template>
-		<ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [rightAligned]="false" [preset]="presets.shalala">
-			{{value}}
-		</ng-template>
-		<ng-template columnKey="newlyAdded" columnCaption="newlyAdded" let-value="value" [enabledByDefault]="false" [preset]="presets.other">
-			{{value}}
-		</ng-template>
+        <ng-template staticColumnCaption="Static column 2" let-row="row">
+            miaow
+        </ng-template>
 
-		<ng-template filterForm>
-			<form [formGroup]="myFilterForm" class="filterForm">
-				<div class="fields">
-					<div style="height: 50px;">
-						<input type="text" formControlName="name" style="width: 40%" />
-						<input type="text" formControlName="email" style="width: 40%" />
-					</div>
-					<div style="height: 50px;">
-						<input type="text" formControlName="name" />
-						<input type="text" formControlName="email" />
-					</div>
-					<div style="height: 50px;">
-						<input type="text" formControlName="name" />
-						<input type="text" formControlName="email" />
-					</div>
-					<div style="height: 50px;">
-						<input type="text" formControlName="name" />
-						<input type="text" formControlName="email" />
-					</div>
-					<div style="height: 50px;">
-						<input type="text" formControlName="name" />
-						<input type="text" formControlName="email" />
-					</div>
-					<div style="height: 50px;">
-						<input type="text" formControlName="name" />
-						<input type="text" formControlName="email" />
-					</div>
-				</div>
-				<button class="submitButton" (click)="setFilters()">Submit</button>
-			</form>
-		</ng-template>
-	</wutu-data-table>
+        <ng-template columnKey="name" columnCaption="Full name" let-value="value" [preset]="presets.name">
+            {{ value }}
+        </ng-template>
+        <ng-template [columnKey]="null" columnCaption="mjeh" [preset]="presets.name">
+            hello
+        </ng-template>
+        <ng-template *ngIf="withAge" columnKey="age" columnCaption="Age" [headerTpl]="ageHeader" let-value="value"
+            let-row="row" defaultSort="DESC" [preset]="presets.age">
+            {{ value }} years old
+        </ng-template>
+        <ng-template columnKey="address" columnCaption="Address" [sortKey]="null" let-value="value"
+                [enabledByDefault]="false" [preset]="presets.other">
+            {{ value.street }} at number {{ value.number }}
+        </ng-template>
+        <ng-template columnKey="occupation" columnCaption="{{getDelayed() | async}}" sortKey="blargh" let-value="value"
+                [aggregationTpl]="occupationAggr" [showTooltipOnOverflow]="false" [preset]="presets.other">
+            {{ value }} occupation occupation occupation
+        </ng-template>
+        <ng-template #occupationAggr let-value="value">occupationAggr: {{ value }}</ng-template>
+        <ng-template columnKey="shalala" columnCaption="Shalala" let-value="value" [rightAligned]="false"
+                [preset]="presets.shalala">
+            {{ value }}
+        </ng-template>
+        <ng-template columnKey="newlyAdded" columnCaption="newlyAdded" let-value="value" [enabledByDefault]="false"
+                [preset]="presets.other">
+            {{ value }}
+        </ng-template>
+
+        <ng-template filterForm>
+            <form [formGroup]="myFilterForm" class="filterForm">
+                <div class="fields">
+                    <div style="height: 50px;">
+                        <input type="text" formControlName="name" style="width: 40%"/>
+                        <input type="text" formControlName="email" style="width: 40%"/>
+                    </div>
+                    <div style="height: 50px;">
+                        <input type="text" formControlName="name"/>
+                        <input type="text" formControlName="email"/>
+                    </div>
+                    <div style="height: 50px;">
+                        <input type="text" formControlName="name"/>
+                        <input type="text" formControlName="email"/>
+                    </div>
+                    <div style="height: 50px;">
+                        <input type="text" formControlName="name"/>
+                        <input type="text" formControlName="email"/>
+                    </div>
+                    <div style="height: 50px;">
+                        <input type="text" formControlName="name"/>
+                        <input type="text" formControlName="email"/>
+                    </div>
+                    <div style="height: 50px;">
+                        <input type="text" formControlName="name"/>
+                        <input type="text" formControlName="email"/>
+                    </div>
+                </div>
+                <button class="submitButton" (click)="setFilters()">Submit</button>
+            </form>
+        </ng-template>
+    </wutu-data-table>
 </div>
 
 <ng-template #empty>
- Empty state
+    Empty state
 </ng-template>
 
 <ng-template #expandedTpl>
-	{{expandedInfo.name}}
+    {{ expandedInfo.name }}
 </ng-template>
 
 <ng-template #summaryTpl>
-	I am a summary woeiiii
+    I am a summary woeiiii
 </ng-template>

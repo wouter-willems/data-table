@@ -1,24 +1,21 @@
-import {NgModule} from '@angular/core';
+import { NgModule } from '@angular/core';
 import {
 	ColumnKeyDirective,
 	DataTableComponent,
 	FilterFormDirective,
+	GridItemTemplateDirective,
 	StaticColumnDirective
 } from './data-table/data-table.component';
-import {CommonModule, JsonPipe} from "@angular/common";
-import {FormsModule} from "@angular/forms";
-import {ColumnRearrangerComponent} from './column-rearranger/column-rearranger.component';
-import {LibStyleComponent} from './lib-style/lib-style.component';
-import {WithTooltipDirective} from "./withTooltip.component";
+import { CommonModule, JsonPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ColumnRearrangerComponent } from './column-rearranger/column-rearranger.component';
+import { LibStyleComponent } from './lib-style/lib-style.component';
+import { WithTooltipDirective } from './withTooltip.component';
 
 @NgModule({
-	declarations: [DataTableComponent, ColumnKeyDirective, StaticColumnDirective, FilterFormDirective, ColumnRearrangerComponent, LibStyleComponent, WithTooltipDirective],
-	imports: [
-		CommonModule,
-		JsonPipe,
-		FormsModule
-	],
-	exports: [DataTableComponent, ColumnKeyDirective, StaticColumnDirective, FilterFormDirective, ColumnRearrangerComponent]
+	declarations: [DataTableComponent, ColumnKeyDirective, StaticColumnDirective, FilterFormDirective, GridItemTemplateDirective, ColumnRearrangerComponent, LibStyleComponent, WithTooltipDirective],
+	imports: [CommonModule, JsonPipe, FormsModule],
+	exports: [DataTableComponent, ColumnKeyDirective, StaticColumnDirective, FilterFormDirective, GridItemTemplateDirective, ColumnRearrangerComponent]
 })
 export class WutuDataTableModule {
 }

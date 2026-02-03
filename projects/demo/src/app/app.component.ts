@@ -1,19 +1,23 @@
-import {AfterViewInit, Component, inject, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import { AfterViewInit, Component, inject, TemplateRef, ViewChild } from '@angular/core';
 import {
 	ActionMenuBtnRefToken,
+	ActionMenuMultipleBtnRefToken,
 	CheckBoxRefToken,
-	ConfigBtnRefToken, DataTableComponent, WDTRow, FilterBtnRefToken,
-	SearchInputRefToken, ToggleRefToken, ActionMenuMultipleBtnRefToken, TranslationsToken
+	ConfigBtnRefToken,
+	DataTableComponent,
+	FilterBtnRefToken,
+	SearchInputRefToken,
+	ToggleRefToken,
+	WDTViewMode,
+	WDTRow
 } from 'projects/wouter-willems/data-table/src/public-api';
-import {
-	SaveBtnRefToken
-} from "../../../wouter-willems/data-table/src/lib/column-rearranger/column-rearranger.component";
-import {ActivatedRoute, Router} from "@angular/router";
-import {FormControl, FormGroup, Validators } from '@angular/forms';
-import {getDummyData, getSingleDummyItem} from "./dummy";
-import {wdtColumnPresets} from "./presets";
-import {memoize} from "lodash";
-import {stringIsSetAndFilled} from "../../../wouter-willems/data-table/src/lib/util/values";
+import { SaveBtnRefToken } from '../../../wouter-willems/data-table/src/lib/column-rearranger/column-rearranger.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { getDummyData, getSingleDummyItem } from './dummy';
+import { wdtColumnPresets } from './presets';
+import { memoize } from 'lodash';
+import { stringIsSetAndFilled } from '../../../wouter-willems/data-table/src/lib/util/values';
 
 
 @Component({
@@ -68,6 +72,7 @@ export class AppComponent implements AfterViewInit {
 	public presets = wdtColumnPresets;
 	private expandedInfo: { name: string; index: number };
 	protected withAge = false;
+	protected viewMode: WDTViewMode = 'table';
 
 	constructor(private router: Router, private activatedRoute: ActivatedRoute) {
 		this.myFilterForm = new FormGroup({
@@ -189,7 +194,7 @@ export class AppComponent implements AfterViewInit {
 		// return this.myFilterForm.
 	};
 
-	getExpandedTplFn = (): {index: number, tpl: TemplateRef<any>} => {
+	getExpandedTplFn = (): { index: number, tpl: TemplateRef<any> } => {
 		if (!Number.isFinite(this.expandedInfo?.index)) {
 			return;
 		}
@@ -238,7 +243,7 @@ export class AppComponent implements AfterViewInit {
 	}
 
 	public getSearchParams() {
-		const q =  this.activatedRoute.snapshot.queryParams;
+		const q = this.activatedRoute.snapshot.queryParams;
 		return {
 			itemsPerPage: q.itemsPerPage,
 			page: Number(q.page),
@@ -264,19 +269,24 @@ export class AppComponent implements AfterViewInit {
 		});
 	});
 
-	tabs: Array<{ caption: string; count: number; isSelected: boolean; onClick: () => void }> = [{
-		caption: 'To do', count: 8, isSelected: false, onClick: () => {
-			console.log('click');
-		}
-	},
+	tabs: Array<{ caption: string; count: number; isSelected: boolean; onClick: () => void }> = [
 		{
-			caption: 'All items', count: 48, isSelected: true, onClick: () => {
-				console.log('click 2');
+			caption: 'Table view', count: 48, isSelected: true, onClick: () => {
+				this.viewMode = 'table';
+				this.selectTab('Table view');
 			}
-		}
-	];
+		}, {
+			caption: 'Grid view', count: 69, isSelected: false, onClick: () => {
+				this.viewMode = 'grid';
+				this.selectTab('Grid view');
+			}
+		}];
 
 	dataRetrieved(data: { totalAmount: number; data: Array<WDTRow>; aggregatedValues: Record<string, any> }) {
 		console.log(data);
+	}
+
+	selectTab(caption: string) {
+		this.tabs.forEach(tab => tab.isSelected = tab.caption === caption);
 	}
 }
