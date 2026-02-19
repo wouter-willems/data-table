@@ -370,7 +370,7 @@ $tdPadding: var(#{$p}td-padding);
   cursor: pointer;
   font-weight: bold;
   padding: 0;
-  color: #1570EF;
+  color: var(--wdt-text-button-color);
   &:hover {
     text-decoration: underline;
   }
