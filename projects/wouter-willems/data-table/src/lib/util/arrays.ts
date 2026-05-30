@@ -1,4 +1,4 @@
-import { isArray, isEqual } from 'lodash';
+import { isArray, isEqual } from 'lodash-es';
 import { isValueSet } from './values';
 
 export function removeDuplicatesFromArraysWithComparator(comparator: (e1: any, e2: any) => boolean, ...arrays: any[]): any {

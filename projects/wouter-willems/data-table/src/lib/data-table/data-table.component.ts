@@ -20,7 +20,7 @@ import {
 import {arrayIsSetAndFilled, removeDuplicatesFromArray, removeDuplicatesFromArraysWithComparator} from '../util/arrays';
 import {isValueSet, stringIsSetAndFilled, useIfNumberIsSet, useIfStringIsSet} from '../util/values';
 import {awaitableForNextCycle, runNextRenderCycle} from "../util/angular";
-import {debounce, isEqual} from 'lodash';
+import {debounce, isEqual} from 'lodash-es';
 import {SaveBtnRefToken} from "../column-rearranger/column-rearranger.component";
 import {FormGroup} from "@angular/forms";
 

@@ -1,4 +1,4 @@
-import { isEqual, merge } from 'lodash';
+import { isEqual, merge } from 'lodash-es';
 import {isValueSet, stringIsSetAndFilled } from './values';
 
 export function mapObjectValues<O, T>(myObject: O, mapFn: (e: O[keyof O]) => T): Record<keyof O, T> {
